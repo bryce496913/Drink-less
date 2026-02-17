@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22626" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="UserProfileEntity" representedClassName="UserProfileEntity" syncable="YES">
+        <attribute name="id" optional="NO" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="createdAt" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="goalType" optional="NO" attributeType="String"/>
+        <attribute name="weeklyTarget" optional="NO" attributeType="Integer 16" defaultValueString="10" usesScalarValueType="YES"/>
+        <attribute name="dryDaysTarget" optional="NO" attributeType="Integer 16" defaultValueString="2" usesScalarValueType="YES"/>
+        <attribute name="baselineWeeklyDrinks" optional="NO" attributeType="Double" defaultValueString="10" usesScalarValueType="YES"/>
+        <attribute name="costPerDrink" optional="NO" attributeType="Double" defaultValueString="8" usesScalarValueType="YES"/>
+        <attribute name="caloriesPerDrink" optional="NO" attributeType="Double" defaultValueString="120" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="AppSettingsEntity" representedClassName="AppSettingsEntity" syncable="YES">
+        <attribute name="reminderTime" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="remindersEnabled" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="hasCompletedOnboarding" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="backendSyncEnabled" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="backendBaseURL" optional="NO" attributeType="String" defaultValueString=""/>
+        <attribute name="deviceId" optional="NO" attributeType="String" defaultValueString=""/>
+        <attribute name="avoidWeekendForAutoDry" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="DayLogEntity" representedClassName="DayLogEntity" syncable="YES">
+        <attribute name="id" optional="NO" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="date" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="plannedTargetDrinks" optional="NO" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isDryPlanned" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="totalDrinks" optional="NO" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="updatedAt" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="entriesBlob" optional="YES" attributeType="Binary"/>
+    </entity>
+</model>
