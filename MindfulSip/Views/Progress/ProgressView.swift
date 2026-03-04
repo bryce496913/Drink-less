@@ -18,7 +18,7 @@ struct ProgressView: View {
 
                 Chart {
                     ForEach(dateService.weekDates(from: .now), id: \.self) { date in
-                        let log = container.loggingService.log(for: date)
+                        let log = container.log(for: date)
                         BarMark(x: .value("Day", date, unit: .day), y: .value("Drinks", log.totalDrinks))
                             .foregroundStyle(AppTheme.highlight)
                     }

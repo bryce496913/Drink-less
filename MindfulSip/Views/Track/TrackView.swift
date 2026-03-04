@@ -8,7 +8,7 @@ struct TrackView: View {
             List {
                 ForEach((0..<30), id: \.self) { offset in
                     let date = Calendar.current.date(byAdding: .day, value: -offset, to: .now) ?? .now
-                    let log = container.loggingService.log(for: date)
+                    let log = container.log(for: date)
                     NavigationLink {
                         DayEditorView(date: date, log: log)
                     } label: {
