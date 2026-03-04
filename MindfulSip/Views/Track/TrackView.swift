@@ -16,11 +16,16 @@ struct TrackView: View {
                             Text(date.formatted(date: .abbreviated, time: .omitted))
                             Spacer()
                             Text("\(log.totalDrinks, specifier: "%.1f")")
+                                .foregroundStyle(AppTheme.highlight)
                         }
+                        .font(AppTheme.font(.body))
                     }
+                    .listRowBackground(AppTheme.surface)
                 }
             }
-            .navigationTitle("Edit Past Days")
+            .scrollContentBackground(.hidden)
+            .background(AppTheme.background)
+            .navigationTitle("Tracking")
             .toolbar { NavigationLink("SMS Sim", destination: SMSSimulatorView()) }
         }
     }
@@ -35,10 +40,14 @@ struct DayEditorView: View {
         Form {
             Stepper("Total drinks: \(log.totalDrinks, specifier: "%.1f")", value: $log.totalDrinks, in: 0...30, step: 0.5)
             if log.isDryPlanned && log.totalDrinks > 0 {
-                Text("This is marked as a dry day.").foregroundStyle(.orange)
+                Text("This is marked as a dry day.").foregroundStyle(AppTheme.highlight)
             }
             Button("Save") { container.saveLog(log) }
+                .buttonStyle(PrimaryButtonStyle())
+                .listRowBackground(AppTheme.surface)
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.background)
         .navigationTitle(date.formatted(date: .abbreviated, time: .omitted))
     }
 }

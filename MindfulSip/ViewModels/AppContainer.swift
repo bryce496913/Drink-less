@@ -27,5 +27,11 @@ final class AppContainer: ObservableObject {
 
     func saveProfile() { store.saveProfile(profile); refresh() }
     func saveSettings() { store.saveSettings(settings); refresh() }
+    func saveProfileAndSettings() {
+        store.saveProfile(profile)
+        store.saveSettings(settings)
+        refresh()
+    }
+
     func saveLog(_ log: DayLog) { store.upsert(log: log); refresh() }
 }

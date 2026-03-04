@@ -8,6 +8,8 @@ struct MindfulSipApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(container)
+                .preferredColorScheme(.dark)
+                .tint(AppTheme.highlight)
         }
     }
 }
