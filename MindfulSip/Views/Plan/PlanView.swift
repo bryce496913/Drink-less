@@ -26,7 +26,7 @@ struct PlanView: View {
                             Text(date.formatted(.dateTime.weekday(.wide)))
                                 .font(AppTheme.font(.headline, weight: .semibold))
                             Spacer()
-                            Text("Logged \(container.loggingService.log(for: date).totalDrinks, specifier: "%.1f")")
+                            Text("Logged \(container.log(for: date).totalDrinks, specifier: "%.1f")")
                                 .font(AppTheme.font(.footnote))
                                 .foregroundStyle(AppTheme.highlight)
                         }
@@ -59,7 +59,7 @@ struct PlanView: View {
             targets[changedIndex] = max(0, targets[changedIndex] - overflow)
         }
         for (idx, date) in weekDates.enumerated() {
-            var log = container.loggingService.log(for: date)
+            var log = container.log(for: date)
             log.isDryPlanned = dryDays.contains(idx)
             log.plannedTargetDrinks = targets[idx]
             container.saveLog(log)

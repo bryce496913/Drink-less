@@ -11,9 +11,8 @@ struct SMSSimulatorView: View {
                 .keyboardType(.decimalPad)
             Button("Process message") {
                 let value = Double(message.trimmingCharacters(in: .whitespacesAndNewlines)) ?? 0
-                let today = container.loggingService.log(for: .now)
-                container.loggingService.update(date: .now, total: today.totalDrinks + value, delta: value)
-                container.refresh()
+                let today = container.log(for: .now)
+                container.updateDrinkTotal(date: .now, total: today.totalDrinks + value, delta: value)
             }
         }
         .navigationTitle("SMS Companion Simulator")
