@@ -16,7 +16,7 @@ struct OnboardingView: View {
                     Text("Step \(step + 1) of \(totalSteps)")
                         .font(AppTheme.font(.subheadline))
                         .foregroundStyle(AppTheme.highlight)
-                    ProgressView(value: Double(step + 1), total: Double(totalSteps))
+                    SwiftUI.ProgressView(value: Double(step + 1), total: Double(totalSteps))
                         .tint(AppTheme.highlight)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
