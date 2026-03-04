@@ -15,10 +15,12 @@ struct ProgressView: View {
                 Text("This week: \(drinks, specifier: "%.1f") / \(container.profile.weeklyTarget)")
                 Text("Dry days: \(dryDays) / \(container.profile.dryDaysTarget)")
                 Text("Estimated money saved: $\(analytics.saved(actualWeekly: drinks, baselineWeekly: container.profile.baselineWeeklyDrinks, perDrink: container.profile.costPerDrink), specifier: "%.0f")")
+
                 Chart {
                     ForEach(dateService.weekDates(from: .now), id: \.self) { date in
                         let log = container.loggingService.log(for: date)
                         BarMark(x: .value("Day", date, unit: .day), y: .value("Drinks", log.totalDrinks))
+                            .foregroundStyle(AppTheme.highlight)
                     }
                 }
                 .frame(height: 180)
@@ -30,8 +32,13 @@ struct ProgressView: View {
                     Text("Logging streak: \(insight.loggingStreak) days")
                 }
             }
+            .font(AppTheme.font(.body))
+            .foregroundStyle(AppTheme.text)
+            .padding()
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
             .padding()
         }
+        .background(AppTheme.background.ignoresSafeArea())
         .navigationTitle("Progress")
     }
 }

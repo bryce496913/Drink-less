@@ -15,8 +15,12 @@ struct SettingsView: View {
             TextField("Backend base URL", text: $container.settings.backendBaseURL)
             TextField("Device ID", text: $container.settings.deviceId)
             Button("Delete all data", role: .destructive) { container.store.deleteAll(); container.refresh() }
-            Button("Save") { container.saveProfile(); container.saveSettings(); dismiss() }
+            Button("Save") { container.saveProfileAndSettings(); dismiss() }
+                .buttonStyle(PrimaryButtonStyle())
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.background)
+        .foregroundStyle(AppTheme.text)
         .navigationTitle("Settings")
     }
 }

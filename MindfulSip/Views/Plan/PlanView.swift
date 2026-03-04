@@ -17,23 +17,34 @@ struct PlanView: View {
                     targets = container.planService.distributeTarget(weeklyTarget: container.profile.weeklyTarget, dryDayIndexes: dryDays)
                     persist()
                 }
+                .buttonStyle(.plain)
+                .foregroundStyle(AppTheme.highlight)
+
                 ForEach(Array(weekDates.enumerated()), id: \.offset) { index, date in
-                    HStack {
-                        Text(date.formatted(.dateTime.weekday(.abbreviated)))
-                        Toggle("Dry", isOn: Binding(get: { dryDays.contains(index) }, set: { newValue in
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text(date.formatted(.dateTime.weekday(.wide)))
+                                .font(AppTheme.font(.headline, weight: .semibold))
+                            Spacer()
+                            Text("Logged \(container.loggingService.log(for: date).totalDrinks, specifier: "%.1f")")
+                                .font(AppTheme.font(.footnote))
+                                .foregroundStyle(AppTheme.highlight)
+                        }
+                        Toggle("Dry day", isOn: Binding(get: { dryDays.contains(index) }, set: { newValue in
                             if newValue { dryDays.insert(index) } else { dryDays.remove(index) }
                             targets = container.planService.distributeTarget(weeklyTarget: container.profile.weeklyTarget, dryDayIndexes: dryDays)
                             persist()
-                        })).labelsHidden()
+                        }))
                         Stepper(value: Binding(get: { targets[index] }, set: { targets[index] = max(0, $0); persist(index) }), in: 0...20, step: 0.5) {
-                            Text("Target \(targets[index], specifier: "%.1f")")
+                            Text("Target: \(targets[index], specifier: "%.1f")")
                         }
-                        Spacer()
-                        let logged = container.loggingService.log(for: date).totalDrinks
-                        Text("Logged \(logged, specifier: "%.1f")")
                     }
+                    .padding(.vertical, 6)
+                    .listRowBackground(AppTheme.surface)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(AppTheme.background)
             .navigationTitle("Weekly Plan")
             .onAppear {
                 targets = container.planService.distributeTarget(weeklyTarget: container.profile.weeklyTarget, dryDayIndexes: dryDays)

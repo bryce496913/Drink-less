@@ -11,6 +11,7 @@ struct RootView: View {
                 OnboardingView()
             }
         }
+        .background(AppTheme.background.ignoresSafeArea())
     }
 }
 
