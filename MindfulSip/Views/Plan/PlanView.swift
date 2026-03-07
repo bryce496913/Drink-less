@@ -28,8 +28,8 @@ struct PlanView: View {
                         }
 
                         HStack(spacing: 10) {
-                            planStat(title: "Planned this week", value: "\(totalPlanned, specifier: "%.1f")")
-                            planStat(title: "Remaining", value: "\(remaining, specifier: "%.1f")")
+                            planStat(title: "Planned this week", value: String(format: "%.1f", totalPlanned))
+                            planStat(title: "Remaining", value: String(format: "%.1f", remaining))
                         }
                     }
 

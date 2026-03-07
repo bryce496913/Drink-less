@@ -137,9 +137,9 @@ struct TrackView: View {
                 .font(AppTheme.font(.headline, weight: .semibold))
 
             HStack(spacing: 10) {
-                detailPill(title: "Drinks", value: "\(selectedLog.totalDrinks, specifier: "%.1f")")
-                detailPill(title: "Cost", value: "$\(selectedLog.totalDrinks * container.profile.costPerDrink, specifier: "%.0f")")
-                detailPill(title: "Calories", value: "\(selectedLog.totalDrinks * container.profile.caloriesPerDrink, specifier: "%.0f")")
+                detailPill(title: "Drinks", value: String(format: "%.1f", selectedLog.totalDrinks))
+                detailPill(title: "Cost", value: "$" + String(format: "%.0f", selectedLog.totalDrinks * container.profile.costPerDrink))
+                detailPill(title: "Calories", value: String(format: "%.0f", selectedLog.totalDrinks * container.profile.caloriesPerDrink))
             }
 
             Text("Notes")
