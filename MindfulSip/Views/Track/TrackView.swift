@@ -4,7 +4,7 @@ struct TrackView: View {
     @EnvironmentObject var container: AppContainer
 
     private let calendar = Calendar.current
-    @State private var selectedDate = Date()
+    @State private var selectedDate = .now
 
     private var monthDates: [Date] {
         guard let monthInterval = calendar.dateInterval(of: .month, for: selectedDate),
@@ -27,6 +27,10 @@ struct TrackView: View {
 
     private var monthTitle: String {
         selectedDate.formatted(.dateTime.month(.wide).year())
+    }
+
+    private var today: Date {
+        calendar.startOfDay(for: container.currentDate)
     }
 
     var body: some View {
@@ -114,6 +118,7 @@ struct TrackView: View {
                 legendItem(color: .yellow, label: "0.5 - 2")
                 legendItem(color: .orange, label: "2.5 - 4")
                 legendItem(color: .red, label: "4+")
+                legendItem(color: .gray, label: "Future")
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -142,7 +147,7 @@ struct TrackView: View {
                 .foregroundStyle(AppTheme.text)
                 .frame(maxWidth: .infinity)
                 .frame(height: 42)
-                .background(drinkColor(for: log.totalDrinks), in: RoundedRectangle(cornerRadius: 10))
+                .background(drinkColor(for: log.totalDrinks, on: date), in: RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(isSelected ? AppTheme.text : Color.clear, lineWidth: 2)
@@ -151,7 +156,11 @@ struct TrackView: View {
         .buttonStyle(.plain)
     }
 
-    private func drinkColor(for total: Double) -> Color {
+    private func drinkColor(for total: Double, on date: Date) -> Color {
+        if calendar.startOfDay(for: date) > today {
+            return .gray.opacity(0.45)
+        }
+
         switch total {
         case 0: return .green.opacity(0.85)
         case 0.5 ... 2: return .yellow.opacity(0.8)

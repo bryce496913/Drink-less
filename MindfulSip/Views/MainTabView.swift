@@ -22,6 +22,7 @@ struct MainTabView: View {
             GuidanceView().tabItem { Label("Guidance", systemImage: "heart.text.square") }
         }
         .ignoresSafeArea(.container, edges: [.top, .bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppTheme.background.ignoresSafeArea())
     }
 }
