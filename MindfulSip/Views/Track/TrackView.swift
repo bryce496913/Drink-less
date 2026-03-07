@@ -118,7 +118,7 @@ struct TrackView: View {
                         legend
                     }
                     .padding()
-                    .padding(.bottom, showDayCard ? 320 : 0)
+                    .padding(.bottom, showDayCard ? 390 : 0)
                 }
                 .background(AppTheme.background.ignoresSafeArea())
                 .navigationTitle("Tracking")
@@ -165,49 +165,71 @@ struct TrackView: View {
     }
 
     private var dayInfoCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text(selectedDate.formatted(date: .complete, time: .omitted))
-                    .font(AppTheme.font(.headline, weight: .semibold))
-                Spacer()
-                Button("Close") {
-                    withAnimation {
-                        showDayCard = false
+        ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .center) {
+                    Text(selectedDate.formatted(date: .complete, time: .omitted))
+                        .font(AppTheme.font(.headline, weight: .semibold))
+                    Spacer()
+                    Button {
+                        withAnimation {
+                            showDayCard = false
+                        }
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(AppTheme.font(.caption, weight: .semibold))
+                            .foregroundStyle(AppTheme.text)
+                            .padding(7)
+                            .background(AppTheme.background.opacity(0.7), in: Circle())
                     }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(SecondaryButtonStyle())
+
+                HStack(spacing: 10) {
+                    detailPill(title: "Money spent", value: "$\(String(format: "%.0f", dayMoneySpent))")
+                    detailPill(title: "Calories", value: "\(String(format: "%.0f", dayCalories))")
+                }
+
+                HStack(alignment: .top, spacing: 10) {
+                    detailPill(title: "Target", value: "\(String(format: "%.1f", selectedLog.plannedTargetDrinks))")
+                        .frame(maxWidth: 130)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Status")
+                            .font(AppTheme.font(.caption2))
+                            .foregroundStyle(AppTheme.text.opacity(0.75))
+
+                        Label(targetStatus.text, systemImage: targetStatus.text == "Above target" ? "arrow.up.circle.fill" : "checkmark.circle.fill")
+                            .font(AppTheme.font(.body, weight: .semibold))
+                            .foregroundStyle(targetStatus.color)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(8)
+                    .background(AppTheme.background.opacity(0.6), in: RoundedRectangle(cornerRadius: 10))
+                }
+
+                detailPill(title: "Types", value: drinkTypesSummary)
+
+                Text("Notes")
+                    .font(AppTheme.font(.footnote, weight: .semibold))
+                    .foregroundStyle(AppTheme.text.opacity(0.8))
+
+                TextEditor(text: $notesDraft)
+                    .font(AppTheme.font(.body))
+                    .frame(minHeight: 72, maxHeight: 110)
+                    .padding(6)
+                    .background(AppTheme.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
+
+                Button("Save notes") {
+                    var updated = selectedLog
+                    updated.notes = notesDraft
+                    container.saveLog(updated)
+                }
+                .buttonStyle(PrimaryButtonStyle())
             }
-
-            HStack(spacing: 10) {
-                detailPill(title: "Money spent", value: "$\(String(format: "%.0f", dayMoneySpent))")
-                detailPill(title: "Calories drunk", value: "\(String(format: "%.0f", dayCalories))")
-            }
-
-            detailPill(title: "Types", value: drinkTypesSummary)
-            detailPill(title: "Target", value: "\(String(format: "%.1f", selectedLog.plannedTargetDrinks))")
-
-            Label(targetStatus.text, systemImage: targetStatus.text == "Above target" ? "arrow.up.circle.fill" : "checkmark.circle.fill")
-                .font(AppTheme.font(.body, weight: .semibold))
-                .foregroundStyle(targetStatus.color)
-
-            Text("Notes")
-                .font(AppTheme.font(.footnote, weight: .semibold))
-                .foregroundStyle(AppTheme.text.opacity(0.8))
-
-            TextEditor(text: $notesDraft)
-                .font(AppTheme.font(.body))
-                .frame(minHeight: 72, maxHeight: 110)
-                .padding(6)
-                .background(AppTheme.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
-
-            Button("Save notes") {
-                var updated = selectedLog
-                updated.notes = notesDraft
-                container.saveLog(updated)
-            }
-            .buttonStyle(PrimaryButtonStyle())
+            .padding(16)
         }
-        .padding(16)
+        .frame(maxHeight: 370)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
         .padding(.horizontal)

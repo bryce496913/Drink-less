@@ -3,6 +3,7 @@
     <entity name="UserProfileEntity" representedClassName="UserProfileEntity" syncable="YES">
         <attribute name="id" optional="NO" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="createdAt" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" optional="NO" attributeType="String" defaultValueString="Friend"/>
         <attribute name="goalType" optional="NO" attributeType="String"/>
         <attribute name="weeklyTarget" optional="NO" attributeType="Integer 16" defaultValueString="10" usesScalarValueType="YES"/>
         <attribute name="dryDaysTarget" optional="NO" attributeType="Integer 16" defaultValueString="2" usesScalarValueType="YES"/>

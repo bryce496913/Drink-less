@@ -20,6 +20,7 @@ struct MainTabView: View {
             TrackView().tabItem { Label("Track", systemImage: "calendar.badge.clock") }
             ProgressView().tabItem { Label("Progress", systemImage: "chart.bar") }
             GuidanceView().tabItem { Label("Guidance", systemImage: "heart.text.square") }
+            SettingsView().tabItem { Label("Settings", systemImage: "gearshape") }
         }
         .ignoresSafeArea(.container, edges: [.top, .bottom])
         .frame(maxWidth: .infinity, maxHeight: .infinity)

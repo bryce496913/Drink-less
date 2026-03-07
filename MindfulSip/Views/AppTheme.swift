@@ -10,18 +10,14 @@ enum AppTheme {
     static func font(_ style: Font.TextStyle, weight: Font.Weight = .regular) -> Font {
         let size: CGFloat
         switch style {
-        case .largeTitle: size = 34
-        case .title: size = 28
-        case .title2: size = 22
-        case .title3: size = 20
-        case .headline: size = 17
-        case .subheadline: size = 15
-        case .body: size = 17
-        case .callout: size = 16
-        case .footnote: size = 13
-        case .caption: size = 12
-        case .caption2: size = 11
-        @unknown default: size = 17
+        case .largeTitle, .title, .title2, .title3, .headline:
+            size = 20
+        case .subheadline, .body, .callout:
+            size = 15
+        case .footnote, .caption, .caption2:
+            size = 13
+        @unknown default:
+            size = 15
         }
 
         let family: String
@@ -40,10 +36,10 @@ struct PrimaryButtonStyle: ButtonStyle {
         configuration.label
             .font(AppTheme.font(.headline, weight: .semibold))
             .foregroundStyle(AppTheme.text)
-            .padding(.vertical, 10)
-            .padding(.horizontal, 14)
+            .padding(.vertical, 7)
+            .padding(.horizontal, 10)
             .frame(maxWidth: .infinity)
-            .background(AppTheme.accent.opacity(configuration.isPressed ? 0.7 : 1), in: RoundedRectangle(cornerRadius: 14))
+            .background(AppTheme.accent.opacity(configuration.isPressed ? 0.7 : 1), in: RoundedRectangle(cornerRadius: 10))
     }
 }
 
@@ -52,9 +48,9 @@ struct SecondaryButtonStyle: ButtonStyle {
         configuration.label
             .font(AppTheme.font(.subheadline, weight: .medium))
             .foregroundStyle(AppTheme.text)
-            .padding(.vertical, 10)
-            .padding(.horizontal, 14)
-            .background(AppTheme.surface.opacity(configuration.isPressed ? 0.7 : 1), in: RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).stroke(AppTheme.highlight, lineWidth: 1))
+            .padding(.vertical, 7)
+            .padding(.horizontal, 10)
+            .background(AppTheme.surface.opacity(configuration.isPressed ? 0.7 : 1), in: RoundedRectangle(cornerRadius: 10))
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppTheme.highlight, lineWidth: 1))
     }
 }

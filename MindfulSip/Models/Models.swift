@@ -14,6 +14,7 @@ enum DrinkType: String, Codable, CaseIterable, Identifiable {
 struct UserProfile: Codable {
     var id: UUID = UUID()
     var createdAt: Date = .now
+    var name: String = "Friend"
     var goalType: GoalType = .drinkLess
     var weeklyTarget: Int = 10
     var dryDaysTarget: Int = 2

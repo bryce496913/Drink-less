@@ -24,6 +24,10 @@ struct OnboardingView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     switch step {
                     case 0:
+                        Text("Tell us about you")
+                            .font(AppTheme.font(.headline, weight: .semibold))
+                        TextField("Your name", text: $container.profile.name)
+                            .textInputAutocapitalization(.words)
                         Text("What is your current goal?")
                             .font(AppTheme.font(.headline, weight: .semibold))
                         Picker("Goal type", selection: $container.profile.goalType) {
