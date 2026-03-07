@@ -20,16 +20,16 @@ struct ProgressView: View {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(alignment: .top, spacing: 12) {
                     VStack(alignment: .leading, spacing: 6) {
-                        progressMetric(title: "This week", value: "\(drinks, specifier: "%.1f") / \(container.profile.weeklyTarget)")
+                        progressMetric(title: "This week", value: "\(String(format: "%.1f", drinks)) / \(container.profile.weeklyTarget)")
                         progressMetric(title: "Dry days", value: "\(dryDays) / \(container.profile.dryDaysTarget)")
-                        progressMetric(title: "Money (week)", value: "$\(moneySpentWeek, specifier: "%.0f")")
+                        progressMetric(title: "Money (week)", value: "$\(String(format: "%.0f", moneySpentWeek))")
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     VStack(alignment: .leading, spacing: 6) {
-                        progressMetric(title: "Calories (week)", value: "\(caloriesWeek, specifier: "%.0f")")
-                        progressMetric(title: "Money (total)", value: "$\(moneySpentTotal, specifier: "%.0f")")
-                        progressMetric(title: "Calories (total)", value: "\(caloriesTotal, specifier: "%.0f")")
+                        progressMetric(title: "Calories (week)", value: String(format: "%.0f", caloriesWeek))
+                        progressMetric(title: "Money (total)", value: "$\(String(format: "%.0f", moneySpentTotal))")
+                        progressMetric(title: "Calories (total)", value: String(format: "%.0f", caloriesTotal))
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -47,7 +47,7 @@ struct ProgressView: View {
 
                 if container.logs.count >= 14 {
                     let insight = analytics.insights(logs: container.logs)
-                    Text("Last 14 days: \(insight.last14, specifier: "%.1f"), previous: \(insight.previous14, specifier: "%.1f")")
+                    Text("Last 14 days: \(String(format: "%.1f", insight.last14)), previous: \(String(format: "%.1f", insight.previous14))")
                     Text("No-drink streak: \(insight.dryStreak) days")
                     Text("App-use streak: \(insight.loggingStreak) days")
 
