@@ -17,11 +17,12 @@ struct MainTabView: View {
         TabView {
             HomeView().tabItem { Label("Home", systemImage: "house") }
             PlanView().tabItem { Label("Plan", systemImage: "calendar") }
-            TrackView().tabItem { Label("Track", systemImage: "list.bullet") }
+            TrackView().tabItem { Label("Track", systemImage: "calendar.badge.clock") }
             ProgressView().tabItem { Label("Progress", systemImage: "chart.bar") }
-            GuidanceView().tabItem { Label("Guidance", systemImage: "brain") }
+            GuidanceView().tabItem { Label("Guidance", systemImage: "heart.text.square") }
         }
-        .background(AppTheme.background)
+        .ignoresSafeArea(.container, edges: [.top, .bottom])
+        .background(AppTheme.background.ignoresSafeArea())
     }
 }
 
