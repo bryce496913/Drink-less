@@ -33,21 +33,6 @@ struct PlanView: View {
                         }
                     }
 
-                    HStack(spacing: 8) {
-                        Button("Auto-pick dry days") {
-                            dryDays = container.planService.autoPickDryDays(count: container.profile.dryDaysTarget, avoidWeekend: container.settings.avoidWeekendForAutoDry)
-                            targets = container.planService.distributeTarget(weeklyTarget: container.profile.weeklyTarget, dryDayIndexes: dryDays)
-                            persist()
-                        }
-                        .buttonStyle(PrimaryButtonStyle())
-
-                        Button("Even split") {
-                            targets = container.planService.distributeTarget(weeklyTarget: container.profile.weeklyTarget, dryDayIndexes: dryDays)
-                            persist()
-                        }
-                        .buttonStyle(SecondaryButtonStyle())
-                    }
-
                     VStack(spacing: 10) {
                         ForEach(Array(weekDates.enumerated()), id: \.offset) { index, date in
                             dayRow(index: index, date: date)
@@ -85,47 +70,34 @@ struct PlanView: View {
                         .foregroundStyle(AppTheme.text.opacity(0.7))
                 }
 
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("Logged")
-                        .font(AppTheme.font(.caption2, weight: .medium))
-                        .foregroundStyle(AppTheme.text.opacity(0.65))
-                    Text("\(dayLog.totalDrinks, specifier: "%.1f")")
-                        .font(AppTheme.font(.callout, weight: .semibold))
-                        .foregroundStyle(AppTheme.highlight)
+                Text("Logged: \(dayLog.totalDrinks, specifier: "%.1f")")
+                    .font(AppTheme.font(.callout, weight: .semibold))
+                    .foregroundStyle(AppTheme.highlight)
+
+                HStack(spacing: 8) {
+                    Text("Dry:")
+                        .font(AppTheme.font(.caption, weight: .semibold))
+                        .foregroundStyle(AppTheme.text.opacity(0.8))
+                    Toggle("Dry", isOn: Binding(get: { dryDays.contains(index) }, set: { newValue in
+                        if newValue {
+                            dryDays.insert(index)
+                            targets[index] = 0
+                        } else {
+                            dryDays.remove(index)
+                        }
+                        persist(index)
+                    }))
+                    .font(AppTheme.font(.caption, weight: .semibold))
+                    .tint(AppTheme.highlight)
+                    .labelsHidden()
                 }
-
-                Toggle("Dry", isOn: Binding(get: { dryDays.contains(index) }, set: { newValue in
-                    if newValue {
-                        dryDays.insert(index)
-                        targets[index] = 0
-                    } else {
-                        dryDays.remove(index)
-                    }
-                    persist(index)
-                }))
-                .font(AppTheme.font(.caption, weight: .semibold))
-                .tint(AppTheme.highlight)
-                .labelsHidden()
-
-                Text("Dry")
-                    .font(AppTheme.font(.caption2, weight: .medium))
-                    .foregroundStyle(AppTheme.text.opacity(0.7))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Target")
+                Text("Target: \(targets[index], specifier: "%.1f")")
                     .font(AppTheme.font(.caption, weight: .semibold))
                     .foregroundStyle(AppTheme.text.opacity(0.75))
-
-                HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text("\(targets[index], specifier: "%.1f")")
-                        .font(AppTheme.font(.title3, weight: .bold))
-                        .foregroundStyle(AppTheme.highlight)
-                    Text("drinks")
-                        .font(AppTheme.font(.caption2))
-                        .foregroundStyle(AppTheme.text.opacity(0.7))
-                }
 
                 Stepper(value: Binding(get: { targets[index] }, set: {
                     targets[index] = max(0, $0)

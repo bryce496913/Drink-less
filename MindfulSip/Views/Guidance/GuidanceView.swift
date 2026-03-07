@@ -2,7 +2,11 @@ import SwiftUI
 
 struct GuidanceView: View {
     @EnvironmentObject var container: AppContainer
-    @State private var feeling = ""
+
+    @State private var showDailySupport = true
+    @State private var showAdvice = true
+    @State private var showPraise = true
+    @State private var showRecommendation = true
 
     private var todayDrinks: Double {
         container.log(for: container.currentDate).totalDrinks
@@ -19,9 +23,7 @@ struct GuidanceView: View {
     }
 
     private var advice: String {
-        feeling.isEmpty
-            ? "Try a reset routine: 1) hydrate 2) take a short walk 3) check your plan target for today."
-            : "You shared '\(feeling)'. Name the trigger, then replace the next drink decision with a 10-minute delay."
+        "Try a reset routine: 1) hydrate 2) take a short walk 3) check your plan target for today."
     }
 
     private var praiseMessage: String {
@@ -51,22 +53,13 @@ struct GuidanceView: View {
                         .foregroundStyle(AppTheme.text)
 
                     Text("Daily support and practical coaching based on your recent progress.")
-                        .font(AppTheme.font(.body))
+                        .font(AppTheme.font(.footnote))
                         .foregroundStyle(AppTheme.text.opacity(0.9))
 
-                    guidanceCard(title: "Daily support", message: dailySupport, icon: "sun.max")
-                    guidanceCard(title: "Advice", message: advice, icon: "lightbulb")
-                    guidanceCard(title: "Praise", message: praiseMessage, icon: "hands.clap")
-                    guidanceCard(title: "Recommendation", message: recommendation, icon: "target")
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("How are you feeling?")
-                            .font(AppTheme.font(.headline, weight: .semibold))
-                        TextField("e.g. stressed, social pressure, craving", text: $feeling)
-                            .textFieldStyle(.roundedBorder)
-                    }
-                    .padding(14)
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                    guidanceAccordion(title: "Daily Support", message: dailySupport, icon: "sun.max", isExpanded: $showDailySupport)
+                    guidanceAccordion(title: "Advice", message: advice, icon: "lightbulb", isExpanded: $showAdvice)
+                    guidanceAccordion(title: "Praise", message: praiseMessage, icon: "hands.clap", isExpanded: $showPraise)
+                    guidanceAccordion(title: "Recommendation", message: recommendation, icon: "target", isExpanded: $showRecommendation)
                 }
                 .padding()
             }
@@ -75,13 +68,15 @@ struct GuidanceView: View {
         }
     }
 
-    private func guidanceCard(title: String, message: String, icon: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label(title, systemImage: icon)
-                .font(AppTheme.font(.headline, weight: .semibold))
+    private func guidanceAccordion(title: String, message: String, icon: String, isExpanded: Binding<Bool>) -> some View {
+        DisclosureGroup(isExpanded: isExpanded) {
             Text(message)
-                .font(AppTheme.font(.body))
+                .font(AppTheme.font(.footnote))
                 .foregroundStyle(AppTheme.text.opacity(0.95))
+                .padding(.top, 8)
+        } label: {
+            Label(title, systemImage: icon)
+                .font(AppTheme.font(.subheadline, weight: .semibold))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
