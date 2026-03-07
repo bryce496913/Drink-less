@@ -34,6 +34,10 @@ struct HomeView: View {
         max(0, (container.profile.baselineWeeklyDrinks - weekTotal) * container.profile.caloriesPerDrink)
     }
 
+    private func format(_ value: Double, decimals: Int) -> String {
+        value.formatted(.number.precision(.fractionLength(decimals)))
+    }
+
     private var achievementBadges: [String] {
         var badges: [String] = []
         if todayLog.totalDrinks == 0 { badges.append("Daily win: no drinks today") }
@@ -63,8 +67,8 @@ struct HomeView: View {
                     }
 
                     HStack(spacing: 10) {
-                        StatPill(title: "Money saved", value: "$\(moneySaved, specifier: "%.0f")")
-                        StatPill(title: "Calories saved", value: "\(caloriesSaved, specifier: "%.0f")")
+                        StatPill(title: "Money saved", value: "$\(format(moneySaved, decimals: 0))")
+                        StatPill(title: "Calories saved", value: format(caloriesSaved, decimals: 0))
                     }
 
                     VStack(spacing: 10) {
@@ -75,7 +79,7 @@ struct HomeView: View {
                                     amount = container.log(for: .now).totalDrinks
                                 }
                                 .buttonStyle(SecondaryButtonStyle())
-                                .accessibilityLabel("Add \(quick, specifier: "%.1f") drinks")
+                                .accessibilityLabel("Add \(format(quick, decimals: 1)) drinks")
                             }
                         }
 
