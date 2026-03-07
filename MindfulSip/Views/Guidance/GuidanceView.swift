@@ -3,10 +3,10 @@ import SwiftUI
 struct GuidanceView: View {
     @EnvironmentObject var container: AppContainer
 
-    @State private var showDailySupport = true
-    @State private var showAdvice = true
-    @State private var showPraise = true
-    @State private var showRecommendation = true
+    @State private var showDailySupport = false
+    @State private var showAdvice = false
+    @State private var showPraise = false
+    @State private var showRecommendation = false
 
     private var todayDrinks: Double {
         container.log(for: container.currentDate).totalDrinks
@@ -48,7 +48,7 @@ struct GuidanceView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("Guidance")
+                    Text("Guidance for \(container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Friend" : container.profile.name)")
                         .font(AppTheme.font(.title2, weight: .bold))
                         .foregroundStyle(AppTheme.text)
 

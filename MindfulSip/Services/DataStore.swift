@@ -16,6 +16,7 @@ final class DataStore: ObservableObject {
             return UserProfile(
                 id: entity.id,
                 createdAt: entity.createdAt,
+                name: entity.name,
                 goalType: GoalType(rawValue: entity.goalType) ?? .drinkLess,
                 weeklyTarget: Int(entity.weeklyTarget),
                 dryDaysTarget: Int(entity.dryDaysTarget),
@@ -34,6 +35,7 @@ final class DataStore: ObservableObject {
         let entity = (try? context.fetch(request).first) ?? UserProfileEntity(context: context)
         entity.id = profile.id
         entity.createdAt = profile.createdAt
+        entity.name = profile.name
         entity.goalType = profile.goalType.rawValue
         entity.weeklyTarget = Int16(profile.weeklyTarget)
         entity.dryDaysTarget = Int16(profile.dryDaysTarget)

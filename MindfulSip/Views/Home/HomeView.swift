@@ -3,11 +3,17 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var container: AppContainer
     @State private var amount: Double = 1
-    @State private var showAddDrinks = true
-    @State private var showAchievements = true
-    @State private var showTip = true
+    @State private var showStats = true
+    @State private var showAddDrinks = false
+    @State private var showAchievements = false
+    @State private var showTip = false
 
     private let analytics = AnalyticsService()
+
+    private var displayName: String {
+        let trimmed = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? "Friend" : trimmed
+    }
 
     private var todayLog: DayLog {
         container.log(for: container.currentDate)
@@ -67,7 +73,7 @@ struct HomeView: View {
             ScrollView {
                 VStack(spacing: 14) {
                     VStack(spacing: 8) {
-                        Text("Mindful Sips")
+                        Text("Welcome, \(displayName)")
                             .font(AppTheme.font(.title, weight: .bold))
                             .foregroundStyle(AppTheme.text)
                         Text("Today: \(todayLog.totalDrinks, specifier: "%.1f") drinks")
@@ -76,20 +82,31 @@ struct HomeView: View {
                     }
                     .frame(maxWidth: .infinity)
 
-                    HStack(spacing: 10) {
-                        StatPill(title: "Dry streak", value: "\(dryStreak) d")
-                        StatPill(title: "App streak", value: "\(loggingStreak) d")
-                    }
+                    DisclosureGroup(isExpanded: $showStats) {
+                        VStack(spacing: 10) {
+                            HStack(spacing: 10) {
+                                StatPill(title: "Dry streak", value: "\(dryStreak) d")
+                                StatPill(title: "App streak", value: "\(loggingStreak) d")
+                            }
 
-                    HStack(spacing: 10) {
-                        StatPill(title: "Money spent (week)", value: "$\(format(moneySpentWeek, decimals: 0))")
-                        StatPill(title: "Calories drunk (week)", value: format(caloriesWeek, decimals: 0))
-                    }
+                            HStack(spacing: 10) {
+                                StatPill(title: "Money spent (week)", value: "$\(format(moneySpentWeek, decimals: 0))")
+                                StatPill(title: "Calories drunk (week)", value: format(caloriesWeek, decimals: 0))
+                            }
 
-                    HStack(spacing: 10) {
-                        StatPill(title: "Money spent (total)", value: "$\(format(moneySpentTotal, decimals: 0))")
-                        StatPill(title: "Calories drunk (total)", value: format(caloriesTotal, decimals: 0))
+                            HStack(spacing: 10) {
+                                StatPill(title: "Money spent (total)", value: "$\(format(moneySpentTotal, decimals: 0))")
+                                StatPill(title: "Calories drunk (total)", value: format(caloriesTotal, decimals: 0))
+                            }
+                        }
+                        .padding(.top, 8)
+                    } label: {
+                        Text("Stats")
+                            .font(AppTheme.font(.headline, weight: .semibold))
+                            .foregroundStyle(AppTheme.text)
                     }
+                    .padding(16)
+                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
 
                     DisclosureGroup(isExpanded: $showAddDrinks) {
                         VStack(spacing: 12) {
@@ -154,7 +171,7 @@ struct HomeView: View {
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
 
                     if todayLog.totalDrinks > todayLog.plannedTargetDrinks, todayLog.plannedTargetDrinks > 0 {
-                        Text("You are above today’s target. Try water between drinks.")
+                        Text("You are above today’s target. Try water between drinks, \(displayName).")
                             .font(AppTheme.font(.footnote))
                             .foregroundStyle(AppTheme.text)
                             .padding(12)
@@ -168,7 +185,6 @@ struct HomeView: View {
             }
             .background(AppTheme.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { NavigationLink("Settings", destination: SettingsView()) }
             .onAppear { amount = todayLog.totalDrinks }
         }
     }
@@ -242,7 +258,7 @@ private struct StatPill: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+        .background(AppTheme.background.opacity(0.45), in: RoundedRectangle(cornerRadius: 14))
     }
 }
 
