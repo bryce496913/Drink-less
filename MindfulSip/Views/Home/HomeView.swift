@@ -162,11 +162,11 @@ private struct DrinkQuickAddGrid: View {
 
     private let options: [(title: String, icon: String, amount: Double)] = [
         ("Wine", "wineglass", 1.0),
-        ("Beer", "mug.fill", 1.0),
-        ("Shot", "drop", 0.5),
-        ("Large beer", "takeoutbag.and.cup.and.straw.fill", 1.5),
-        ("Cocktail", "sparkles", 1.5),
-        ("Double mix", "number.2.circle.fill", 2.0)
+        ("Beer", "mug", 1.0),
+        ("Shot", "drop.fill", 0.5),
+        ("Large beer", "waterbottle", 1.5),
+        ("Cocktail", "cup.and.saucer", 1.5),
+        ("Double mix", "2.circle", 2.0)
     ]
 
     var body: some View {

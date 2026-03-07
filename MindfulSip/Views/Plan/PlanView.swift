@@ -75,27 +75,25 @@ struct PlanView: View {
     private func dayRow(index: Int, date: Date) -> some View {
         let dayLog = container.log(for: date)
 
-        return VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 2) {
+        return HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 1) {
                     Text(date.formatted(.dateTime.weekday(.wide)))
-                        .font(AppTheme.font(.headline, weight: .semibold))
+                        .font(AppTheme.font(.subheadline, weight: .semibold))
                     Text(date.formatted(date: .abbreviated, time: .omitted))
-                        .font(AppTheme.font(.caption))
-                        .foregroundStyle(AppTheme.text.opacity(0.7))
-                }
-                Spacer()
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("Logged")
                         .font(AppTheme.font(.caption2))
                         .foregroundStyle(AppTheme.text.opacity(0.7))
+                }
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Logged")
+                        .font(AppTheme.font(.caption2, weight: .medium))
+                        .foregroundStyle(AppTheme.text.opacity(0.65))
                     Text("\(dayLog.totalDrinks, specifier: "%.1f")")
-                        .font(AppTheme.font(.body, weight: .semibold))
+                        .font(AppTheme.font(.callout, weight: .semibold))
                         .foregroundStyle(AppTheme.highlight)
                 }
-            }
 
-            HStack(spacing: 12) {
                 Toggle("Dry", isOn: Binding(get: { dryDays.contains(index) }, set: { newValue in
                     if newValue {
                         dryDays.insert(index)
@@ -105,7 +103,29 @@ struct PlanView: View {
                     }
                     persist(index)
                 }))
+                .font(AppTheme.font(.caption, weight: .semibold))
                 .tint(AppTheme.highlight)
+                .labelsHidden()
+
+                Text("Dry")
+                    .font(AppTheme.font(.caption2, weight: .medium))
+                    .foregroundStyle(AppTheme.text.opacity(0.7))
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Target")
+                    .font(AppTheme.font(.caption, weight: .semibold))
+                    .foregroundStyle(AppTheme.text.opacity(0.75))
+
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    Text("\(targets[index], specifier: "%.1f")")
+                        .font(AppTheme.font(.title3, weight: .bold))
+                        .foregroundStyle(AppTheme.highlight)
+                    Text("drinks")
+                        .font(AppTheme.font(.caption2))
+                        .foregroundStyle(AppTheme.text.opacity(0.7))
+                }
 
                 Stepper(value: Binding(get: { targets[index] }, set: {
                     targets[index] = max(0, $0)
@@ -114,10 +134,14 @@ struct PlanView: View {
                     }
                     persist(index)
                 }), in: 0 ... 20, step: 0.5) {
-                    Text("Target: \(targets[index], specifier: "%.1f")")
+                    Text("Adjust")
+                        .font(AppTheme.font(.caption, weight: .medium))
                         .foregroundStyle(AppTheme.text)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(10)
+            .background(AppTheme.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 12))
         }
         .padding(12)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
