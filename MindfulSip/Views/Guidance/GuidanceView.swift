@@ -5,7 +5,7 @@ struct GuidanceView: View {
     @State private var feeling = ""
 
     private var todayDrinks: Double {
-        container.log(for: .now).totalDrinks
+        container.log(for: container.currentDate).totalDrinks
     }
 
     private var dailySupport: String {
@@ -36,7 +36,7 @@ struct GuidanceView: View {
     }
 
     private var recommendation: String {
-        let weekly = AnalyticsService().weeklyTotal(logs: container.logs, weekStart: DateService().startOfWeek(.now))
+        let weekly = AnalyticsService().weeklyTotal(logs: container.logs, weekStart: DateService().startOfWeek(container.currentDate))
         return weekly > Double(container.profile.weeklyTarget)
             ? "Recommendation: plan two alcohol-free days next week and enable evening reminders."
             : "Recommendation: keep your current plan and reward yourself with a healthy treat this weekend."

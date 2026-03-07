@@ -11,6 +11,7 @@ struct RootView: View {
                 OnboardingView()
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppTheme.background.ignoresSafeArea())
     }
 }

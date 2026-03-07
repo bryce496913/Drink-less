@@ -8,7 +8,7 @@ struct ProgressView: View {
 
     var body: some View {
         ScrollView {
-            let weekStart = dateService.startOfWeek(.now)
+            let weekStart = dateService.startOfWeek(container.currentDate)
             let drinks = analytics.weeklyTotal(logs: container.logs, weekStart: weekStart)
             let dryDays = analytics.weeklyDryDays(logs: container.logs, weekStart: weekStart)
             let moneySaved = analytics.saved(actualWeekly: drinks, baselineWeekly: container.profile.baselineWeeklyDrinks, perDrink: container.profile.costPerDrink)
@@ -21,7 +21,7 @@ struct ProgressView: View {
                 Text("Calories saved: \(caloriesSaved, specifier: "%.0f")")
 
                 Chart {
-                    ForEach(dateService.weekDates(from: .now), id: \.self) { date in
+                    ForEach(dateService.weekDates(from: container.currentDate), id: \.self) { date in
                         let log = container.log(for: date)
                         BarMark(x: .value("Day", date, unit: .day), y: .value("Drinks", log.totalDrinks))
                             .foregroundStyle(AppTheme.highlight)

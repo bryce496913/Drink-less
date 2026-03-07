@@ -7,11 +7,11 @@ struct HomeView: View {
     private let analytics = AnalyticsService()
 
     private var todayLog: DayLog {
-        container.log(for: .now)
+        container.log(for: container.currentDate)
     }
 
     private var weekStart: Date {
-        analytics.dateService.startOfWeek(.now)
+        analytics.dateService.startOfWeek(container.currentDate)
     }
 
     private var weekTotal: Double {
@@ -75,8 +75,8 @@ struct HomeView: View {
                         HStack {
                             ForEach([0.5, 1.0, 2.0, 3.0], id: \.self) { quick in
                                 Button("+\(quick, specifier: "%.1f")") {
-                                    container.updateDrinkTotal(date: .now, total: todayLog.totalDrinks + quick, delta: quick)
-                                    amount = container.log(for: .now).totalDrinks
+                                    container.updateDrinkTotal(date: container.currentDate, total: todayLog.totalDrinks + quick, delta: quick)
+                                    amount = container.log(for: container.currentDate).totalDrinks
                                 }
                                 .buttonStyle(SecondaryButtonStyle())
                                 .accessibilityLabel("Add \(format(quick, decimals: 1)) drinks")
@@ -86,7 +86,7 @@ struct HomeView: View {
                         Stepper("Set today total: \(amount, specifier: "%.1f")", value: $amount, in: 0 ... 20, step: 0.5)
                             .foregroundStyle(AppTheme.text)
                         Button("Save total") {
-                            container.updateDrinkTotal(date: .now, total: amount)
+                            container.updateDrinkTotal(date: container.currentDate, total: amount)
                         }
                         .buttonStyle(PrimaryButtonStyle())
                     }
@@ -113,7 +113,7 @@ struct HomeView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Tip of the day")
                             .font(AppTheme.font(.headline, weight: .semibold))
-                        Text(container.tipService.tip(for: .now))
+                        Text(container.tipService.tip(for: container.currentDate))
                             .font(AppTheme.font(.body))
                             .foregroundStyle(AppTheme.text.opacity(0.9))
                     }

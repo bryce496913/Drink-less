@@ -7,7 +7,7 @@ struct PlanView: View {
     @State private var dryDays: Set<Int> = []
     @State private var targets: [Double] = Array(repeating: 0, count: 7)
 
-    var weekDates: [Date] { dateService.weekDates(from: .now) }
+    var weekDates: [Date] { dateService.weekDates(from: container.currentDate) }
 
     var body: some View {
         NavigationStack {

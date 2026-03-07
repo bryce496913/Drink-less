@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 @MainActor
 final class AppContainer: ObservableObject {
@@ -12,13 +13,17 @@ final class AppContainer: ObservableObject {
     @Published var profile: UserProfile
     @Published var settings: AppSettings
     @Published var logs: [DayLog]
+    @Published var currentDate: Date = .now
 
     private let dateService = DateService()
+    private var clockCancellable: AnyCancellable?
 
     init() {
         profile = store.loadProfile()
         settings = store.loadSettings()
         logs = store.fetchLogs(daysBack: 365)
+        startClock()
+        applyReminderSettings()
     }
 
     func refresh() {
@@ -28,10 +33,15 @@ final class AppContainer: ObservableObject {
     }
 
     func saveProfile() { store.saveProfile(profile); refresh() }
-    func saveSettings() { store.saveSettings(settings); refresh() }
+    func saveSettings() {
+        store.saveSettings(settings)
+        applyReminderSettings()
+        refresh()
+    }
     func saveProfileAndSettings() {
         store.saveProfile(profile)
         store.saveSettings(settings)
+        applyReminderSettings()
         refresh()
     }
 
@@ -46,5 +56,25 @@ final class AppContainer: ObservableObject {
     func updateDrinkTotal(date: Date, total: Double, type: DrinkType? = nil, delta: Double? = nil) {
         loggingService.update(date: date, total: total, type: type, delta: delta)
         logs = store.fetchLogs(daysBack: 365)
+    }
+
+    private func startClock() {
+        clockCancellable = Timer.publish(every: 30, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] now in
+                self?.currentDate = now
+            }
+    }
+
+    private func applyReminderSettings() {
+        guard settings.remindersEnabled else {
+            notificationService.cancelDailyReminder()
+            return
+        }
+
+        Task {
+            await notificationService.requestIfNeeded()
+            notificationService.scheduleDailyReminder(at: settings.reminderTime)
+        }
     }
 }
