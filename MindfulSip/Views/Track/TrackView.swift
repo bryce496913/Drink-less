@@ -4,7 +4,7 @@ struct TrackView: View {
     @EnvironmentObject var container: AppContainer
 
     private let calendar = Calendar.current
-    @State private var selectedDate = .now
+    @State private var selectedDate = Date.now
 
     private var monthDates: [Date] {
         guard let monthInterval = calendar.dateInterval(of: .month, for: selectedDate),
