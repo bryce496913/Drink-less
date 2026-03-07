@@ -5,6 +5,8 @@ struct TrackView: View {
 
     private let calendar = DateService().calendar
     @State private var selectedDate = Date.now
+    @State private var showDayCard = false
+    @State private var notesDraft = ""
 
     private var monthDates: [Date] {
         guard let monthInterval = calendar.dateInterval(of: .month, for: selectedDate),
@@ -37,75 +39,98 @@ struct TrackView: View {
         container.log(for: selectedDate)
     }
 
-    private var metGoal: Bool {
-        selectedLog.totalDrinks <= selectedLog.plannedTargetDrinks
+    private var dayMoneySpent: Double {
+        selectedLog.totalDrinks * container.profile.costPerDrink
     }
 
-    private var isPastSelectedDate: Bool {
-        calendar.startOfDay(for: selectedDate) < today
+    private var dayCalories: Double {
+        selectedLog.totalDrinks * container.profile.caloriesPerDrink
     }
 
-    private var hasLoggedInfo: Bool {
-        selectedLog.totalDrinks > 0 || !selectedLog.notes.isEmpty || selectedLog.plannedTargetDrinks > 0 || selectedLog.isDryPlanned
+    private var targetStatus: (text: String, color: Color) {
+        if selectedLog.plannedTargetDrinks == 0 {
+            return selectedLog.totalDrinks == 0 ? ("On target", .green) : ("Above target", .red)
+        }
+        if selectedLog.totalDrinks < selectedLog.plannedTargetDrinks {
+            return ("Below target", .green)
+        }
+        if selectedLog.totalDrinks == selectedLog.plannedTargetDrinks {
+            return ("On target", .green)
+        }
+        return ("Above target", .red)
+    }
+
+    private var drinkTypesSummary: String {
+        let typedEntries = selectedLog.entries.compactMap(\.type)
+        guard !typedEntries.isEmpty else {
+            return "No drink types logged for this day."
+        }
+
+        let counts = Dictionary(grouping: typedEntries, by: { $0 }).mapValues(\.count)
+        let ordered: [DrinkType] = [.wine, .beer, .spirits, .cocktail, .other]
+
+        return ordered.compactMap { type in
+            guard let count = counts[type] else { return nil }
+            return "\(emoji(for: type)) x\(count)"
+        }
+        .joined(separator: "  ")
     }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 14) {
-                    HStack {
-                        Button {
-                            selectedDate = calendar.date(byAdding: .month, value: -1, to: selectedDate) ?? selectedDate
-                        } label: {
-                            Image(systemName: "chevron.left")
+            ZStack(alignment: .bottom) {
+                ScrollView {
+                    VStack(spacing: 14) {
+                        HStack {
+                            Button {
+                                selectedDate = calendar.date(byAdding: .month, value: -1, to: selectedDate) ?? selectedDate
+                            } label: {
+                                Image(systemName: "chevron.left")
+                            }
+                            .buttonStyle(SecondaryButtonStyle())
+
+                            Spacer()
+                            Text(monthTitle)
+                                .font(AppTheme.font(.headline, weight: .semibold))
+                                .foregroundStyle(AppTheme.text)
+                            Spacer()
+
+                            Button {
+                                selectedDate = calendar.date(byAdding: .month, value: 1, to: selectedDate) ?? selectedDate
+                            } label: {
+                                Image(systemName: "chevron.right")
+                            }
+                            .buttonStyle(SecondaryButtonStyle())
                         }
-                        .buttonStyle(SecondaryButtonStyle())
 
-                        Spacer()
-                        Text(monthTitle)
-                            .font(AppTheme.font(.headline, weight: .semibold))
-                            .foregroundStyle(AppTheme.text)
-                        Spacer()
+                        weekHeader
 
-                        Button {
-                            selectedDate = calendar.date(byAdding: .month, value: 1, to: selectedDate) ?? selectedDate
-                        } label: {
-                            Image(systemName: "chevron.right")
-                        }
-                        .buttonStyle(SecondaryButtonStyle())
-                    }
-
-                    weekHeader
-
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8) {
-                        ForEach(monthDates, id: \.self) { date in
-                            if calendar.isDate(date, equalTo: selectedDate, toGranularity: .month) {
-                                calendarCell(for: date)
-                            } else {
-                                Color.clear.frame(height: 42)
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8) {
+                            ForEach(monthDates, id: \.self) { date in
+                                if calendar.isDate(date, equalTo: selectedDate, toGranularity: .month) {
+                                    calendarCell(for: date)
+                                } else {
+                                    Color.clear.frame(height: 42)
+                                }
                             }
                         }
-                    }
 
-                    legend
-                    selectedDateMetricsSection
-
-                    NavigationLink {
-                        DayEditorView(date: selectedDate, log: selectedLog)
-                    } label: {
-                        Label("Edit selected day", systemImage: "square.and.pencil")
-                            .font(AppTheme.font(.body, weight: .semibold))
-                            .foregroundStyle(AppTheme.text)
-                            .frame(maxWidth: .infinity)
-                            .padding(12)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+                        legend
                     }
+                    .padding()
+                    .padding(.bottom, showDayCard ? 320 : 0)
                 }
-                .padding()
+                .background(AppTheme.background.ignoresSafeArea())
+                .navigationTitle("Tracking")
+                .navigationBarTitleDisplayMode(.inline)
+
+                if showDayCard {
+                    dayInfoCard
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                        .zIndex(1)
+                }
             }
-            .background(AppTheme.background.ignoresSafeArea())
-            .navigationTitle("Tracking")
-            .navigationBarTitleDisplayMode(.inline)
+            .animation(.spring(response: 0.35, dampingFraction: 0.85), value: showDayCard)
         }
     }
 
@@ -139,51 +164,54 @@ struct TrackView: View {
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
     }
 
-    @ViewBuilder
-    private var selectedDateMetricsSection: some View {
-        if isPastSelectedDate, hasLoggedInfo {
-            dateDetailCard
-        } else {
-            Text("Select a past day with logged data to view complete metrics.")
-                .font(AppTheme.font(.footnote))
-                .foregroundStyle(AppTheme.text.opacity(0.75))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(12)
-                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
-        }
-    }
-
-    private var dateDetailCard: some View {
+    private var dayInfoCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(selectedDate.formatted(date: .complete, time: .omitted))
-                .font(AppTheme.font(.headline, weight: .semibold))
-
-            HStack(spacing: 10) {
-                detailPill(title: "Drinks", value: String(format: "%.1f", selectedLog.totalDrinks))
-                detailPill(title: "Target", value: String(format: "%.1f", selectedLog.plannedTargetDrinks))
-                detailPill(title: "Diff", value: String(format: "%+.1f", selectedLog.totalDrinks - selectedLog.plannedTargetDrinks))
+            HStack {
+                Text(selectedDate.formatted(date: .complete, time: .omitted))
+                    .font(AppTheme.font(.headline, weight: .semibold))
+                Spacer()
+                Button("Close") {
+                    withAnimation {
+                        showDayCard = false
+                    }
+                }
+                .buttonStyle(SecondaryButtonStyle())
             }
 
             HStack(spacing: 10) {
-                detailPill(title: "Cost", value: "$" + String(format: "%.0f", selectedLog.totalDrinks * container.profile.costPerDrink))
-                detailPill(title: "Calories", value: String(format: "%.0f", selectedLog.totalDrinks * container.profile.caloriesPerDrink))
-                detailPill(title: "Dry planned", value: selectedLog.isDryPlanned ? "Yes" : "No")
+                detailPill(title: "Money spent", value: "$\(String(format: "%.0f", dayMoneySpent))")
+                detailPill(title: "Calories drunk", value: "\(String(format: "%.0f", dayCalories))")
             }
+
+            detailPill(title: "Types", value: drinkTypesSummary)
+            detailPill(title: "Target", value: "\(String(format: "%.1f", selectedLog.plannedTargetDrinks))")
+
+            Label(targetStatus.text, systemImage: targetStatus.text == "Above target" ? "arrow.up.circle.fill" : "checkmark.circle.fill")
+                .font(AppTheme.font(.body, weight: .semibold))
+                .foregroundStyle(targetStatus.color)
 
             Text("Notes")
                 .font(AppTheme.font(.footnote, weight: .semibold))
                 .foregroundStyle(AppTheme.text.opacity(0.8))
-            Text(selectedLog.notes.isEmpty ? "No notes for this day." : selectedLog.notes)
-                .font(AppTheme.font(.body))
-                .foregroundStyle(AppTheme.text)
 
-            Label(metGoal ? "Met goal" : "Goal missed", systemImage: metGoal ? "checkmark.circle" : "xmark.circle")
-                .font(AppTheme.font(.body, weight: .semibold))
-                .foregroundStyle(metGoal ? .green : .red)
+            TextEditor(text: $notesDraft)
+                .font(AppTheme.font(.body))
+                .frame(minHeight: 72, maxHeight: 110)
+                .padding(6)
+                .background(AppTheme.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
+
+            Button("Save notes") {
+                var updated = selectedLog
+                updated.notes = notesDraft
+                container.saveLog(updated)
+            }
+            .buttonStyle(PrimaryButtonStyle())
         }
+        .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
-        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
+        .padding(.horizontal)
+        .padding(.bottom, 12)
     }
 
     private func detailPill(title: String, value: String) -> some View {
@@ -194,6 +222,7 @@ struct TrackView: View {
             Text(value)
                 .font(AppTheme.font(.footnote, weight: .semibold))
                 .foregroundStyle(AppTheme.highlight)
+                .multilineTextAlignment(.leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(8)
@@ -215,6 +244,10 @@ struct TrackView: View {
 
         return Button {
             selectedDate = date
+            notesDraft = container.log(for: date).notes
+            withAnimation {
+                showDayCard = true
+            }
         } label: {
             Text("\(calendar.component(.day, from: date))")
                 .font(AppTheme.font(.callout, weight: .semibold))
@@ -242,30 +275,15 @@ struct TrackView: View {
         default: return .red.opacity(0.85)
         }
     }
-}
 
-struct DayEditorView: View {
-    @EnvironmentObject var container: AppContainer
-    let date: Date
-    @State var log: DayLog
-
-    var body: some View {
-        Form {
-            Stepper("Total drinks: \(log.totalDrinks, specifier: "%.1f")", value: $log.totalDrinks, in: 0 ... 30, step: 0.5)
-            if log.isDryPlanned && log.totalDrinks > 0 {
-                Text("This is marked as a dry day.").foregroundStyle(AppTheme.highlight)
-            }
-            Section("Notes") {
-                TextField("How did today go?", text: $log.notes, axis: .vertical)
-                    .lineLimit(3...6)
-            }
-            Button("Save") { container.saveLog(log) }
-                .buttonStyle(PrimaryButtonStyle())
-                .listRowBackground(AppTheme.surface)
+    private func emoji(for type: DrinkType) -> String {
+        switch type {
+        case .wine: return "🍷"
+        case .beer: return "🍺"
+        case .spirits: return "🥃"
+        case .cocktail: return "🍸"
+        case .other: return "🍹"
         }
-        .scrollContentBackground(.hidden)
-        .background(AppTheme.background)
-        .navigationTitle(date.formatted(date: .abbreviated, time: .omitted))
     }
 }
 

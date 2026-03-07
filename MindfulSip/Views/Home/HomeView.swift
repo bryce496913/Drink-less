@@ -3,6 +3,9 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var container: AppContainer
     @State private var amount: Double = 1
+    @State private var showAddDrinks = true
+    @State private var showAchievements = true
+    @State private var showTip = true
 
     private let analytics = AnalyticsService()
 
@@ -88,36 +91,48 @@ struct HomeView: View {
                         StatPill(title: "Calories drunk (total)", value: format(caloriesTotal, decimals: 0))
                     }
 
-                    VStack(spacing: 12) {
-                        Text("Add drinks")
+                    DisclosureGroup(isExpanded: $showAddDrinks) {
+                        VStack(spacing: 12) {
+                            DrinkQuickAddGrid { amountToAdd, type in
+                                container.updateDrinkTotal(
+                                    date: container.currentDate,
+                                    total: todayLog.totalDrinks + amountToAdd,
+                                    type: type,
+                                    delta: amountToAdd
+                                )
+                                amount = container.log(for: container.currentDate).totalDrinks
+                            }
+
+                            Stepper("Set today total: \(amount, specifier: "%.1f")", value: $amount, in: 0 ... 20, step: 1)
+                                .foregroundStyle(AppTheme.text)
+                            Button("Save total") {
+                                container.updateDrinkTotal(date: container.currentDate, total: amount)
+                            }
+                            .buttonStyle(PrimaryButtonStyle())
+                        }
+                        .padding(.top, 8)
+                    } label: {
+                        Text("Add Drinks")
                             .font(AppTheme.font(.headline, weight: .semibold))
                             .foregroundStyle(AppTheme.text)
-
-                        DrinkQuickAddGrid { delta in
-                            container.updateDrinkTotal(date: container.currentDate, total: todayLog.totalDrinks + delta, delta: delta)
-                            amount = container.log(for: container.currentDate).totalDrinks
-                        }
-
-                        Stepper("Set today total: \(amount, specifier: "%.1f")", value: $amount, in: 0 ... 20, step: 1)
-                            .foregroundStyle(AppTheme.text)
-                        Button("Save total") {
-                            container.updateDrinkTotal(date: container.currentDate, total: amount)
-                        }
-                        .buttonStyle(PrimaryButtonStyle())
                     }
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Daily achievements")
-                            .font(AppTheme.font(.headline, weight: .semibold))
-                        if achievementBadges.isEmpty {
-                            Text("Keep logging to unlock daily and weekly badges.")
-                        } else {
-                            ForEach(achievementBadges, id: \.self) { badge in
-                                Label(badge, systemImage: "rosette")
+                    DisclosureGroup(isExpanded: $showAchievements) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            if achievementBadges.isEmpty {
+                                Text("Keep logging to unlock daily and weekly badges.")
+                            } else {
+                                ForEach(achievementBadges, id: \.self) { badge in
+                                    Label(badge, systemImage: "rosette")
+                                }
                             }
                         }
+                        .padding(.top, 8)
+                    } label: {
+                        Text("Daily Achievements")
+                            .font(AppTheme.font(.headline, weight: .semibold))
                     }
                     .font(AppTheme.font(.body))
                     .foregroundStyle(AppTheme.text.opacity(0.95))
@@ -125,12 +140,14 @@ struct HomeView: View {
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Tip of the day")
-                            .font(AppTheme.font(.headline, weight: .semibold))
+                    DisclosureGroup(isExpanded: $showTip) {
                         Text(container.tipService.tip(for: container.currentDate))
                             .font(AppTheme.font(.body))
                             .foregroundStyle(AppTheme.text.opacity(0.9))
+                            .padding(.top, 8)
+                    } label: {
+                        Text("Tip of The Day")
+                            .font(AppTheme.font(.headline, weight: .semibold))
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(16)
@@ -158,26 +175,41 @@ struct HomeView: View {
 }
 
 private struct DrinkQuickAddGrid: View {
-    let onAdd: (Double) -> Void
+    let onAdd: (Double, DrinkType) -> Void
 
     private let options: [(title: String, icon: String, amount: Double)] = [
-        ("Wine", "wineglass", 1.0),
-        ("Beer", "mug", 1.0),
-        ("Shot", "drop.fill", 0.5),
-        ("Large beer", "waterbottle", 1.5),
-        ("Cocktail", "cup.and.saucer", 1.5),
-        ("Double mix", "2.circle", 2.0)
+        ("Wine", "🍷", 1.0),
+        ("Beer", "🍺", 1.0),
+        ("Shot", "🥃", 0.5),
+        ("Large Beer", "🍺", 1.5),
+        ("Cocktail", "🍸", 1.5),
+        ("Double Shot", "🥃", 2.0)
     ]
+
+    private func drinkType(for title: String) -> DrinkType {
+        switch title {
+        case "Wine":
+            return .wine
+        case "Beer", "Large Beer":
+            return .beer
+        case "Shot", "Double Shot":
+            return .spirits
+        case "Cocktail":
+            return .cocktail
+        default:
+            return .other
+        }
+    }
 
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
             ForEach(options, id: \.title) { option in
                 Button {
-                    onAdd(option.amount)
+                    onAdd(option.amount, drinkType(for: option.title))
                 } label: {
                     VStack(spacing: 4) {
-                        Image(systemName: option.icon)
-                            .font(.system(size: 18, weight: .semibold))
+                        Text(option.icon)
+                            .font(.system(size: 21))
                         Text(option.title)
                             .font(AppTheme.font(.caption, weight: .semibold))
                             .multilineTextAlignment(.center)
