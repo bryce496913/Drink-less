@@ -57,5 +57,6 @@ final class DayLogEntity: NSManagedObject {
     @NSManaged var isDryPlanned: Bool
     @NSManaged var totalDrinks: Double
     @NSManaged var updatedAt: Date
+    @NSManaged var notes: String
     @NSManaged var entriesBlob: Data?
 }

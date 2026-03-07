@@ -26,12 +26,24 @@ struct HomeView: View {
         analytics.loggingStreak(logs: container.logs)
     }
 
-    private var moneySaved: Double {
-        analytics.saved(actualWeekly: weekTotal, baselineWeekly: container.profile.baselineWeeklyDrinks, perDrink: container.profile.costPerDrink)
+    private var moneySpentWeek: Double {
+        weekTotal * container.profile.costPerDrink
     }
 
-    private var caloriesSaved: Double {
-        max(0, (container.profile.baselineWeeklyDrinks - weekTotal) * container.profile.caloriesPerDrink)
+    private var caloriesWeek: Double {
+        weekTotal * container.profile.caloriesPerDrink
+    }
+
+    private var grandTotalDrinks: Double {
+        container.logs.reduce(0) { $0 + $1.totalDrinks }
+    }
+
+    private var moneySpentTotal: Double {
+        grandTotalDrinks * container.profile.costPerDrink
+    }
+
+    private var caloriesTotal: Double {
+        grandTotalDrinks * container.profile.caloriesPerDrink
     }
 
     private func format(_ value: Double, decimals: Int) -> String {
@@ -51,15 +63,15 @@ struct HomeView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 14) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Mindful Sip")
+                    VStack(spacing: 8) {
+                        Text("Mindful Sips")
                             .font(AppTheme.font(.title, weight: .bold))
                             .foregroundStyle(AppTheme.text)
                         Text("Today: \(todayLog.totalDrinks, specifier: "%.1f") drinks")
                             .font(AppTheme.font(.title3, weight: .medium))
                             .foregroundStyle(AppTheme.highlight)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity)
 
                     HStack(spacing: 10) {
                         StatPill(title: "Dry streak", value: "\(dryStreak) d")
@@ -67,23 +79,26 @@ struct HomeView: View {
                     }
 
                     HStack(spacing: 10) {
-                        StatPill(title: "Money saved", value: "$\(format(moneySaved, decimals: 0))")
-                        StatPill(title: "Calories saved", value: format(caloriesSaved, decimals: 0))
+                        StatPill(title: "Money spent (week)", value: "$\(format(moneySpentWeek, decimals: 0))")
+                        StatPill(title: "Calories drunk (week)", value: format(caloriesWeek, decimals: 0))
                     }
 
-                    VStack(spacing: 10) {
-                        HStack {
-                            ForEach([0.5, 1.0, 2.0, 3.0], id: \.self) { quick in
-                                Button("+\(quick, specifier: "%.1f")") {
-                                    container.updateDrinkTotal(date: container.currentDate, total: todayLog.totalDrinks + quick, delta: quick)
-                                    amount = container.log(for: container.currentDate).totalDrinks
-                                }
-                                .buttonStyle(SecondaryButtonStyle())
-                                .accessibilityLabel("Add \(format(quick, decimals: 1)) drinks")
-                            }
+                    HStack(spacing: 10) {
+                        StatPill(title: "Money spent (total)", value: "$\(format(moneySpentTotal, decimals: 0))")
+                        StatPill(title: "Calories drunk (total)", value: format(caloriesTotal, decimals: 0))
+                    }
+
+                    VStack(spacing: 12) {
+                        Text("Add drinks")
+                            .font(AppTheme.font(.headline, weight: .semibold))
+                            .foregroundStyle(AppTheme.text)
+
+                        DrinkQuickAddGrid { delta in
+                            container.updateDrinkTotal(date: container.currentDate, total: todayLog.totalDrinks + delta, delta: delta)
+                            amount = container.log(for: container.currentDate).totalDrinks
                         }
 
-                        Stepper("Set today total: \(amount, specifier: "%.1f")", value: $amount, in: 0 ... 20, step: 0.5)
+                        Stepper("Set today total: \(amount, specifier: "%.1f")", value: $amount, in: 0 ... 20, step: 1)
                             .foregroundStyle(AppTheme.text)
                         Button("Save total") {
                             container.updateDrinkTotal(date: container.currentDate, total: amount)
@@ -138,6 +153,44 @@ struct HomeView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { NavigationLink("Settings", destination: SettingsView()) }
             .onAppear { amount = todayLog.totalDrinks }
+        }
+    }
+}
+
+private struct DrinkQuickAddGrid: View {
+    let onAdd: (Double) -> Void
+
+    private let options: [(title: String, icon: String, amount: Double)] = [
+        ("Wine", "wineglass", 1.0),
+        ("Beer", "mug.fill", 1.0),
+        ("Shot", "drop", 0.5),
+        ("Large beer", "takeoutbag.and.cup.and.straw.fill", 1.5),
+        ("Cocktail", "sparkles", 1.5),
+        ("Double mix", "number.2.circle.fill", 2.0)
+    ]
+
+    var body: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
+            ForEach(options, id: \.title) { option in
+                Button {
+                    onAdd(option.amount)
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: option.icon)
+                            .font(.system(size: 18, weight: .semibold))
+                        Text(option.title)
+                            .font(AppTheme.font(.caption, weight: .semibold))
+                            .multilineTextAlignment(.center)
+                        Text("+\(option.amount, specifier: "%.1f")")
+                            .font(AppTheme.font(.caption2))
+                    }
+                    .foregroundStyle(AppTheme.text)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(AppTheme.background.opacity(0.6), in: RoundedRectangle(cornerRadius: 12))
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
 }

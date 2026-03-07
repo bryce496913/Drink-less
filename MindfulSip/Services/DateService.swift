@@ -1,7 +1,11 @@
 import Foundation
 
 struct DateService {
-    let calendar = Calendar(identifier: .gregorian)
+    let calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.firstWeekday = 2 // Monday
+        return calendar
+    }()
 
     func startOfDay(_ date: Date) -> Date { calendar.startOfDay(for: date) }
 

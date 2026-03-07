@@ -20,6 +20,6 @@ final class LoggingService {
     func log(for date: Date) -> DayLog {
         let day = dateService.startOfDay(date)
         return store.fetchLogs(daysBack: 365).first { dateService.startOfDay($0.date) == day }
-            ?? DayLog(date: day, plannedTargetDrinks: 0, isDryPlanned: false, totalDrinks: 0, updatedAt: .now)
+            ?? DayLog(date: day, plannedTargetDrinks: 0, isDryPlanned: false, totalDrinks: 0, updatedAt: .now, notes: "")
     }
 }

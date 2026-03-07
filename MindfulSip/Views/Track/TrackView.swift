@@ -3,7 +3,7 @@ import SwiftUI
 struct TrackView: View {
     @EnvironmentObject var container: AppContainer
 
-    private let calendar = Calendar.current
+    private let calendar = DateService().calendar
     @State private var selectedDate = Date.now
 
     private var monthDates: [Date] {
@@ -31,6 +31,14 @@ struct TrackView: View {
 
     private var today: Date {
         calendar.startOfDay(for: container.currentDate)
+    }
+
+    private var selectedLog: DayLog {
+        container.log(for: selectedDate)
+    }
+
+    private var metGoal: Bool {
+        selectedLog.totalDrinks <= selectedLog.plannedTargetDrinks
     }
 
     var body: some View {
@@ -72,20 +80,17 @@ struct TrackView: View {
                     }
 
                     legend
+                    dateDetailCard
 
-                    let log = container.log(for: selectedDate)
                     NavigationLink {
-                        DayEditorView(date: selectedDate, log: log)
+                        DayEditorView(date: selectedDate, log: selectedLog)
                     } label: {
-                        HStack {
-                            Text("Selected: \(selectedDate.formatted(date: .abbreviated, time: .omitted))")
-                            Spacer()
-                            Text("\(log.totalDrinks, specifier: "%.1f") drinks")
-                                .foregroundStyle(AppTheme.highlight)
-                        }
-                        .font(AppTheme.font(.body))
-                        .padding(12)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+                        Label("Edit selected day", systemImage: "square.and.pencil")
+                            .font(AppTheme.font(.body, weight: .semibold))
+                            .foregroundStyle(AppTheme.text)
+                            .frame(maxWidth: .infinity)
+                            .padding(12)
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
                     }
                 }
                 .padding()
@@ -97,9 +102,9 @@ struct TrackView: View {
     }
 
     private var weekHeader: some View {
-        let days = calendar.shortWeekdaySymbols
+        let mondayFirst = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         return HStack {
-            ForEach(days, id: \.self) { day in
+            ForEach(mondayFirst, id: \.self) { day in
                 Text(day)
                     .font(AppTheme.font(.caption, weight: .semibold))
                     .foregroundStyle(AppTheme.text.opacity(0.75))
@@ -124,6 +129,47 @@ struct TrackView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+    }
+
+    private var dateDetailCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(selectedDate.formatted(date: .complete, time: .omitted))
+                .font(AppTheme.font(.headline, weight: .semibold))
+
+            HStack(spacing: 10) {
+                detailPill(title: "Drinks", value: "\(selectedLog.totalDrinks, specifier: "%.1f")")
+                detailPill(title: "Cost", value: "$\(selectedLog.totalDrinks * container.profile.costPerDrink, specifier: "%.0f")")
+                detailPill(title: "Calories", value: "\(selectedLog.totalDrinks * container.profile.caloriesPerDrink, specifier: "%.0f")")
+            }
+
+            Text("Notes")
+                .font(AppTheme.font(.footnote, weight: .semibold))
+                .foregroundStyle(AppTheme.text.opacity(0.8))
+            Text(selectedLog.notes.isEmpty ? "No notes for this day." : selectedLog.notes)
+                .font(AppTheme.font(.body))
+                .foregroundStyle(AppTheme.text)
+
+            Label(metGoal ? "Met goal" : "Goal missed", systemImage: metGoal ? "checkmark.circle" : "xmark.circle")
+                .font(AppTheme.font(.body, weight: .semibold))
+                .foregroundStyle(metGoal ? .green : .red)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(14)
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+    }
+
+    private func detailPill(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(AppTheme.font(.caption2))
+                .foregroundStyle(AppTheme.text.opacity(0.75))
+            Text(value)
+                .font(AppTheme.font(.footnote, weight: .semibold))
+                .foregroundStyle(AppTheme.highlight)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(8)
+        .background(AppTheme.background.opacity(0.6), in: RoundedRectangle(cornerRadius: 10))
     }
 
     private func legendItem(color: Color, label: String) -> some View {
@@ -180,6 +226,10 @@ struct DayEditorView: View {
             Stepper("Total drinks: \(log.totalDrinks, specifier: "%.1f")", value: $log.totalDrinks, in: 0 ... 30, step: 0.5)
             if log.isDryPlanned && log.totalDrinks > 0 {
                 Text("This is marked as a dry day.").foregroundStyle(AppTheme.highlight)
+            }
+            Section("Notes") {
+                TextField("How did today go?", text: $log.notes, axis: .vertical)
+                    .lineLimit(3...6)
             }
             Button("Save") { container.saveLog(log) }
                 .buttonStyle(PrimaryButtonStyle())
