@@ -50,7 +50,7 @@ final class AppContainer: ObservableObject {
     func log(for date: Date) -> DayLog {
         let day = dateService.startOfDay(date)
         return logs.first { dateService.startOfDay($0.date) == day }
-            ?? DayLog(date: day, plannedTargetDrinks: 0, isDryPlanned: false, totalDrinks: 0, updatedAt: .now)
+            ?? DayLog(date: day, plannedTargetDrinks: 0, isDryPlanned: false, totalDrinks: 0, updatedAt: .now, notes: "")
     }
 
     func updateDrinkTotal(date: Date, total: Double, type: DrinkType? = nil, delta: Double? = nil) {

@@ -73,7 +73,7 @@ final class DataStore: ObservableObject {
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
         let entities = (try? context.fetch(request)) ?? []
         return entities.map {
-            DayLog(id: $0.id, date: $0.date, plannedTargetDrinks: $0.plannedTargetDrinks, isDryPlanned: $0.isDryPlanned, totalDrinks: $0.totalDrinks, updatedAt: $0.updatedAt, entries: (try? JSONDecoder().decode([DrinkEntry].self, from: $0.entriesBlob ?? Data())) ?? [])
+            DayLog(id: $0.id, date: $0.date, plannedTargetDrinks: $0.plannedTargetDrinks, isDryPlanned: $0.isDryPlanned, totalDrinks: $0.totalDrinks, updatedAt: $0.updatedAt, notes: $0.notes, entries: (try? JSONDecoder().decode([DrinkEntry].self, from: $0.entriesBlob ?? Data())) ?? [])
         }
     }
 
@@ -88,6 +88,7 @@ final class DataStore: ObservableObject {
         entity.isDryPlanned = log.isDryPlanned
         entity.totalDrinks = log.totalDrinks
         entity.updatedAt = .now
+        entity.notes = log.notes
         entity.entriesBlob = try? JSONEncoder().encode(log.entries)
         persistence.save()
     }

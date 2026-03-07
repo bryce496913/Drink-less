@@ -11,14 +11,19 @@ struct ProgressView: View {
             let weekStart = dateService.startOfWeek(container.currentDate)
             let drinks = analytics.weeklyTotal(logs: container.logs, weekStart: weekStart)
             let dryDays = analytics.weeklyDryDays(logs: container.logs, weekStart: weekStart)
-            let moneySaved = analytics.saved(actualWeekly: drinks, baselineWeekly: container.profile.baselineWeeklyDrinks, perDrink: container.profile.costPerDrink)
-            let caloriesSaved = max(0, (container.profile.baselineWeeklyDrinks - drinks) * container.profile.caloriesPerDrink)
+            let moneySpentWeek = drinks * container.profile.costPerDrink
+            let caloriesWeek = drinks * container.profile.caloriesPerDrink
+            let totalDrinks = container.logs.reduce(0) { $0 + $1.totalDrinks }
+            let moneySpentTotal = totalDrinks * container.profile.costPerDrink
+            let caloriesTotal = totalDrinks * container.profile.caloriesPerDrink
 
             VStack(alignment: .leading, spacing: 16) {
                 Text("This week: \(drinks, specifier: "%.1f") / \(container.profile.weeklyTarget)")
                 Text("Dry days: \(dryDays) / \(container.profile.dryDaysTarget)")
-                Text("Money saved: $\(moneySaved, specifier: "%.0f")")
-                Text("Calories saved: \(caloriesSaved, specifier: "%.0f")")
+                Text("Money spent this week: $\(moneySpentWeek, specifier: "%.0f")")
+                Text("Calories drunk this week: \(caloriesWeek, specifier: "%.0f")")
+                Text("Money spent total: $\(moneySpentTotal, specifier: "%.0f")")
+                Text("Calories drunk total: \(caloriesTotal, specifier: "%.0f")")
 
                 Chart {
                     ForEach(dateService.weekDates(from: container.currentDate), id: \.self) { date in

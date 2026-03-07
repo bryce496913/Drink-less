@@ -46,6 +46,7 @@ struct DayLog: Codable, Identifiable {
     var isDryPlanned: Bool
     var totalDrinks: Double
     var updatedAt: Date
+    var notes: String = ""
     var entries: [DrinkEntry] = []
 }
 
