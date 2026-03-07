@@ -41,6 +41,14 @@ struct TrackView: View {
         selectedLog.totalDrinks <= selectedLog.plannedTargetDrinks
     }
 
+    private var isPastSelectedDate: Bool {
+        calendar.startOfDay(for: selectedDate) < today
+    }
+
+    private var hasLoggedInfo: Bool {
+        selectedLog.totalDrinks > 0 || !selectedLog.notes.isEmpty || selectedLog.plannedTargetDrinks > 0 || selectedLog.isDryPlanned
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -80,7 +88,7 @@ struct TrackView: View {
                     }
 
                     legend
-                    dateDetailCard
+                    selectedDateMetricsSection
 
                     NavigationLink {
                         DayEditorView(date: selectedDate, log: selectedLog)
@@ -131,6 +139,20 @@ struct TrackView: View {
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
     }
 
+    @ViewBuilder
+    private var selectedDateMetricsSection: some View {
+        if isPastSelectedDate, hasLoggedInfo {
+            dateDetailCard
+        } else {
+            Text("Select a past day with logged data to view complete metrics.")
+                .font(AppTheme.font(.footnote))
+                .foregroundStyle(AppTheme.text.opacity(0.75))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+        }
+    }
+
     private var dateDetailCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(selectedDate.formatted(date: .complete, time: .omitted))
@@ -138,8 +160,14 @@ struct TrackView: View {
 
             HStack(spacing: 10) {
                 detailPill(title: "Drinks", value: String(format: "%.1f", selectedLog.totalDrinks))
+                detailPill(title: "Target", value: String(format: "%.1f", selectedLog.plannedTargetDrinks))
+                detailPill(title: "Diff", value: String(format: "%+.1f", selectedLog.totalDrinks - selectedLog.plannedTargetDrinks))
+            }
+
+            HStack(spacing: 10) {
                 detailPill(title: "Cost", value: "$" + String(format: "%.0f", selectedLog.totalDrinks * container.profile.costPerDrink))
                 detailPill(title: "Calories", value: String(format: "%.0f", selectedLog.totalDrinks * container.profile.caloriesPerDrink))
+                detailPill(title: "Dry planned", value: selectedLog.isDryPlanned ? "Yes" : "No")
             }
 
             Text("Notes")

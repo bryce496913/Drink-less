@@ -18,12 +18,23 @@ struct ProgressView: View {
             let caloriesTotal = totalDrinks * container.profile.caloriesPerDrink
 
             VStack(alignment: .leading, spacing: 16) {
-                Text("This week: \(drinks, specifier: "%.1f") / \(container.profile.weeklyTarget)")
-                Text("Dry days: \(dryDays) / \(container.profile.dryDaysTarget)")
-                Text("Money spent this week: $\(moneySpentWeek, specifier: "%.0f")")
-                Text("Calories drunk this week: \(caloriesWeek, specifier: "%.0f")")
-                Text("Money spent total: $\(moneySpentTotal, specifier: "%.0f")")
-                Text("Calories drunk total: \(caloriesTotal, specifier: "%.0f")")
+                HStack(alignment: .top, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        progressMetric(title: "This week", value: "\(drinks, specifier: "%.1f") / \(container.profile.weeklyTarget)")
+                        progressMetric(title: "Dry days", value: "\(dryDays) / \(container.profile.dryDaysTarget)")
+                        progressMetric(title: "Money (week)", value: "$\(moneySpentWeek, specifier: "%.0f")")
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        progressMetric(title: "Calories (week)", value: "\(caloriesWeek, specifier: "%.0f")")
+                        progressMetric(title: "Money (total)", value: "$\(moneySpentTotal, specifier: "%.0f")")
+                        progressMetric(title: "Calories (total)", value: "\(caloriesTotal, specifier: "%.0f")")
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(10)
+                .background(AppTheme.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 12))
 
                 Chart {
                     ForEach(dateService.weekDates(from: container.currentDate), id: \.self) { date in
@@ -47,7 +58,7 @@ struct ProgressView: View {
                     if drinks <= Double(container.profile.weeklyTarget) { Text("🏅 Weekly target met") }
                 }
             }
-            .font(AppTheme.font(.body))
+            .font(AppTheme.font(.callout))
             .foregroundStyle(AppTheme.text)
             .padding()
             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
@@ -55,6 +66,17 @@ struct ProgressView: View {
         }
         .background(AppTheme.background.ignoresSafeArea())
         .navigationTitle("Progress")
+    }
+
+    private func progressMetric(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text(title)
+                .font(AppTheme.font(.caption2, weight: .medium))
+                .foregroundStyle(AppTheme.text.opacity(0.7))
+            Text(value)
+                .font(AppTheme.font(.footnote, weight: .semibold))
+                .foregroundStyle(AppTheme.text)
+        }
     }
 }
 
