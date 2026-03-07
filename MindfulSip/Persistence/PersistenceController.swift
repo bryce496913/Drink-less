@@ -30,6 +30,7 @@ final class PersistenceController {
 final class UserProfileEntity: NSManagedObject {
     @NSManaged var id: UUID
     @NSManaged var createdAt: Date
+    @NSManaged var name: String
     @NSManaged var goalType: String
     @NSManaged var weeklyTarget: Int16
     @NSManaged var dryDaysTarget: Int16
