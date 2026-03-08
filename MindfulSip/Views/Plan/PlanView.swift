@@ -9,6 +9,7 @@ struct PlanView: View {
     @State private var isProfileExpanded = false
     @State private var isTargetsExpanded = false
     @State private var isReminderExpanded = false
+    @State private var showDeleteConfirmation = false
 
     private var weekDates: [Date] { dateService.weekDates(from: container.currentDate) }
 
@@ -179,14 +180,23 @@ struct PlanView: View {
                 .foregroundStyle(AppTheme.text)
 
             DisclosureGroup(isExpanded: $isProfileExpanded) {
-                VStack(spacing: 8) {
-                    TextField("Your name", text: $container.profile.name)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Name: user_name")
+                        .font(AppTheme.font(.h3, weight: .semibold))
+                        .foregroundStyle(AppTheme.text.opacity(0.9))
+                    TextField("user_name", text: $container.profile.name)
+                        .font(AppTheme.font(.h3))
                         .textInputAutocapitalization(.words)
-                    Picker("Goal", selection: $container.profile.goalType) {
+
+                    Text("Goal: user_goal (Drink less or Take a break)")
+                        .font(AppTheme.font(.h3, weight: .semibold))
+                        .foregroundStyle(AppTheme.text.opacity(0.9))
+                    Picker("user_goal", selection: $container.profile.goalType) {
                         ForEach(GoalType.allCases) { goal in
                             Text(goal.rawValue).tag(goal)
                         }
                     }
+                    .font(AppTheme.font(.h3))
                 }
                 .padding(.top, 4)
             } label: {
@@ -197,7 +207,9 @@ struct PlanView: View {
             DisclosureGroup(isExpanded: $isTargetsExpanded) {
                 VStack(spacing: 8) {
                     Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0...50)
+                        .font(AppTheme.font(.h3))
                     Stepper("Dry day target: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0...7)
+                        .font(AppTheme.font(.h3))
                 }
                 .padding(.top, 4)
             } label: {
@@ -208,8 +220,11 @@ struct PlanView: View {
             DisclosureGroup(isExpanded: $isReminderExpanded) {
                 VStack(spacing: 8) {
                     Toggle("Reminders enabled", isOn: $container.settings.remindersEnabled)
+                        .font(AppTheme.font(.h3))
                     DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
+                        .font(AppTheme.font(.h3))
                     Toggle("Avoid weekend auto dry days", isOn: $container.settings.avoidWeekendForAutoDry)
+                        .font(AppTheme.font(.h3))
                 }
                 .padding(.top, 4)
             } label: {
@@ -227,15 +242,23 @@ struct PlanView: View {
             .buttonStyle(PrimaryButtonStyle())
 
             Button("Delete all data", role: .destructive) {
-                container.store.deleteAll()
-                container.refresh()
-                loadWeek()
+                showDeleteConfirmation = true
             }
             .buttonStyle(SecondaryButtonStyle())
         }
         .foregroundStyle(AppTheme.text)
         .padding(14)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+        .alert("Delete all data?", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                container.store.deleteAll()
+                container.refresh()
+                loadWeek()
+            }
+        } message: {
+            Text("This action permanently removes your logs, profile, and app settings.")
+        }
     }
 }
 
