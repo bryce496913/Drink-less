@@ -6,6 +6,10 @@ struct OnboardingView: View {
 
     private let totalSteps = 3
 
+    private var isNameValid: Bool {
+        !container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
@@ -28,6 +32,11 @@ struct OnboardingView: View {
                             .font(AppTheme.font(.h2, weight: .semibold))
                         TextField("Your name", text: $container.profile.name)
                             .textInputAutocapitalization(.words)
+                        if !isNameValid {
+                            Text("Name is required to continue.")
+                                .font(AppTheme.font(.h3))
+                                .foregroundStyle(AppTheme.highlight)
+                        }
                         Text("What is your current goal?")
                             .font(AppTheme.font(.h2, weight: .semibold))
                         Picker("Goal type", selection: $container.profile.goalType) {
@@ -75,19 +84,21 @@ struct OnboardingView: View {
                             .buttonStyle(SecondaryButtonStyle())
                     }
                     Button(step == totalSteps - 1 ? "Finish" : "Next") {
+                        if step == 0, !isNameValid {
+                            return
+                        }
                         if step < totalSteps - 1 {
                             step += 1
                             return
                         }
                         container.profile.name = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
-                        if container.profile.name.isEmpty {
-                            container.profile.name = "Friend"
-                        }
                         container.profile.createdAt = .now
                         container.settings.hasCompletedOnboarding = true
                         container.saveProfileAndSettings()
                     }
                     .buttonStyle(PrimaryButtonStyle())
+                    .disabled(step == 0 && !isNameValid)
+                    .opacity(step == 0 && !isNameValid ? 0.6 : 1)
                 }
             }
             .padding()
