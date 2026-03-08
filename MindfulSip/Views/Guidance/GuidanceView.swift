@@ -121,10 +121,12 @@ struct GuidanceView: View {
     }
 
     var body: some View {
+        let trimmedName = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
+
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("Guidance for \(container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? \"Friend\" : container.profile.name)")
+                    Text("Guidance for \(trimmedName.isEmpty ? "Friend" : trimmedName)")
                         .font(AppTheme.font(.title2, weight: .bold))
                         .foregroundStyle(AppTheme.text)
 
