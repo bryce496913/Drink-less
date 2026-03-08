@@ -6,6 +6,9 @@ struct PlanView: View {
 
     @State private var dryDays: Set<Int> = []
     @State private var targets: [Double] = Array(repeating: 0, count: 7)
+    @State private var isProfileExpanded = false
+    @State private var isTargetsExpanded = false
+    @State private var isReminderExpanded = false
 
     private var weekDates: [Date] { dateService.weekDates(from: container.currentDate) }
 
@@ -24,6 +27,7 @@ struct PlanView: View {
                     planHeader
                     weeklySummary
                     dailyTargetsSection
+                    settingsSection
                 }
                 .padding()
             }
@@ -37,11 +41,11 @@ struct PlanView: View {
     private var planHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Weekly planning")
-                .font(AppTheme.font(.title2, weight: .bold))
+                .font(AppTheme.font(.h1, weight: .bold))
                 .foregroundStyle(AppTheme.text)
 
             Text("Set daily limits and dry days. Your total is auto-capped to your weekly target.")
-                .font(AppTheme.font(.body))
+                .font(AppTheme.font(.paragraph))
                 .foregroundStyle(AppTheme.text.opacity(0.9))
 
             Button("Auto-distribute my target") {
@@ -71,7 +75,7 @@ struct PlanView: View {
     private var dailyTargetsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Daily targets")
-                .font(AppTheme.font(.headline, weight: .semibold))
+                .font(AppTheme.font(.h2, weight: .semibold))
                 .foregroundStyle(AppTheme.text)
 
             ForEach(Array(weekDates.enumerated()), id: \.offset) { index, date in
@@ -88,9 +92,9 @@ struct PlanView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(date.formatted(.dateTime.weekday(.wide)))
-                        .font(AppTheme.font(.subheadline, weight: .semibold))
+                        .font(AppTheme.font(.h2, weight: .semibold))
                     Text(date.formatted(date: .abbreviated, time: .omitted))
-                        .font(AppTheme.font(.caption))
+                        .font(AppTheme.font(.h3))
                         .foregroundStyle(AppTheme.text.opacity(0.75))
                 }
                 Spacer()
@@ -120,7 +124,7 @@ struct PlanView: View {
                 persist(index)
             }), in: 0 ... 20, step: 0.5) {
                 Text("Adjust daily target")
-                    .font(AppTheme.font(.body, weight: .medium))
+                    .font(AppTheme.font(.h3, weight: .medium))
                     .foregroundStyle(AppTheme.text)
             }
         }
@@ -131,10 +135,10 @@ struct PlanView: View {
     private func planStat(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(AppTheme.font(.footnote))
+                .font(AppTheme.font(.h3))
                 .foregroundStyle(AppTheme.text.opacity(0.8))
             Text(value)
-                .font(AppTheme.font(.headline, weight: .bold))
+                .font(AppTheme.font(.h3, weight: .bold))
                 .foregroundStyle(AppTheme.highlight)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -166,6 +170,72 @@ struct PlanView: View {
             log.plannedTargetDrinks = targets[index]
             container.saveLog(log)
         }
+    }
+
+    private var settingsSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Settings")
+                .font(AppTheme.font(.h2, weight: .semibold))
+                .foregroundStyle(AppTheme.text)
+
+            DisclosureGroup(isExpanded: $isProfileExpanded) {
+                VStack(spacing: 8) {
+                    TextField("Your name", text: $container.profile.name)
+                        .textInputAutocapitalization(.words)
+                    Picker("Goal", selection: $container.profile.goalType) {
+                        ForEach(GoalType.allCases) { goal in
+                            Text(goal.rawValue).tag(goal)
+                        }
+                    }
+                }
+                .padding(.top, 4)
+            } label: {
+                Text("Profile")
+                    .font(AppTheme.font(.h2, weight: .semibold))
+            }
+
+            DisclosureGroup(isExpanded: $isTargetsExpanded) {
+                VStack(spacing: 8) {
+                    Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0...50)
+                    Stepper("Dry day target: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0...7)
+                }
+                .padding(.top, 4)
+            } label: {
+                Text("Targets")
+                    .font(AppTheme.font(.h2, weight: .semibold))
+            }
+
+            DisclosureGroup(isExpanded: $isReminderExpanded) {
+                VStack(spacing: 8) {
+                    Toggle("Reminders enabled", isOn: $container.settings.remindersEnabled)
+                    DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
+                    Toggle("Avoid weekend auto dry days", isOn: $container.settings.avoidWeekendForAutoDry)
+                }
+                .padding(.top, 4)
+            } label: {
+                Text("Reminders")
+                    .font(AppTheme.font(.h2, weight: .semibold))
+            }
+
+            Button("Save settings") {
+                container.profile.name = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
+                if container.profile.name.isEmpty {
+                    container.profile.name = "Friend"
+                }
+                container.saveProfileAndSettings()
+            }
+            .buttonStyle(PrimaryButtonStyle())
+
+            Button("Delete all data", role: .destructive) {
+                container.store.deleteAll()
+                container.refresh()
+                loadWeek()
+            }
+            .buttonStyle(SecondaryButtonStyle())
+        }
+        .foregroundStyle(AppTheme.text)
+        .padding(14)
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
     }
 }
 

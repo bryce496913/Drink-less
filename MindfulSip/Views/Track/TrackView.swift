@@ -39,6 +39,11 @@ struct TrackView: View {
         container.log(for: selectedDate)
     }
 
+    private var onboardingStartDate: Date? {
+        guard container.settings.hasCompletedOnboarding else { return nil }
+        return calendar.startOfDay(for: container.profile.createdAt)
+    }
+
     private var dayMoneySpent: Double {
         selectedLog.totalDrinks * container.profile.costPerDrink
     }
@@ -158,6 +163,9 @@ struct TrackView: View {
                 legendItem(color: .red, label: "4+")
                 legendItem(color: .gray, label: "Future")
             }
+            Text("★ Setup completed")
+                .font(AppTheme.font(.paragraph))
+                .foregroundStyle(AppTheme.highlight)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
@@ -281,11 +289,23 @@ struct TrackView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(isSelected ? AppTheme.text : Color.clear, lineWidth: 2)
                 )
+                .overlay(alignment: .topTrailing) {
+                    if isOnboardingStart(date) {
+                        Text("★")
+                            .font(AppTheme.font(.paragraph, weight: .bold))
+                            .foregroundStyle(AppTheme.highlight)
+                            .padding(3)
+                    }
+                }
         }
         .buttonStyle(.plain)
     }
 
     private func drinkColor(for total: Double, on date: Date) -> Color {
+        if let onboardingStartDate, calendar.startOfDay(for: date) < onboardingStartDate {
+            return .gray.opacity(0.3)
+        }
+
         if calendar.startOfDay(for: date) > today {
             return .gray.opacity(0.45)
         }
@@ -296,6 +316,11 @@ struct TrackView: View {
         case 2.5 ... 4: return .orange.opacity(0.85)
         default: return .red.opacity(0.85)
         }
+    }
+
+    private func isOnboardingStart(_ date: Date) -> Bool {
+        guard let onboardingStartDate else { return false }
+        return calendar.isDate(date, inSameDayAs: onboardingStartDate)
     }
 
     private func emoji(for type: DrinkType) -> String {
