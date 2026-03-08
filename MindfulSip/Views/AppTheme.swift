@@ -7,18 +7,24 @@ enum AppTheme {
     static let highlight = Color(red: 0.98, green: 0.32, blue: 0.67)
     static let text = Color.white
 
-    static func font(_ style: Font.TextStyle, weight: Font.Weight = .regular) -> Font {
-        let size: CGFloat
-        switch style {
-        case .largeTitle, .title, .title2, .title3, .headline:
-            size = 20
-        case .subheadline, .body, .callout:
-            size = 15
-        case .footnote, .caption, .caption2:
-            size = 13
-        @unknown default:
-            size = 15
+    enum Typography {
+        case h1
+        case h2
+        case h3
+        case paragraph
+
+        var size: CGFloat {
+            switch self {
+            case .h1: return 16
+            case .h2: return 14
+            case .h3: return 12
+            case .paragraph: return 10
+            }
         }
+    }
+
+    static func font(_ typography: Typography, weight: Font.Weight = .regular) -> Font {
+        let size = typography.size
 
         let family: String
         switch weight {
@@ -28,6 +34,21 @@ enum AppTheme {
         default: family = "Poppins-Regular"
         }
         return .custom(family, size: size)
+    }
+
+    static func font(_ style: Font.TextStyle, weight: Font.Weight = .regular) -> Font {
+        let typography: Typography
+        switch style {
+        case .largeTitle, .title, .title2, .title3:
+            typography = .h1
+        case .headline, .subheadline:
+            typography = .h2
+        case .body, .callout, .footnote, .caption, .caption2:
+            typography = .h3
+        @unknown default:
+            typography = .paragraph
+        }
+        return font(typography, weight: weight)
     }
 }
 

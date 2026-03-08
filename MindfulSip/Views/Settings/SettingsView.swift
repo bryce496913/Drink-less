@@ -26,10 +26,6 @@ struct SettingsView: View {
                     Toggle("Avoid weekend auto dry days", isOn: $container.settings.avoidWeekendForAutoDry)
                 }
 
-                Section("Device") {
-                    TextField("Device ID", text: $container.settings.deviceId)
-                }
-
                 Section {
                     Button("Save settings") {
                         container.saveProfileAndSettings()

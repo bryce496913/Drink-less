@@ -11,10 +11,10 @@ struct OnboardingView: View {
             VStack(spacing: 20) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Welcome")
-                        .font(AppTheme.font(.largeTitle, weight: .bold))
+                        .font(AppTheme.font(.h1, weight: .bold))
                         .foregroundStyle(AppTheme.text)
                     Text("Step \(step + 1) of \(totalSteps)")
-                        .font(AppTheme.font(.subheadline))
+                        .font(AppTheme.font(.h3))
                         .foregroundStyle(AppTheme.highlight)
                     SwiftUI.ProgressView(value: Double(step + 1), total: Double(totalSteps))
                         .tint(AppTheme.highlight)
@@ -25,11 +25,11 @@ struct OnboardingView: View {
                     switch step {
                     case 0:
                         Text("Tell us about you")
-                            .font(AppTheme.font(.headline, weight: .semibold))
+                            .font(AppTheme.font(.h2, weight: .semibold))
                         TextField("Your name", text: $container.profile.name)
                             .textInputAutocapitalization(.words)
                         Text("What is your current goal?")
-                            .font(AppTheme.font(.headline, weight: .semibold))
+                            .font(AppTheme.font(.h2, weight: .semibold))
                         Picker("Goal type", selection: $container.profile.goalType) {
                             ForEach(GoalType.allCases) { goal in
                                 Text(goal.rawValue).tag(goal)
@@ -38,12 +38,12 @@ struct OnboardingView: View {
                         .pickerStyle(.segmented)
                     case 1:
                         Text("Set your weekly plan")
-                            .font(AppTheme.font(.headline, weight: .semibold))
+                            .font(AppTheme.font(.h2, weight: .semibold))
                         Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0...50)
                         Stepper("Dry days per week: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0...7)
                     default:
                         Text("Reminder and estimates")
-                            .font(AppTheme.font(.headline, weight: .semibold))
+                            .font(AppTheme.font(.h2, weight: .semibold))
                         DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
                         HStack {
                             Text("Cost per drink")
@@ -79,6 +79,11 @@ struct OnboardingView: View {
                             step += 1
                             return
                         }
+                        container.profile.name = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
+                        if container.profile.name.isEmpty {
+                            container.profile.name = "Friend"
+                        }
+                        container.profile.createdAt = .now
                         container.settings.hasCompletedOnboarding = true
                         container.saveProfileAndSettings()
                     }
@@ -87,6 +92,11 @@ struct OnboardingView: View {
             }
             .padding()
             .background(AppTheme.background.ignoresSafeArea())
+            .onAppear {
+                if !container.settings.hasCompletedOnboarding, container.profile.name == "Friend" {
+                    container.profile.name = ""
+                }
+            }
         }
     }
 }
