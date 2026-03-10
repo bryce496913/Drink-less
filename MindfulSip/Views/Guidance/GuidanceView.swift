@@ -145,8 +145,7 @@ struct GuidanceView: View {
                     .frame(minHeight: geometry.size.height, alignment: .top)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            }
-            .background(AppTheme.background.ignoresSafeArea())
+                .background(AppTheme.background.ignoresSafeArea())
         }
     }
 

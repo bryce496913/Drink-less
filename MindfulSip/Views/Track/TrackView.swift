@@ -137,11 +137,10 @@ struct TrackView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            }
-            .safeAreaInset(edge: .top, spacing: 0) {
-                topHeaderBar(title: "Tracking")
-            }
-            .animation(.spring(response: 0.35, dampingFraction: 0.85), value: showDayCard)
+                .safeAreaInset(edge: .top, spacing: 0) {
+                    topHeaderBar(title: "Tracking")
+                }
+                .animation(.spring(response: 0.35, dampingFraction: 0.85), value: showDayCard)
         }
     }
 
