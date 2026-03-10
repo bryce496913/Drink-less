@@ -65,8 +65,9 @@ struct MainTabView: View {
                 }
                 .tag(AppTab.guidance)
         }
-        .ignoresSafeArea(.all, edges: .top)
+        .edgesIgnoringSafeArea(.all)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .appFullscreenContainer()
     }
 }
 

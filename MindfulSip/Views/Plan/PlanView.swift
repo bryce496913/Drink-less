@@ -37,11 +37,12 @@ struct PlanView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
-            .background(AppTheme.background.ignoresSafeArea(.all))
+            .background(AppTheme.background.edgesIgnoringSafeArea(.all))
             .safeAreaInset(edge: .top, spacing: 0) {
                 planHeaderBar
             }
             .onAppear(perform: loadWeek)
+            .appFullscreenContainer()
     }
 
     private var planHeader: some View {

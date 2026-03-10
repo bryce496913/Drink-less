@@ -14,7 +14,7 @@ struct OnboardingView: View {
         NavigationStack {
             ZStack {
                 AppTheme.background
-                    .ignoresSafeArea()
+                    .edgesIgnoringSafeArea(.all)
 
                 GeometryReader { geometry in
                     ScrollView {
@@ -39,6 +39,7 @@ struct OnboardingView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .appFullscreenContainer()
     }
 
     private var onboardingHeader: some View {

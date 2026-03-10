@@ -10,6 +10,7 @@ struct MindfulSipApp: App {
                 .environmentObject(container)
                 .preferredColorScheme(.dark)
                 .tint(AppTheme.highlight)
+                .appFullscreenContainer()
         }
     }
 }

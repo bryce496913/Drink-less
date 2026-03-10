@@ -185,8 +185,9 @@ struct HomeView: View {
                     .frame(minHeight: geometry.size.height, alignment: .top)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .background(AppTheme.background.ignoresSafeArea(.all))
+                .background(AppTheme.background.edgesIgnoringSafeArea(.all))
                 .onAppear { amount = todayLog.totalDrinks }
+                .appFullscreenContainer()
         }
     }
 }
