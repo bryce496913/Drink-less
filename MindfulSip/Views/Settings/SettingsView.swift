@@ -8,7 +8,7 @@ struct SettingsView: View {
         NavigationStack {
             ZStack {
                 AppTheme.background
-                    .ignoresSafeArea()
+                    .edgesIgnoringSafeArea(.all)
 
                 Form {
                     Section {
@@ -85,6 +85,7 @@ struct SettingsView: View {
                 }
             }
         }
+        .appFullscreenContainer()
     }
 }
 

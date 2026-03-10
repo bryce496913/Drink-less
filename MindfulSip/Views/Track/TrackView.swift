@@ -128,7 +128,7 @@ struct TrackView: View {
                         .frame(minHeight: geometry.size.height, alignment: .top)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .background(AppTheme.background.ignoresSafeArea(.all))
+                    .background(AppTheme.background.edgesIgnoringSafeArea(.all))
 
                     if showDayCard {
                         dayInfoCard
@@ -141,6 +141,7 @@ struct TrackView: View {
                     topHeaderBar(title: "Tracking")
                 }
                 .animation(.spring(response: 0.35, dampingFraction: 0.85), value: showDayCard)
+                .appFullscreenContainer()
         }
     }
 

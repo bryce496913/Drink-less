@@ -52,6 +52,18 @@ enum AppTheme {
     }
 }
 
+enum AppLayout {
+    static let screenWidth: CGFloat = 393
+    static let screenHeight: CGFloat = 852
+}
+
+extension View {
+    func appFullscreenContainer() -> some View {
+        frame(width: AppLayout.screenWidth, height: AppLayout.screenHeight)
+            .edgesIgnoringSafeArea(.all)
+    }
+}
+
 struct PrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label

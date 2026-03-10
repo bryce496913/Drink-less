@@ -6,7 +6,7 @@ struct RootView: View {
     var body: some View {
         ZStack(alignment: .top) {
             AppTheme.background
-                .ignoresSafeArea()
+                .edgesIgnoringSafeArea(.all)
 
             Group {
                 if container.settings.hasCompletedOnboarding {
@@ -18,6 +18,7 @@ struct RootView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .appFullscreenContainer()
     }
 }
 
