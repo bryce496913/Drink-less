@@ -4,15 +4,20 @@ struct RootView: View {
     @EnvironmentObject var container: AppContainer
 
     var body: some View {
-        Group {
-            if container.settings.hasCompletedOnboarding {
-                MainTabView()
-            } else {
-                OnboardingView()
+        ZStack(alignment: .top) {
+            AppTheme.background
+                .ignoresSafeArea()
+
+            Group {
+                if container.settings.hasCompletedOnboarding {
+                    MainTabView()
+                } else {
+                    OnboardingView()
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppTheme.background.ignoresSafeArea())
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 }
 
