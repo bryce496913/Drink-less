@@ -12,31 +12,6 @@ struct SettingsView: View {
 
                 Form {
                     Section {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Name")
-                                .font(AppTheme.font(.subheadline, weight: .semibold))
-                                .foregroundStyle(AppTheme.text.opacity(0.9))
-                            TextField("user_name", text: $container.profile.name)
-                                .font(AppTheme.font(.footnote))
-                        }
-
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Goal")
-                                .font(AppTheme.font(.subheadline, weight: .semibold))
-                                .foregroundStyle(AppTheme.text.opacity(0.9))
-                            Picker("user_goal", selection: $container.profile.goalType) {
-                                ForEach(GoalType.allCases) { goal in
-                                    Text(goal.rawValue).tag(goal)
-                                }
-                            }
-                            .font(AppTheme.font(.footnote))
-                        }
-                    } header: {
-                        Text("Profile")
-                            .font(AppTheme.font(.headline, weight: .semibold))
-                    }
-
-                    Section {
                         Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0...50)
                             .font(AppTheme.font(.footnote))
                         Stepper("Dry day target: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0...7)
