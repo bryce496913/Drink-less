@@ -52,15 +52,10 @@ enum AppTheme {
     }
 }
 
-enum AppLayout {
-    static let screenWidth: CGFloat = 393
-    static let screenHeight: CGFloat = 852
-}
-
 extension View {
     func appFullscreenContainer() -> some View {
-        frame(width: AppLayout.screenWidth, height: AppLayout.screenHeight)
-            .edgesIgnoringSafeArea(.all)
+        frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .ignoresSafeArea()
     }
 }
 
