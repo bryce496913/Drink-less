@@ -16,16 +16,19 @@ struct OnboardingView: View {
                 AppTheme.background
                     .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 20) {
-                        onboardingHeader
-                        onboardingForm
-                        actionButtons
+                GeometryReader { geometry in
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            onboardingHeader
+                            onboardingForm
+                            actionButtons
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(minHeight: geometry.size.height, alignment: .top)
                     }
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .navigationBarTitleDisplayMode(.inline)

@@ -70,8 +70,9 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 14) {
+            GeometryReader { geometry in
+                ScrollView {
+                    VStack(spacing: 14) {
                     VStack(spacing: 8) {
                         Text("Welcome, \(displayName)")
                             .font(AppTheme.font(.title, weight: .bold))
@@ -178,10 +179,14 @@ struct HomeView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(AppTheme.highlight.opacity(0.35), in: RoundedRectangle(cornerRadius: 12))
                     }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 6)
+                    .padding(.bottom, 24)
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: geometry.size.height, alignment: .top)
                 }
-                .padding(.horizontal)
-                .padding(.top, 6)
-                .padding(.bottom, 24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .background(AppTheme.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)

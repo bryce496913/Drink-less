@@ -83,57 +83,63 @@ struct TrackView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .bottom) {
-                ScrollView {
-                    VStack(spacing: 14) {
-                        HStack {
-                            Button {
-                                selectedDate = calendar.date(byAdding: .month, value: -1, to: selectedDate) ?? selectedDate
-                            } label: {
-                                Image(systemName: "chevron.left")
+            GeometryReader { geometry in
+                ZStack(alignment: .bottom) {
+                    ScrollView {
+                        VStack(spacing: 14) {
+                            HStack {
+                                Button {
+                                    selectedDate = calendar.date(byAdding: .month, value: -1, to: selectedDate) ?? selectedDate
+                                } label: {
+                                    Image(systemName: "chevron.left")
+                                }
+                                .buttonStyle(SecondaryButtonStyle())
+
+                                Spacer()
+                                Text(monthTitle)
+                                    .font(AppTheme.font(.headline, weight: .semibold))
+                                    .foregroundStyle(AppTheme.text)
+                                Spacer()
+
+                                Button {
+                                    selectedDate = calendar.date(byAdding: .month, value: 1, to: selectedDate) ?? selectedDate
+                                } label: {
+                                    Image(systemName: "chevron.right")
+                                }
+                                .buttonStyle(SecondaryButtonStyle())
                             }
-                            .buttonStyle(SecondaryButtonStyle())
 
-                            Spacer()
-                            Text(monthTitle)
-                                .font(AppTheme.font(.headline, weight: .semibold))
-                                .foregroundStyle(AppTheme.text)
-                            Spacer()
+                            weekHeader
 
-                            Button {
-                                selectedDate = calendar.date(byAdding: .month, value: 1, to: selectedDate) ?? selectedDate
-                            } label: {
-                                Image(systemName: "chevron.right")
-                            }
-                            .buttonStyle(SecondaryButtonStyle())
-                        }
-
-                        weekHeader
-
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8) {
-                            ForEach(monthDates, id: \.self) { date in
-                                if calendar.isDate(date, equalTo: selectedDate, toGranularity: .month) {
-                                    calendarCell(for: date)
-                                } else {
-                                    Color.clear.frame(height: 42)
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8) {
+                                ForEach(monthDates, id: \.self) { date in
+                                    if calendar.isDate(date, equalTo: selectedDate, toGranularity: .month) {
+                                        calendarCell(for: date)
+                                    } else {
+                                        Color.clear.frame(height: 42)
+                                    }
                                 }
                             }
+
+                            legend
                         }
-
-                        legend
+                        .padding()
+                        .padding(.bottom, showDayCard ? 12 : 0)
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: geometry.size.height, alignment: .top)
                     }
-                    .padding()
-                    .padding(.bottom, showDayCard ? 12 : 0)
-                }
-                .background(AppTheme.background.ignoresSafeArea())
-                .navigationTitle("Tracking")
-                .navigationBarTitleDisplayMode(.inline)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .background(AppTheme.background.ignoresSafeArea())
+                    .navigationTitle("Tracking")
+                    .navigationBarTitleDisplayMode(.inline)
 
-                if showDayCard {
-                    dayInfoCard
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                        .zIndex(1)
+                    if showDayCard {
+                        dayInfoCard
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                            .zIndex(1)
+                    }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .animation(.spring(response: 0.35, dampingFraction: 0.85), value: showDayCard)
         }

@@ -124,22 +124,27 @@ struct GuidanceView: View {
         let trimmedName = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
 
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    Text("Guidance for \(trimmedName.isEmpty ? "Friend" : trimmedName)")
-                        .font(AppTheme.font(.title2, weight: .bold))
-                        .foregroundStyle(AppTheme.text)
+            GeometryReader { geometry in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 14) {
+                        Text("Guidance for \(trimmedName.isEmpty ? "Friend" : trimmedName)")
+                            .font(AppTheme.font(.title2, weight: .bold))
+                            .foregroundStyle(AppTheme.text)
 
-                    Text("Daily support and practical coaching based on your recent progress.")
-                        .font(AppTheme.font(.footnote))
-                        .foregroundStyle(AppTheme.text.opacity(0.9))
+                        Text("Daily support and practical coaching based on your recent progress.")
+                            .font(AppTheme.font(.footnote))
+                            .foregroundStyle(AppTheme.text.opacity(0.9))
 
-                    guidanceAccordion(title: "Daily Support", message: dailySupport, icon: "sun.max", isExpanded: $showDailySupport)
-                    guidanceAccordion(title: "Advice", message: advice, icon: "lightbulb", isExpanded: $showAdvice)
-                    guidanceAccordion(title: "Praise", message: praiseMessage, icon: "hands.clap", isExpanded: $showPraise)
-                    guidanceAccordion(title: "Recommendation", message: recommendation, icon: "target", isExpanded: $showRecommendation)
+                        guidanceAccordion(title: "Daily Support", message: dailySupport, icon: "sun.max", isExpanded: $showDailySupport)
+                        guidanceAccordion(title: "Advice", message: advice, icon: "lightbulb", isExpanded: $showAdvice)
+                        guidanceAccordion(title: "Praise", message: praiseMessage, icon: "hands.clap", isExpanded: $showPraise)
+                        guidanceAccordion(title: "Recommendation", message: recommendation, icon: "target", isExpanded: $showRecommendation)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(minHeight: geometry.size.height, alignment: .top)
                 }
-                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .background(AppTheme.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
