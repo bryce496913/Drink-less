@@ -23,14 +23,19 @@ struct PlanView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 14) {
-                    planHeader
-                    weeklySummary
-                    dailyTargetsSection
-                    settingsSection
+            GeometryReader { geometry in
+                ScrollView {
+                    VStack(spacing: 14) {
+                        planHeader
+                        weeklySummary
+                        dailyTargetsSection
+                        settingsSection
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: geometry.size.height, alignment: .top)
                 }
-                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .background(AppTheme.background.ignoresSafeArea())
             .navigationTitle("\(displayName)'s Plan")
