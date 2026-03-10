@@ -71,7 +71,7 @@ struct ProgressView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        .background(AppTheme.background.edgesIgnoringSafeArea(.all))
+        .background(AppTheme.background)
         .safeAreaInset(edge: .top, spacing: 0) {
             topHeaderBar
         }

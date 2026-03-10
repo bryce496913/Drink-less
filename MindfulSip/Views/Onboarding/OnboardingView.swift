@@ -14,7 +14,6 @@ struct OnboardingView: View {
         NavigationStack {
             ZStack {
                 AppTheme.background
-                    .edgesIgnoringSafeArea(.all)
 
                 GeometryReader { geometry in
                     ScrollView {
