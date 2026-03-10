@@ -14,16 +14,20 @@ struct MainTabView: View {
     }
 
     var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house") }
-            PlanView().tabItem { Label("Plan", systemImage: "calendar") }
-            TrackView().tabItem { Label("Track", systemImage: "calendar.badge.clock") }
-            ProgressView().tabItem { Label("Progress", systemImage: "chart.bar") }
-            GuidanceView().tabItem { Label("Guidance", systemImage: "heart.text.square") }
+        ZStack(alignment: .top) {
+            AppTheme.background
+                .ignoresSafeArea()
+
+            TabView {
+                HomeView().tabItem { Label("Home", systemImage: "house") }
+                PlanView().tabItem { Label("Plan", systemImage: "calendar") }
+                TrackView().tabItem { Label("Track", systemImage: "calendar.badge.clock") }
+                ProgressView().tabItem { Label("Progress", systemImage: "chart.bar") }
+                GuidanceView().tabItem { Label("Guidance", systemImage: "heart.text.square") }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        .ignoresSafeArea(.container, edges: [.top, .bottom])
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppTheme.background.ignoresSafeArea())
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 }
 
