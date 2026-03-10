@@ -1,111 +1,467 @@
 // !$*UTF8*$!
 {
 	archiveVersion = 1;
-	classes = {};
+	classes = {
+	};
 	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
-	A001 /* MindfulSipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B001; };
-	A002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B002; };
-	A003 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B003; };
-	A004 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B004; };
-	A005 /* DateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B005; };
-	A006 /* PlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B006; };
-	A007 /* LoggingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B007; };
-	A008 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008; };
-	A009 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B009; };
-	A010 /* TipService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B010; };
-	A011 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B011; };
-	A012 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B012; };
-	A013 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B013; };
-	A014 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B014; };
-	A015 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B015; };
-	A016 /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B016; };
-	A017 /* TrackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B017; };
-	A018 /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B018; };
-	A019 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B019; };
-	A020 /* SMSSimulatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B020; };
-	A024 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B025; };
-	A025 /* GuidanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B026; };
-	A021 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B021; };
-	A022 /* tips.json in Resources */ = {isa = PBXBuildFile; fileRef = B022; };
-	A023 /* MindfulSipModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B023; };
-	A101 /* PlanServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B101; };
-	A102 /* AnalyticsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B102; };
+		A001 /* MindfulSipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B001 /* MindfulSipApp.swift */; };
+		A002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B002 /* Models.swift */; };
+		A003 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B003 /* PersistenceController.swift */; };
+		A004 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B004 /* DataStore.swift */; };
+		A005 /* DateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B005 /* DateService.swift */; };
+		A006 /* PlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B006 /* PlanService.swift */; };
+		A007 /* LoggingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B007 /* LoggingService.swift */; };
+		A008 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008 /* AnalyticsService.swift */; };
+		A009 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B009 /* NotificationService.swift */; };
+		A010 /* TipService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B010 /* TipService.swift */; };
+		A011 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B011 /* AppContainer.swift */; };
+		A012 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B012 /* RootView.swift */; };
+		A013 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B013 /* MainTabView.swift */; };
+		A014 /* Onboarding/OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B014 /* Onboarding/OnboardingView.swift */; };
+		A015 /* Home/HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B015 /* Home/HomeView.swift */; };
+		A016 /* Plan/PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B016 /* Plan/PlanView.swift */; };
+		A017 /* Track/TrackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B017 /* Track/TrackView.swift */; };
+		A018 /* Progress/ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B018 /* Progress/ProgressView.swift */; };
+		A019 /* Settings/SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B019 /* Settings/SettingsView.swift */; };
+		A020 /* Track/SMSSimulatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B020 /* Track/SMSSimulatorView.swift */; };
+		A021 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B021 /* Assets.xcassets */; };
+		A022 /* tips.json in Resources */ = {isa = PBXBuildFile; fileRef = B022 /* tips.json */; };
+		A023 /* MindfulSipModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B023 /* MindfulSipModel.xcdatamodeld */; };
+		A024 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B025 /* AppTheme.swift */; };
+		A025 /* Guidance/GuidanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B026 /* Guidance/GuidanceView.swift */; };
+		A101 /* PlanServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B101 /* PlanServiceTests.swift */; };
+		A102 /* AnalyticsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B102 /* AnalyticsServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-	P001 = {isa = PBXContainerItemProxy; containerPortal = PROJ; proxyType = 1; remoteGlobalIDString = T001; remoteInfo = MindfulSip; };
+		P001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = PROJ /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = T001;
+			remoteInfo = MindfulSip;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-	B001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindfulSipApp.swift; sourceTree = "<group>"; };
-	B002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
-	B003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
-	B004 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
-	B005 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateService.swift; sourceTree = "<group>"; };
-	B006 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanService.swift; sourceTree = "<group>"; };
-	B007 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingService.swift; sourceTree = "<group>"; };
-	B008 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
-	B009 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
-	B010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipService.swift; sourceTree = "<group>"; };
-	B011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
-	B012 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-	B013 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
-	B014 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding/OnboardingView.swift; sourceTree = "<group>"; };
-	B015 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home/HomeView.swift; sourceTree = "<group>"; };
-	B016 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plan/PlanView.swift; sourceTree = "<group>"; };
-	B017 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Track/TrackView.swift; sourceTree = "<group>"; };
-	B018 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress/ProgressView.swift; sourceTree = "<group>"; };
-	B019 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings/SettingsView.swift; sourceTree = "<group>"; };
-	B020 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Track/SMSSimulatorView.swift; sourceTree = "<group>"; };
-	B021 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-	B022 = {isa = PBXFileReference; lastKnownFileType = text.json; path = tips.json; sourceTree = "<group>"; };
-	B023 = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodeld; path = MindfulSipModel.xcdatamodeld; sourceTree = "<group>"; };
-	B024 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-	B025 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
-	B026 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Guidance/GuidanceView.swift; sourceTree = "<group>"; };
-	B101 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanServiceTests.swift; sourceTree = "<group>"; };
-	B102 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsServiceTests.swift; sourceTree = "<group>"; };
-	APP = {isa = PBXFileReference; explicitFileType = wrapper.application; path = MindfulSip.app; sourceTree = BUILT_PRODUCTS_DIR; };
-	TST = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = MindfulSipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		APP /* MindfulSip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = MindfulSip.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B001 /* MindfulSipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindfulSipApp.swift; sourceTree = "<group>"; };
+		B002 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		B003 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		B004 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		B005 /* DateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateService.swift; sourceTree = "<group>"; };
+		B006 /* PlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanService.swift; sourceTree = "<group>"; };
+		B007 /* LoggingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingService.swift; sourceTree = "<group>"; };
+		B008 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
+		B009 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		B010 /* TipService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipService.swift; sourceTree = "<group>"; };
+		B011 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		B012 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		B013 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		B014 /* Onboarding/OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding/OnboardingView.swift; sourceTree = "<group>"; };
+		B015 /* Home/HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home/HomeView.swift; sourceTree = "<group>"; };
+		B016 /* Plan/PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plan/PlanView.swift; sourceTree = "<group>"; };
+		B017 /* Track/TrackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Track/TrackView.swift; sourceTree = "<group>"; };
+		B018 /* Progress/ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress/ProgressView.swift; sourceTree = "<group>"; };
+		B019 /* Settings/SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings/SettingsView.swift; sourceTree = "<group>"; };
+		B020 /* Track/SMSSimulatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Track/SMSSimulatorView.swift; sourceTree = "<group>"; };
+		B021 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B022 /* tips.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = tips.json; sourceTree = "<group>"; };
+		B023 /* MindfulSipModel.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodeld; path = MindfulSipModel.xcdatamodeld; sourceTree = "<group>"; };
+		B024 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B025 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		B026 /* Guidance/GuidanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Guidance/GuidanceView.swift; sourceTree = "<group>"; };
+		B101 /* PlanServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanServiceTests.swift; sourceTree = "<group>"; };
+		B102 /* AnalyticsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsServiceTests.swift; sourceTree = "<group>"; };
+		TST /* MindfulSipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = MindfulSipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* groups/sources omitted for brevity but valid */
-	GROOT = {isa = PBXGroup; children = (GSRC, GTEST, GPROD); sourceTree = "<group>"; };
-	GPROD = {isa = PBXGroup; children = (APP, TST); name = Products; sourceTree = "<group>"; };
-	GSRC = {isa = PBXGroup; path = MindfulSip; sourceTree = "<group>"; children = (GAPP,GMODEL,GPERS,GSERV,GVM,GVIEW,GRES); };
-	GAPP = {isa = PBXGroup; path = MindfulSipApp; sourceTree = "<group>"; children = (B001); };
-	GMODEL = {isa = PBXGroup; path = Models; sourceTree = "<group>"; children = (B002); };
-	GPERS = {isa = PBXGroup; path = Persistence; sourceTree = "<group>"; children = (B003,B023); };
-	GSERV = {isa = PBXGroup; path = Services; sourceTree = "<group>"; children = (B004,B005,B006,B007,B008,B009,B010); };
-	GVM = {isa = PBXGroup; path = ViewModels; sourceTree = "<group>"; children = (B011); };
-	GVIEW = {isa = PBXGroup; path = Views; sourceTree = "<group>"; children = (B012,B013,B014,B015,B016,B017,B018,B019,B020,B025,B026); };
-	GRES = {isa = PBXGroup; path = Resources; sourceTree = "<group>"; children = (B021,B022,B024); };
-	GTEST = {isa = PBXGroup; path = MindfulSipTests; sourceTree = "<group>"; children = (B101,B102); };
+/* Begin PBXFrameworksBuildPhase section */
+		FAPP /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FTST /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
-	SAPP = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A001,A002,A003,A004,A005,A006,A007,A008,A009,A010,A011,A012,A013,A014,A015,A016,A017,A018,A019,A020,A023,A024,A025); runOnlyForDeploymentPostprocessing = 0; };
-	RAPP = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A021,A022); runOnlyForDeploymentPostprocessing = 0; };
-	STST = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A101,A102); runOnlyForDeploymentPostprocessing = 0; };
-	FAPP = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-	FTST = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* Begin PBXGroup section */
+		GAPP /* MindfulSipApp */ = {
+			isa = PBXGroup;
+			children = (
+				B001 /* MindfulSipApp.swift */,
+			);
+			path = MindfulSipApp;
+			sourceTree = "<group>";
+		};
+		GMODEL /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B002 /* Models.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		GPERS /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				B003 /* PersistenceController.swift */,
+				B023 /* MindfulSipModel.xcdatamodeld */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		GPROD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				APP /* MindfulSip.app */,
+				TST /* MindfulSipTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		GRES /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B021 /* Assets.xcassets */,
+				B022 /* tips.json */,
+				B024 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		GROOT = {
+			isa = PBXGroup;
+			children = (
+				GSRC /* MindfulSip */,
+				GTEST /* MindfulSipTests */,
+				GPROD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		GSERV /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B004 /* DataStore.swift */,
+				B005 /* DateService.swift */,
+				B006 /* PlanService.swift */,
+				B007 /* LoggingService.swift */,
+				B008 /* AnalyticsService.swift */,
+				B009 /* NotificationService.swift */,
+				B010 /* TipService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		GSRC /* MindfulSip */ = {
+			isa = PBXGroup;
+			children = (
+				GAPP /* MindfulSipApp */,
+				GMODEL /* Models */,
+				GPERS /* Persistence */,
+				GSERV /* Services */,
+				GVM /* ViewModels */,
+				GVIEW /* Views */,
+				GRES /* Resources */,
+			);
+			path = MindfulSip;
+			sourceTree = "<group>";
+		};
+		GTEST /* MindfulSipTests */ = {
+			isa = PBXGroup;
+			children = (
+				B101 /* PlanServiceTests.swift */,
+				B102 /* AnalyticsServiceTests.swift */,
+			);
+			path = MindfulSipTests;
+			sourceTree = "<group>";
+		};
+		GVIEW /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B012 /* RootView.swift */,
+				B013 /* MainTabView.swift */,
+				B014 /* Onboarding/OnboardingView.swift */,
+				B015 /* Home/HomeView.swift */,
+				B016 /* Plan/PlanView.swift */,
+				B017 /* Track/TrackView.swift */,
+				B018 /* Progress/ProgressView.swift */,
+				B019 /* Settings/SettingsView.swift */,
+				B020 /* Track/SMSSimulatorView.swift */,
+				B025 /* AppTheme.swift */,
+				B026 /* Guidance/GuidanceView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		GVM /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B011 /* AppContainer.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
 
-	T001 = {isa = PBXNativeTarget; name = MindfulSip; productName = MindfulSip; productReference = APP; productType = "com.apple.product-type.application"; buildConfigurationList = C001; buildPhases = (SAPP,RAPP,FAPP); buildRules = (); dependencies = (); };
-	T002 = {isa = PBXNativeTarget; name = MindfulSipTests; productName = MindfulSipTests; productReference = TST; productType = "com.apple.product-type.bundle.unit-test"; buildConfigurationList = C002; buildPhases = (STST,FTST); buildRules = (); dependencies = (D001); };
-	D001 = {isa = PBXTargetDependency; target = T001; targetProxy = P001; };
+/* Begin PBXNativeTarget section */
+		T001 /* MindfulSip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C001 /* Build configuration list for PBXNativeTarget "MindfulSip" */;
+			buildPhases = (
+				SAPP /* Sources */,
+				RAPP /* Resources */,
+				FAPP /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MindfulSip;
+			productName = MindfulSip;
+			productReference = APP /* MindfulSip.app */;
+			productType = "com.apple.product-type.application";
+		};
+		T002 /* MindfulSipTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C002 /* Build configuration list for PBXNativeTarget "MindfulSipTests" */;
+			buildPhases = (
+				STST /* Sources */,
+				FTST /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D001 /* PBXTargetDependency */,
+			);
+			name = MindfulSipTests;
+			productName = MindfulSipTests;
+			productReference = TST /* MindfulSipTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
 
-	PROJ = {isa = PBXProject; attributes = {LastUpgradeCheck = 1500; TargetAttributes = {T002 = {TestTargetID = T001;};};}; buildConfigurationList = C000; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; mainGroup = GROOT; productRefGroup = GPROD; projectDirPath = ""; projectRoot = ""; targets = (T001,T002); };
+/* Begin PBXProject section */
+		PROJ /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					T002 = {
+						TestTargetID = T001;
+					};
+				};
+			};
+			buildConfigurationList = C000 /* Build configuration list for PBXProject "MindfulSip" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = GROOT;
+			productRefGroup = GPROD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				T001 /* MindfulSip */,
+				T002 /* MindfulSipTests */,
+			);
+		};
+/* End PBXProject section */
 
-	BC01 = {isa = XCBuildConfiguration; name = Debug; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; PRODUCT_NAME = "$(TARGET_NAME)"; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SWIFT_VERSION = 5.9; SDKROOT = iphoneos; INFOPLIST_FILE = MindfulSip/Resources/Info.plist; PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSip; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; MARKETING_VERSION = 1.0; GENERATE_INFOPLIST_FILE = NO;}; };
-	BC02 = {isa = XCBuildConfiguration; name = Release; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; PRODUCT_NAME = "$(TARGET_NAME)"; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SWIFT_VERSION = 5.9; SDKROOT = iphoneos; INFOPLIST_FILE = MindfulSip/Resources/Info.plist; PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSip; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; MARKETING_VERSION = 1.0; GENERATE_INFOPLIST_FILE = NO;}; };
-	BC11 = {isa = XCBuildConfiguration; name = Debug; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; PRODUCT_NAME = "$(TARGET_NAME)"; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SWIFT_VERSION = 5.9; SDKROOT = iphoneos; PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSipTests; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MindfulSip.app/MindfulSip"; BUNDLE_LOADER = "$(TEST_HOST)";}; };
-	BC12 = {isa = XCBuildConfiguration; name = Release; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; PRODUCT_NAME = "$(TARGET_NAME)"; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SWIFT_VERSION = 5.9; SDKROOT = iphoneos; PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSipTests; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MindfulSip.app/MindfulSip"; BUNDLE_LOADER = "$(TEST_HOST)";}; };
-	BCP1 = {isa = XCBuildConfiguration; name = Debug; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; }; };
-	BCP2 = {isa = XCBuildConfiguration; name = Release; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; }; };
-	C000 = {isa = XCConfigurationList; buildConfigurations = (BCP1,BCP2); defaultConfigurationName = Debug; defaultConfigurationIsVisible = 0; };
-	C001 = {isa = XCConfigurationList; buildConfigurations = (BC01,BC02); defaultConfigurationName = Debug; defaultConfigurationIsVisible = 0; };
-	C002 = {isa = XCConfigurationList; buildConfigurations = (BC11,BC12); defaultConfigurationName = Debug; defaultConfigurationIsVisible = 0; };
+/* Begin PBXResourcesBuildPhase section */
+		RAPP /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A021 /* Assets.xcassets in Resources */,
+				A022 /* tips.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		SAPP /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A001 /* MindfulSipApp.swift in Sources */,
+				A002 /* Models.swift in Sources */,
+				A003 /* PersistenceController.swift in Sources */,
+				A004 /* DataStore.swift in Sources */,
+				A005 /* DateService.swift in Sources */,
+				A006 /* PlanService.swift in Sources */,
+				A007 /* LoggingService.swift in Sources */,
+				A008 /* AnalyticsService.swift in Sources */,
+				A009 /* NotificationService.swift in Sources */,
+				A010 /* TipService.swift in Sources */,
+				A011 /* AppContainer.swift in Sources */,
+				A012 /* RootView.swift in Sources */,
+				A013 /* MainTabView.swift in Sources */,
+				A014 /* Onboarding/OnboardingView.swift in Sources */,
+				A015 /* Home/HomeView.swift in Sources */,
+				A016 /* Plan/PlanView.swift in Sources */,
+				A017 /* Track/TrackView.swift in Sources */,
+				A018 /* Progress/ProgressView.swift in Sources */,
+				A019 /* Settings/SettingsView.swift in Sources */,
+				A020 /* Track/SMSSimulatorView.swift in Sources */,
+				A023 /* MindfulSipModel.xcdatamodeld in Sources */,
+				A024 /* AppTheme.swift in Sources */,
+				A025 /* Guidance/GuidanceView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		STST /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A101 /* PlanServiceTests.swift in Sources */,
+				A102 /* AnalyticsServiceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = T001 /* MindfulSip */;
+			targetProxy = P001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		BC01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7ZAXQ2686Z;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MindfulSip/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSip;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		BC02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7ZAXQ2686Z;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MindfulSip/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSip;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		BC11 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZAXQ2686Z;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSipTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MindfulSip.app/MindfulSip";
+			};
+			name = Debug;
+		};
+		BC12 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7ZAXQ2686Z;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSipTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MindfulSip.app/MindfulSip";
+			};
+			name = Release;
+		};
+		BCP1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+			};
+			name = Debug;
+		};
+		BCP2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C000 /* Build configuration list for PBXProject "MindfulSip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BCP1 /* Debug */,
+				BCP2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C001 /* Build configuration list for PBXNativeTarget "MindfulSip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC01 /* Debug */,
+				BC02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C002 /* Build configuration list for PBXNativeTarget "MindfulSipTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC11 /* Debug */,
+				BC12 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
 	};
-	rootObject = PROJ;
+	rootObject = PROJ /* Project object */;
 }

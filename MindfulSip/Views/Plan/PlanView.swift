@@ -187,14 +187,14 @@ struct PlanView: View {
 
             DisclosureGroup(isExpanded: $isProfileExpanded) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Name: user_name")
+                    Text("Name:")
                         .font(AppTheme.font(.h3, weight: .semibold))
                         .foregroundStyle(AppTheme.text.opacity(0.9))
                     TextField("user_name", text: $container.profile.name)
                         .font(AppTheme.font(.h3))
                         .textInputAutocapitalization(.words)
 
-                    Text("Goal: user_goal (Drink less or Take a break)")
+                    Text("Goal:")
                         .font(AppTheme.font(.h3, weight: .semibold))
                         .foregroundStyle(AppTheme.text.opacity(0.9))
                     Picker("user_goal", selection: $container.profile.goalType) {
