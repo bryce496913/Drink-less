@@ -55,7 +55,6 @@ enum AppTheme {
 extension View {
     func appFullscreenContainer() -> some View {
         frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .ignoresSafeArea()
     }
 }
 

@@ -7,7 +7,6 @@ struct SMSSimulatorView: View {
     var body: some View {
         ZStack {
             AppTheme.background
-                .edgesIgnoringSafeArea(.all)
 
             Form {
                 Text("This simulates receiving a numeric SMS value.")

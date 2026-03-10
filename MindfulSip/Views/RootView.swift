@@ -6,7 +6,6 @@ struct RootView: View {
     var body: some View {
         ZStack(alignment: .top) {
             AppTheme.background
-                .edgesIgnoringSafeArea(.all)
 
             Group {
                 if container.settings.hasCompletedOnboarding {

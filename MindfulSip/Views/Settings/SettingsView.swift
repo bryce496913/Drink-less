@@ -8,7 +8,6 @@ struct SettingsView: View {
         NavigationStack {
             ZStack {
                 AppTheme.background
-                    .edgesIgnoringSafeArea(.all)
 
                 Form {
                     Section {
