@@ -12,18 +12,22 @@ struct OnboardingView: View {
 
     var body: some View {
         NavigationStack {
-            GeometryReader { geometry in
+            ZStack {
+                AppTheme.background
+                    .ignoresSafeArea()
+
                 ScrollView {
                     VStack(spacing: 20) {
                         onboardingHeader
                         onboardingForm
                         actionButtons
                     }
-                    .frame(maxWidth: .infinity, minHeight: geometry.size.height, alignment: .top)
                     .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .background(AppTheme.background.ignoresSafeArea())
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 if !container.settings.hasCompletedOnboarding, container.profile.name == "Friend" {
