@@ -123,12 +123,12 @@ struct TrackView: View {
                             legend
                         }
                         .padding(.horizontal)
-                        .padding(.bottom, (showDayCard ? 12 : 0) + MainTabShellView.bottomBarReservedSpace)
+                        .padding(.bottom, (showDayCard ? 12 : 0) + 24)
                         .frame(maxWidth: .infinity)
                         .frame(minHeight: geometry.size.height, alignment: .top)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .background(AppTheme.background.ignoresSafeArea())
+                    .background(AppTheme.background.ignoresSafeArea(.all))
 
                     if showDayCard {
                         dayInfoCard

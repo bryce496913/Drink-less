@@ -180,12 +180,12 @@ struct HomeView: View {
                     }
                     }
                     .padding(.horizontal)
-                    .padding(.bottom, MainTabShellView.bottomBarReservedSpace)
+                    .padding(.bottom, 24)
                     .frame(maxWidth: .infinity)
                     .frame(minHeight: geometry.size.height, alignment: .top)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .background(AppTheme.background.ignoresSafeArea())
+                .background(AppTheme.background.ignoresSafeArea(.all))
                 .onAppear { amount = todayLog.totalDrinks }
         }
     }
