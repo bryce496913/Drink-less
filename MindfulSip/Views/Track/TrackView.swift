@@ -82,9 +82,8 @@ struct TrackView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            GeometryReader { geometry in
-                ZStack(alignment: .bottom) {
+        GeometryReader { geometry in
+            ZStack(alignment: .bottom) {
                     ScrollView {
                         VStack(spacing: 14) {
                             HStack {
@@ -123,15 +122,13 @@ struct TrackView: View {
 
                             legend
                         }
-                        .padding()
-                        .padding(.bottom, showDayCard ? 12 : 0)
+                        .padding(.horizontal)
+                        .padding(.bottom, (showDayCard ? 12 : 0) + MainTabShellView.bottomBarReservedSpace)
                         .frame(maxWidth: .infinity)
                         .frame(minHeight: geometry.size.height, alignment: .top)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .background(AppTheme.background.ignoresSafeArea())
-                    .navigationTitle("Tracking")
-                    .navigationBarTitleDisplayMode(.inline)
 
                     if showDayCard {
                         dayInfoCard
@@ -140,6 +137,9 @@ struct TrackView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            }
+            .safeAreaInset(edge: .top, spacing: 0) {
+                topHeaderBar(title: "Tracking")
             }
             .animation(.spring(response: 0.35, dampingFraction: 0.85), value: showDayCard)
         }
@@ -338,6 +338,24 @@ struct TrackView: View {
         case .other: return "🍹"
         }
     }
+
+    private func topHeaderBar(title: String) -> some View {
+        VStack(spacing: 0) {
+            Text(title)
+                .font(AppTheme.font(.headline, weight: .semibold))
+                .foregroundStyle(AppTheme.text)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 16)
+                .padding(.top, 6)
+                .padding(.bottom, 10)
+
+            Rectangle()
+                .fill(AppTheme.highlight.opacity(0.2))
+                .frame(height: 1)
+        }
+        .background(AppTheme.background.opacity(0.96))
+    }
+
 }
 
 #Preview {

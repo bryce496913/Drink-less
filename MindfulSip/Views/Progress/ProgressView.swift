@@ -63,14 +63,18 @@ struct ProgressView: View {
                 .foregroundStyle(AppTheme.text)
                 .padding()
                 .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
-                .padding()
+                .padding(.horizontal)
+                .padding(.top, 12)
+                .padding(.bottom, MainTabShellView.bottomBarReservedSpace)
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 .frame(minHeight: geometry.size.height, alignment: .top)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .background(AppTheme.background.ignoresSafeArea())
-        .navigationTitle("Progress")
+        .safeAreaInset(edge: .top, spacing: 0) {
+            topHeaderBar
+        }
     }
 
     private func progressMetric(title: String, value: String) -> some View {
@@ -83,6 +87,24 @@ struct ProgressView: View {
                 .foregroundStyle(AppTheme.text)
         }
     }
+
+    private var topHeaderBar: some View {
+        VStack(spacing: 0) {
+            Text("Progress")
+                .font(AppTheme.font(.headline, weight: .semibold))
+                .foregroundStyle(AppTheme.text)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 16)
+                .padding(.top, 6)
+                .padding(.bottom, 10)
+
+            Rectangle()
+                .fill(AppTheme.highlight.opacity(0.2))
+                .frame(height: 1)
+        }
+        .background(AppTheme.background.opacity(0.96))
+    }
+
 }
 
 #Preview {
