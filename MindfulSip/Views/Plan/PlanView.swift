@@ -22,26 +22,26 @@ struct PlanView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            GeometryReader { geometry in
-                ScrollView {
+        GeometryReader { geometry in
+            ScrollView {
                     VStack(spacing: 14) {
                         planHeader
                         weeklySummary
                         dailyTargetsSection
                         settingsSection
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.bottom, MainTabShellView.bottomBarReservedSpace)
                     .frame(maxWidth: .infinity)
                     .frame(minHeight: geometry.size.height, alignment: .top)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .background(AppTheme.background.ignoresSafeArea())
-            .navigationTitle("\(displayName)'s Plan")
-            .navigationBarTitleDisplayMode(.inline)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                planHeaderBar
+            }
             .onAppear(perform: loadWeek)
-        }
     }
 
     private var planHeader: some View {
@@ -265,6 +265,24 @@ struct PlanView: View {
             Text("This action permanently removes your logs, profile, and app settings.")
         }
     }
+
+    private var planHeaderBar: some View {
+        VStack(spacing: 0) {
+            Text("\(displayName)'s Plan")
+                .font(AppTheme.font(.headline, weight: .semibold))
+                .foregroundStyle(AppTheme.text)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 16)
+                .padding(.top, 6)
+                .padding(.bottom, 10)
+
+            Rectangle()
+                .fill(AppTheme.highlight.opacity(0.2))
+                .frame(height: 1)
+        }
+        .background(AppTheme.background.opacity(0.96))
+    }
+
 }
 
 #Preview {

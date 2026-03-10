@@ -69,10 +69,9 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            GeometryReader { geometry in
-                ScrollView {
-                    VStack(spacing: 14) {
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 14) {
                     VStack(spacing: 8) {
                         Text("Welcome, \(displayName)")
                             .font(AppTheme.font(.title, weight: .bold))
@@ -181,15 +180,13 @@ struct HomeView: View {
                     }
                     }
                     .padding(.horizontal)
-                    .padding(.top, 6)
-                    .padding(.bottom, 24)
+                    .padding(.bottom, MainTabShellView.bottomBarReservedSpace)
                     .frame(maxWidth: .infinity)
                     .frame(minHeight: geometry.size.height, alignment: .top)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .background(AppTheme.background.ignoresSafeArea())
-            .navigationBarTitleDisplayMode(.inline)
             .onAppear { amount = todayLog.totalDrinks }
         }
     }

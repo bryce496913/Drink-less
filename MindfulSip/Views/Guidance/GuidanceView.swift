@@ -123,9 +123,8 @@ struct GuidanceView: View {
     var body: some View {
         let trimmedName = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        NavigationStack {
-            GeometryReader { geometry in
-                ScrollView {
+        GeometryReader { geometry in
+            ScrollView {
                     VStack(alignment: .leading, spacing: 14) {
                         Text("Guidance for \(trimmedName.isEmpty ? "Friend" : trimmedName)")
                             .font(AppTheme.font(.title2, weight: .bold))
@@ -140,14 +139,14 @@ struct GuidanceView: View {
                         guidanceAccordion(title: "Praise", message: praiseMessage, icon: "hands.clap", isExpanded: $showPraise)
                         guidanceAccordion(title: "Recommendation", message: recommendation, icon: "target", isExpanded: $showRecommendation)
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.bottom, MainTabShellView.bottomBarReservedSpace)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .frame(minHeight: geometry.size.height, alignment: .top)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
             .background(AppTheme.background.ignoresSafeArea())
-            .navigationBarTitleDisplayMode(.inline)
         }
     }
 
