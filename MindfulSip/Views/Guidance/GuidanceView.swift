@@ -140,12 +140,12 @@ struct GuidanceView: View {
                         guidanceAccordion(title: "Recommendation", message: recommendation, icon: "target", isExpanded: $showRecommendation)
                     }
                     .padding(.horizontal)
-                    .padding(.bottom, MainTabShellView.bottomBarReservedSpace)
+                    .padding(.bottom, 24)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .frame(minHeight: geometry.size.height, alignment: .top)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .background(AppTheme.background.ignoresSafeArea())
+                .background(AppTheme.background.ignoresSafeArea(.all))
         }
     }
 

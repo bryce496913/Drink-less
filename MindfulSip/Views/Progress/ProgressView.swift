@@ -65,13 +65,13 @@ struct ProgressView: View {
                 .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
                 .padding(.horizontal)
                 .padding(.top, 12)
-                .padding(.bottom, MainTabShellView.bottomBarReservedSpace)
+                .padding(.bottom, 24)
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 .frame(minHeight: geometry.size.height, alignment: .top)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        .background(AppTheme.background.ignoresSafeArea())
+        .background(AppTheme.background.ignoresSafeArea(.all))
         .safeAreaInset(edge: .top, spacing: 0) {
             topHeaderBar
         }
