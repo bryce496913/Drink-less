@@ -123,7 +123,7 @@ struct TrackView: View {
                         legend
                     }
                     .padding()
-                    .padding(.bottom, showDayCard ? 390 : 0)
+                    .padding(.bottom, showDayCard ? 12 : 0)
                 }
                 .background(AppTheme.background.ignoresSafeArea())
                 .navigationTitle("Tracking")
@@ -237,10 +237,10 @@ struct TrackView: View {
             }
             .padding(16)
         }
-        .frame(maxHeight: 370)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
         .padding(.horizontal)
+        .padding(.top, 12)
         .padding(.bottom, 12)
     }
 
