@@ -180,6 +180,19 @@ struct HomeView: View {
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
 
+                    if let reminderMessage = container.todaysReminderMessage {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Today’s reminder")
+                                .font(AppTheme.font(.headline, weight: .semibold))
+                            Text(reminderMessage)
+                                .font(AppTheme.font(.body))
+                        }
+                        .foregroundStyle(AppTheme.text)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(12)
+                        .background(AppTheme.highlight.opacity(0.18), in: RoundedRectangle(cornerRadius: 12))
+                    }
+
                     if todayLog.totalDrinks > todayLog.plannedTargetDrinks, todayLog.plannedTargetDrinks > 0 {
                         Text("You are above today’s target. Try water between drinks, \(displayName).")
                             .font(AppTheme.font(.footnote))

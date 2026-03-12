@@ -196,15 +196,17 @@ struct PlanView: View {
                             .textInputAutocapitalization(.words)
                     }
 
-                    Text("Goal:")
-                        .font(AppTheme.font(.h3, weight: .semibold))
-                        .foregroundStyle(AppTheme.text.opacity(0.9))
-                    Picker("user_goal", selection: $container.profile.goalType) {
-                        ForEach(GoalType.allCases) { goal in
-                            Text(goal.rawValue).tag(goal)
+                    HStack(spacing: 8) {
+                        Text("Goal:")
+                            .font(AppTheme.font(.h3, weight: .semibold))
+                            .foregroundStyle(AppTheme.text.opacity(0.9))
+                        Picker("user_goal", selection: $container.profile.goalType) {
+                            ForEach(GoalType.allCases) { goal in
+                                Text(goal.rawValue).tag(goal)
+                            }
                         }
+                        .font(AppTheme.font(.h3))
                     }
-                    .font(AppTheme.font(.h3))
                 }
                 .padding(.top, 4)
             } label: {
@@ -229,8 +231,16 @@ struct PlanView: View {
                 VStack(spacing: 8) {
                     Toggle("Reminders enabled", isOn: $container.settings.remindersEnabled)
                         .font(AppTheme.font(.h3))
+                        .onChange(of: container.settings.remindersEnabled) { _ in
+                            container.saveSettings()
+                        }
                     DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
                         .font(AppTheme.font(.h3))
+                        .onChange(of: container.settings.reminderTime) { _ in
+                            if container.settings.remindersEnabled {
+                                container.saveSettings()
+                            }
+                        }
                     Toggle("Avoid weekend auto dry days", isOn: $container.settings.avoidWeekendForAutoDry)
                         .font(AppTheme.font(.h3))
                 }
