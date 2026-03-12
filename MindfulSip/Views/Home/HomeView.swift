@@ -7,6 +7,7 @@ struct HomeView: View {
     @State private var showAddDrinks = false
     @State private var showAchievements = false
     @State private var showTip = false
+    @State private var addDrinkSaveMessage = ""
 
     private let analytics = AnalyticsService()
 
@@ -124,8 +125,17 @@ struct HomeView: View {
                                 .foregroundStyle(AppTheme.text)
                             Button("Save total") {
                                 container.updateDrinkTotal(date: container.currentDate, total: amount)
+                                showSavedTotalMessage()
                             }
                             .buttonStyle(PrimaryButtonStyle())
+
+                            if !addDrinkSaveMessage.isEmpty {
+                                Text(addDrinkSaveMessage)
+                                    .font(AppTheme.font(.caption))
+                                    .foregroundStyle(.green)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .transition(.opacity)
+                            }
                         }
                         .padding(.top, 8)
                     } label: {
@@ -188,6 +198,13 @@ struct HomeView: View {
                 .background(AppTheme.background)
                 .onAppear { amount = todayLog.totalDrinks }
                 .appFullscreenContainer()
+        }
+    }
+
+    private func showSavedTotalMessage() {
+        addDrinkSaveMessage = "Drinks total saved"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            addDrinkSaveMessage = ""
         }
     }
 }

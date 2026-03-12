@@ -7,6 +7,7 @@ struct TrackView: View {
     @State private var selectedDate = Date.now
     @State private var showDayCard = false
     @State private var notesDraft = ""
+    @State private var noteSaveMessage = ""
 
     private var monthDates: [Date] {
         guard let monthInterval = calendar.dateInterval(of: .month, for: selectedDate),
@@ -164,9 +165,8 @@ struct TrackView: View {
                 .foregroundStyle(AppTheme.text.opacity(0.8))
             HStack {
                 legendItem(color: .green, label: "0 drinks")
-                legendItem(color: .yellow, label: "0.5 - 2")
-                legendItem(color: .orange, label: "2.5 - 4")
-                legendItem(color: .red, label: "4+")
+                legendItem(color: .mint, label: "Met goal")
+                legendItem(color: .red, label: "Missed goal")
                 legendItem(color: .gray, label: "Future")
             }
             Text("★ Setup completed")
@@ -238,8 +238,16 @@ struct TrackView: View {
                     var updated = selectedLog
                     updated.notes = notesDraft
                     container.saveLog(updated)
+                    showNoteSavedMessage()
                 }
                 .buttonStyle(PrimaryButtonStyle())
+
+                if !noteSaveMessage.isEmpty {
+                    Text(noteSaveMessage)
+                        .font(AppTheme.font(.caption))
+                        .foregroundStyle(.green)
+                        .transition(.opacity)
+                }
             }
             .padding(16)
         }
@@ -290,7 +298,7 @@ struct TrackView: View {
                 .foregroundStyle(AppTheme.text)
                 .frame(maxWidth: .infinity)
                 .frame(height: 42)
-                .background(drinkColor(for: log.totalDrinks, on: date), in: RoundedRectangle(cornerRadius: 10))
+                .background(drinkColor(for: log, on: date), in: RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(isSelected ? AppTheme.text : Color.clear, lineWidth: 2)
@@ -307,7 +315,7 @@ struct TrackView: View {
         .buttonStyle(.plain)
     }
 
-    private func drinkColor(for total: Double, on date: Date) -> Color {
+    private func drinkColor(for log: DayLog, on date: Date) -> Color {
         if let onboardingStartDate, calendar.startOfDay(for: date) < onboardingStartDate {
             return .gray.opacity(0.3)
         }
@@ -316,11 +324,18 @@ struct TrackView: View {
             return .gray.opacity(0.45)
         }
 
-        switch total {
-        case 0: return .green.opacity(0.85)
-        case 0.5 ... 2: return .yellow.opacity(0.8)
-        case 2.5 ... 4: return .orange.opacity(0.85)
-        default: return .red.opacity(0.85)
+        if log.totalDrinks == 0 {
+            return .green.opacity(0.85)
+        }
+
+        let metGoal = log.totalDrinks <= log.plannedTargetDrinks
+        return metGoal ? .mint.opacity(0.85) : .red.opacity(0.85)
+    }
+
+    private func showNoteSavedMessage() {
+        noteSaveMessage = "Notes saved"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            noteSaveMessage = ""
         }
     }
 

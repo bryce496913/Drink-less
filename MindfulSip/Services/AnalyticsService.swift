@@ -32,6 +32,30 @@ struct AnalyticsService {
         return Insights(last14: last14, previous14: previous14, topWeekday: top, dryStreak: dryStreak(logs: sorted, today: today), loggingStreak: loggingStreak(logs: sorted, today: today))
     }
 
+    func weeklyGoalSuccessStreak(logs: [DayLog], weeklyTarget: Int, asOf date: Date = .now) -> Int {
+        let target = Double(weeklyTarget)
+        let currentWeekStart = dateService.startOfWeek(date)
+        var streak = 0
+        var cursor = Calendar.current.date(byAdding: .day, value: -7, to: currentWeekStart) ?? currentWeekStart
+
+        while streak < 52 {
+            let weekStart = dateService.startOfWeek(cursor)
+            let weekTotal = weeklyTotal(logs: logs, weekStart: weekStart)
+            if weekTotal <= target {
+                streak += 1
+            } else {
+                break
+            }
+
+            guard let previous = Calendar.current.date(byAdding: .day, value: -7, to: weekStart) else {
+                break
+            }
+            cursor = previous
+        }
+
+        return streak
+    }
+
     func dryStreak(logs: [DayLog], today: Date = .now) -> Int {
         let map = Dictionary(uniqueKeysWithValues: logs.map { (dateService.startOfDay($0.date), $0.totalDrinks) })
         var streak = 0

@@ -17,6 +17,7 @@ struct ProgressView: View {
                 let totalDrinks = container.logs.reduce(0) { $0 + $1.totalDrinks }
                 let moneySpentTotal = totalDrinks * container.profile.costPerDrink
                 let caloriesTotal = totalDrinks * container.profile.caloriesPerDrink
+                let weeklyGoalStreak = analytics.weeklyGoalSuccessStreak(logs: container.logs, weeklyTarget: container.profile.weeklyTarget, asOf: container.currentDate)
 
                 VStack(alignment: .leading, spacing: 16) {
                     HStack(alignment: .top, spacing: 12) {
@@ -24,6 +25,7 @@ struct ProgressView: View {
                             progressMetric(title: "This week", value: "\(String(format: "%.1f", drinks)) / \(container.profile.weeklyTarget)")
                             progressMetric(title: "Dry days", value: "\(dryDays) / \(container.profile.dryDaysTarget)")
                             progressMetric(title: "Money (week)", value: "$\(String(format: "%.0f", moneySpentWeek))")
+                            progressMetric(title: "Goal streak", value: "\(weeklyGoalStreak) weeks")
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -40,11 +42,35 @@ struct ProgressView: View {
                     Chart {
                         ForEach(dateService.weekDates(from: container.currentDate), id: \.self) { date in
                             let log = container.log(for: date)
-                            BarMark(x: .value("Day", date, unit: .day), y: .value("Drinks", log.totalDrinks))
-                                .foregroundStyle(AppTheme.highlight)
+                            let groupedEntries = Dictionary(grouping: log.entries.filter { $0.type != nil }, by: { $0.type! })
+
+                            if groupedEntries.isEmpty {
+                                BarMark(x: .value("Day", date, unit: .day), y: .value("Drinks", log.totalDrinks))
+                                    .foregroundStyle(drinkTypeColor(.other))
+                            } else {
+                                ForEach(DrinkType.allCases) { type in
+                                    let amount = groupedEntries[type]?.reduce(0) { $0 + $1.amount } ?? 0
+                                    if amount > 0 {
+                                        BarMark(x: .value("Day", date, unit: .day), y: .value("Drinks", amount))
+                                            .foregroundStyle(drinkTypeColor(type))
+                                    }
+                                }
+                            }
                         }
                     }
                     .frame(height: 180)
+
+                    HStack(spacing: 10) {
+                        ForEach(DrinkType.allCases) { type in
+                            HStack(spacing: 4) {
+                                Circle()
+                                    .fill(drinkTypeColor(type))
+                                    .frame(width: 8, height: 8)
+                                Text(type.rawValue.capitalized)
+                                    .font(AppTheme.font(.caption2))
+                            }
+                        }
+                    }
 
                     if container.logs.count >= 14 {
                         let insight = analytics.insights(logs: container.logs)
@@ -86,6 +112,21 @@ struct ProgressView: View {
             Text(value)
                 .font(AppTheme.font(.footnote, weight: .semibold))
                 .foregroundStyle(AppTheme.text)
+        }
+    }
+
+    private func drinkTypeColor(_ type: DrinkType) -> Color {
+        switch type {
+        case .wine:
+            return Color(red: 0.8, green: 0.34, blue: 0.74)
+        case .beer:
+            return Color(red: 0.93, green: 0.65, blue: 0.28)
+        case .spirits:
+            return Color(red: 0.53, green: 0.46, blue: 0.93)
+        case .cocktail:
+            return Color(red: 0.24, green: 0.72, blue: 0.78)
+        case .other:
+            return AppTheme.highlight
         }
     }
 
