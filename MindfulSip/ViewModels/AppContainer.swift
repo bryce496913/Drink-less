@@ -15,13 +15,27 @@ final class AppContainer: ObservableObject {
     @Published var logs: [DayLog]
     @Published var currentDate: Date = .now
 
+    var todaysReminderMessage: String? {
+        guard settings.remindersEnabled else { return nil }
+        let today = dateService.startOfDay(currentDate)
+        guard
+            let triggerDate = Calendar.current.date(bySettingHour: Calendar.current.component(.hour, from: settings.reminderTime), minute: Calendar.current.component(.minute, from: settings.reminderTime), second: 0, of: today),
+            currentDate >= triggerDate
+        else {
+            return nil
+        }
+        return notificationService.reminderMessage(for: triggerDate)
+    }
+
     private let dateService = DateService()
     private var clockCancellable: AnyCancellable?
+    private var lastReminderRefreshDay: Date
 
     init() {
         profile = store.loadProfile()
         settings = store.loadSettings()
         logs = store.fetchLogs(daysBack: 365)
+        lastReminderRefreshDay = dateService.startOfDay(.now)
         startClock()
         applyReminderSettings()
     }
@@ -62,7 +76,17 @@ final class AppContainer: ObservableObject {
         clockCancellable = Timer.publish(every: 30, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] now in
-                self?.currentDate = now
+                guard let self else { return }
+                currentDate = now
+
+                let day = dateService.startOfDay(now)
+                if day != lastReminderRefreshDay {
+                    lastReminderRefreshDay = day
+                    if settings.remindersEnabled {
+                        applyReminderSettings()
+                    }
+                    notificationService.clearStaleDeliveredReminders(referenceDate: now)
+                }
             }
     }
 

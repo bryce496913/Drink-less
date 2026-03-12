@@ -43,6 +43,21 @@ final class AnalyticsServiceTests: XCTestCase {
             DayLog(date: threeWeeksAgo, plannedTargetDrinks: 2, isDryPlanned: false, totalDrinks: 5, updatedAt: .now, notes: "")
         ]
 
-        XCTAssertEqual(service.weeklyGoalSuccessStreak(logs: logs, weeklyTarget: 3, asOf: today), 2)
+        XCTAssertEqual(service.weeklyGoalSuccessStreak(logs: logs, weeklyTarget: 3, setupDate: threeWeeksAgo, asOf: today), 2)
     }
+    func testWeeklyGoalSuccessStreakStartsAtSetupWeek() {
+        let dateService = DateService()
+        let today = dateService.startOfDay(.now)
+        let currentWeekStart = dateService.startOfWeek(today)
+
+        let lastWeek = Calendar.current.date(byAdding: .day, value: -7, to: currentWeekStart)!
+        let setupDate = Calendar.current.date(byAdding: .day, value: -3, to: lastWeek)!
+
+        let logs = [
+            DayLog(date: lastWeek, plannedTargetDrinks: 2, isDryPlanned: false, totalDrinks: 2, updatedAt: .now, notes: "")
+        ]
+
+        XCTAssertEqual(service.weeklyGoalSuccessStreak(logs: logs, weeklyTarget: 3, setupDate: setupDate, asOf: today), 1)
+    }
+
 }

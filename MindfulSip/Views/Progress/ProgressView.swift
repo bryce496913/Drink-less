@@ -17,7 +17,7 @@ struct ProgressView: View {
                 let totalDrinks = container.logs.reduce(0) { $0 + $1.totalDrinks }
                 let moneySpentTotal = totalDrinks * container.profile.costPerDrink
                 let caloriesTotal = totalDrinks * container.profile.caloriesPerDrink
-                let weeklyGoalStreak = analytics.weeklyGoalSuccessStreak(logs: container.logs, weeklyTarget: container.profile.weeklyTarget, asOf: container.currentDate)
+                let weeklyGoalStreak = analytics.weeklyGoalSuccessStreak(logs: container.logs, weeklyTarget: container.profile.weeklyTarget, setupDate: container.profile.createdAt, asOf: container.currentDate)
 
                 VStack(alignment: .leading, spacing: 16) {
                     HStack(alignment: .top, spacing: 12) {

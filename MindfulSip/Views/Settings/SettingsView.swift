@@ -23,8 +23,16 @@ struct SettingsView: View {
                     Section {
                         Toggle("Reminders enabled", isOn: $container.settings.remindersEnabled)
                             .font(AppTheme.font(.footnote))
+                            .onChange(of: container.settings.remindersEnabled) { _ in
+                                container.saveSettings()
+                            }
                         DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
                             .font(AppTheme.font(.footnote))
+                            .onChange(of: container.settings.reminderTime) { _ in
+                                if container.settings.remindersEnabled {
+                                    container.saveSettings()
+                                }
+                            }
                         Toggle("Avoid weekend auto dry days", isOn: $container.settings.avoidWeekendForAutoDry)
                             .font(AppTheme.font(.footnote))
                     } header: {
