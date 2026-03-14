@@ -9,7 +9,7 @@ struct PlanView: View {
     @State private var isProfileExpanded = false
     @State private var isTargetsExpanded = false
     @State private var isReminderExpanded = false
-    @State private var isDailyTargetsExpanded = true
+    @State private var isDailyTargetsExpanded = false
     @State private var isSettingsExpanded = false
     @State private var showDeleteConfirmation = false
 
