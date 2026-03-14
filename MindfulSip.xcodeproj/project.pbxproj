@@ -26,7 +26,6 @@
 		A017 /* Track/TrackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B017 /* Track/TrackView.swift */; };
 		A018 /* Progress/ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B018 /* Progress/ProgressView.swift */; };
 		A019 /* Settings/SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B019 /* Settings/SettingsView.swift */; };
-		A020 /* Track/SMSSimulatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B020 /* Track/SMSSimulatorView.swift */; };
 		A021 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B021 /* Assets.xcassets */; };
 		A022 /* tips.json in Resources */ = {isa = PBXBuildFile; fileRef = B022 /* tips.json */; };
 		A023 /* MindfulSipModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B023 /* MindfulSipModel.xcdatamodeld */; };
@@ -67,7 +66,6 @@
 		B017 /* Track/TrackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Track/TrackView.swift; sourceTree = "<group>"; };
 		B018 /* Progress/ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress/ProgressView.swift; sourceTree = "<group>"; };
 		B019 /* Settings/SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings/SettingsView.swift; sourceTree = "<group>"; };
-		B020 /* Track/SMSSimulatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Track/SMSSimulatorView.swift; sourceTree = "<group>"; };
 		B021 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B022 /* tips.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = tips.json; sourceTree = "<group>"; };
 		B023 /* MindfulSipModel.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodeld; path = MindfulSipModel.xcdatamodeld; sourceTree = "<group>"; };
@@ -198,7 +196,6 @@
 				B017 /* Track/TrackView.swift */,
 				B018 /* Progress/ProgressView.swift */,
 				B019 /* Settings/SettingsView.swift */,
-				B020 /* Track/SMSSimulatorView.swift */,
 				B025 /* AppTheme.swift */,
 				B026 /* Guidance/GuidanceView.swift */,
 			);
@@ -318,7 +315,6 @@
 				A017 /* Track/TrackView.swift in Sources */,
 				A018 /* Progress/ProgressView.swift in Sources */,
 				A019 /* Settings/SettingsView.swift in Sources */,
-				A020 /* Track/SMSSimulatorView.swift in Sources */,
 				A023 /* MindfulSipModel.xcdatamodeld in Sources */,
 				A024 /* AppTheme.swift in Sources */,
 				A025 /* Guidance/GuidanceView.swift in Sources */,

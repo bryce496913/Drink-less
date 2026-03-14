@@ -15,9 +15,6 @@
         <attribute name="reminderTime" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="remindersEnabled" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="hasCompletedOnboarding" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="backendSyncEnabled" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="backendBaseURL" optional="NO" attributeType="String" defaultValueString=""/>
-        <attribute name="deviceId" optional="NO" attributeType="String" defaultValueString=""/>
         <attribute name="avoidWeekendForAutoDry" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
     </entity>
     <entity name="DayLogEntity" representedClassName="DayLogEntity" syncable="YES">

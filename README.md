@@ -21,7 +21,6 @@ MindfulSip is an iOS 16+ SwiftUI app for planning and tracking mindful drinking 
 - Tip-of-the-day from local JSON.
 - Progress charts, summaries, and 14-day insights.
 - CSV export can be added from current `DataStore` logs.
-- Optional SMS companion simulator and optional Node/Twilio backend stub in `backend_sms_companion/`.
 
 ## Testing
 - `MindfulSipTests/PlanServiceTests.swift`
@@ -33,4 +32,4 @@ xcodebuild test -project MindfulSip.xcodeproj -scheme MindfulSip -destination 'p
 ```
 
 ## Privacy
-All app data stays on device unless the user manually enables backend sync and points to their own URL.
+All app data stays on device. MindfulSip is fully offline and does not perform server sync or online checks.
