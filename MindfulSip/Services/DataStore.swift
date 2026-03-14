@@ -48,7 +48,7 @@ final class DataStore: ObservableObject {
     func loadSettings() -> AppSettings {
         let request = NSFetchRequest<AppSettingsEntity>(entityName: "AppSettingsEntity")
         if let entity = try? context.fetch(request).first {
-            return AppSettings(reminderTime: entity.reminderTime, remindersEnabled: entity.remindersEnabled, hasCompletedOnboarding: entity.hasCompletedOnboarding, backendSyncEnabled: entity.backendSyncEnabled, backendBaseURL: entity.backendBaseURL, deviceId: entity.deviceId, avoidWeekendForAutoDry: entity.avoidWeekendForAutoDry)
+            return AppSettings(reminderTime: entity.reminderTime, remindersEnabled: entity.remindersEnabled, hasCompletedOnboarding: entity.hasCompletedOnboarding, avoidWeekendForAutoDry: entity.avoidWeekendForAutoDry)
         }
         let settings = AppSettings()
         saveSettings(settings)
@@ -61,9 +61,6 @@ final class DataStore: ObservableObject {
         entity.reminderTime = settings.reminderTime
         entity.remindersEnabled = settings.remindersEnabled
         entity.hasCompletedOnboarding = settings.hasCompletedOnboarding
-        entity.backendSyncEnabled = settings.backendSyncEnabled
-        entity.backendBaseURL = settings.backendBaseURL
-        entity.deviceId = settings.deviceId
         entity.avoidWeekendForAutoDry = settings.avoidWeekendForAutoDry
         persistence.save()
     }

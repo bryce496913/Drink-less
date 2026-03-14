@@ -27,9 +27,6 @@ struct AppSettings: Codable {
     var reminderTime: Date = Calendar.current.date(bySettingHour: 20, minute: 0, second: 0, of: .now) ?? .now
     var remindersEnabled: Bool = false
     var hasCompletedOnboarding: Bool = false
-    var backendSyncEnabled: Bool = false
-    var backendBaseURL: String = ""
-    var deviceId: String = UUID().uuidString
     var avoidWeekendForAutoDry: Bool = false
 }
 

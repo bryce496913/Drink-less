@@ -44,9 +44,6 @@ final class AppSettingsEntity: NSManagedObject {
     @NSManaged var reminderTime: Date
     @NSManaged var remindersEnabled: Bool
     @NSManaged var hasCompletedOnboarding: Bool
-    @NSManaged var backendSyncEnabled: Bool
-    @NSManaged var backendBaseURL: String
-    @NSManaged var deviceId: String
     @NSManaged var avoidWeekendForAutoDry: Bool
 }
 
