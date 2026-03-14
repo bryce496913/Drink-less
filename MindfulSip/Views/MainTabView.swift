@@ -1,5 +1,9 @@
 import SwiftUI
 
+extension Notification.Name {
+    static let openPlanTab = Notification.Name("openPlanTab")
+}
+
 enum AppTab: String, CaseIterable, Identifiable {
     case home
     case plan
@@ -64,6 +68,9 @@ struct MainTabView: View {
                     Label(AppTab.guidance.title, systemImage: AppTab.guidance.icon)
                 }
                 .tag(AppTab.guidance)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openPlanTab)) { _ in
+            selectedTab = .plan
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .appFullscreenContainer()
