@@ -8,6 +8,11 @@ struct HomeView: View {
     @State private var showAchievements = false
     @State private var showTip = false
     @State private var addDrinkSaveMessage = ""
+    @State private var showMondaySetupPrompt = false
+    @State private var showWeeklyCelebration = false
+
+    @AppStorage("lastWeeklySetupPromptWeekStart") private var lastWeeklySetupPromptWeekStart = ""
+    @AppStorage("lastWeeklyCelebrationWeekStart") private var lastWeeklyCelebrationWeekStart = ""
 
     private let analytics = AnalyticsService()
 
@@ -24,8 +29,23 @@ struct HomeView: View {
         analytics.dateService.startOfWeek(container.currentDate)
     }
 
+    private var previousWeekStart: Date {
+        Calendar.current.date(byAdding: .day, value: -7, to: weekStart) ?? weekStart
+    }
+
     private var weekTotal: Double {
         analytics.weeklyTotal(logs: container.logs, weekStart: weekStart)
+    }
+
+    private var previousWeekTotal: Double {
+        analytics.weeklyTotal(logs: container.logs, weekStart: previousWeekStart)
+    }
+
+    private var previousWeekHadActivity: Bool {
+        let previousWeekDays = Set(analytics.dateService.weekDates(from: previousWeekStart).map(analytics.dateService.startOfDay))
+        return container.logs.contains { log in
+            previousWeekDays.contains(analytics.dateService.startOfDay(log.date)) && (log.totalDrinks > 0 || log.plannedTargetDrinks > 0)
+        }
     }
 
     private var dryStreak: Int {
@@ -209,7 +229,35 @@ struct HomeView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .background(AppTheme.background)
-                .onAppear { amount = todayLog.totalDrinks }
+                .onAppear {
+                    amount = todayLog.totalDrinks
+                    handleMondayExperience()
+                }
+                .alert("Weekly planning time", isPresented: $showMondaySetupPrompt) {
+                    Button("Go to Plan tab") {
+                        NotificationCenter.default.post(name: .openPlanTab, object: nil)
+                    }
+                    Button("Later", role: .cancel) { }
+                } message: {
+                    Text("It is Monday. Set your weekly goal and assign daily drink targets for Monday through Sunday.")
+                }
+                .overlay(alignment: .top) {
+                    if showWeeklyCelebration {
+                        VStack(spacing: 8) {
+                            Label("🎉 Weekly goal complete!", systemImage: "sparkles")
+                                .font(AppTheme.font(.headline, weight: .bold))
+                            Text("Amazing work last week. You stayed on plan and gave your future self a strong start.")
+                                .font(AppTheme.font(.footnote))
+                                .multilineTextAlignment(.center)
+                        }
+                        .foregroundStyle(AppTheme.text)
+                        .padding(14)
+                        .background(AppTheme.highlight.opacity(0.26), in: RoundedRectangle(cornerRadius: 14))
+                        .padding(.top, 12)
+                        .padding(.horizontal, 20)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                }
                 .appFullscreenContainer()
         }
     }
@@ -218,6 +266,31 @@ struct HomeView: View {
         addDrinkSaveMessage = "Drinks total saved"
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             addDrinkSaveMessage = ""
+        }
+    }
+
+    private func handleMondayExperience() {
+        let currentDay = analytics.dateService.startOfDay(container.currentDate)
+        let thisWeekKey = analytics.dateService.startOfDay(weekStart).formatted(date: .numeric, time: .omitted)
+        let isMonday = Calendar.current.component(.weekday, from: currentDay) == 2
+        guard isMonday else { return }
+
+        if lastWeeklySetupPromptWeekStart != thisWeekKey {
+            showMondaySetupPrompt = true
+            lastWeeklySetupPromptWeekStart = thisWeekKey
+        }
+
+        let previousWeekComplete = previousWeekTotal <= Double(container.profile.weeklyTarget)
+        if lastWeeklyCelebrationWeekStart != thisWeekKey, previousWeekHadActivity, previousWeekComplete {
+            withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                showWeeklyCelebration = true
+            }
+            lastWeeklyCelebrationWeekStart = thisWeekKey
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+                withAnimation(.easeOut(duration: 0.25)) {
+                    showWeeklyCelebration = false
+                }
+            }
         }
     }
 }

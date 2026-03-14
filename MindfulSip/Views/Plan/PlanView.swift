@@ -9,12 +9,20 @@ struct PlanView: View {
     @State private var isProfileExpanded = false
     @State private var isTargetsExpanded = false
     @State private var isReminderExpanded = false
+    @State private var isDailyTargetsExpanded = true
+    @State private var isSettingsExpanded = false
     @State private var showDeleteConfirmation = false
 
     private var weekDates: [Date] { dateService.weekDates(from: container.currentDate) }
 
     private var plannedTotal: Double { targets.reduce(0, +) }
     private var remaining: Double { max(0, Double(container.profile.weeklyTarget) - plannedTotal) }
+    private var weekRangeLabel: String {
+        guard let weekStart = weekDates.first, let weekEnd = weekDates.last else {
+            return "Monday - Sunday"
+        }
+        return "Monday - Sunday • \(weekStart.formatted(date: .abbreviated, time: .omitted)) to \(weekEnd.formatted(date: .abbreviated, time: .omitted))"
+    }
 
     private var displayName: String {
         let trimmed = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -55,6 +63,10 @@ struct PlanView: View {
                 .font(AppTheme.font(.paragraph))
                 .foregroundStyle(AppTheme.text.opacity(0.9))
 
+            Text(weekRangeLabel)
+                .font(AppTheme.font(.caption, weight: .semibold))
+                .foregroundStyle(AppTheme.highlight)
+
             Button("Auto-distribute my target") {
                 targets = container.planService.distributeTarget(weeklyTarget: container.profile.weeklyTarget, dryDayIndexes: dryDays)
                 persist()
@@ -80,15 +92,20 @@ struct PlanView: View {
     }
 
     private var dailyTargetsSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        DisclosureGroup(isExpanded: $isDailyTargetsExpanded) {
+            VStack(alignment: .leading, spacing: 10) {
+                ForEach(Array(weekDates.enumerated()), id: \.offset) { index, date in
+                    dayRow(index: index, date: date)
+                }
+            }
+            .padding(.top, 8)
+        } label: {
             Text("Daily targets")
                 .font(AppTheme.font(.h2, weight: .semibold))
                 .foregroundStyle(AppTheme.text)
-
-            ForEach(Array(weekDates.enumerated()), id: \.offset) { index, date in
-                dayRow(index: index, date: date)
-            }
         }
+        .padding(14)
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -180,69 +197,66 @@ struct PlanView: View {
     }
 
     private var settingsSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Settings")
-                .font(AppTheme.font(.h2, weight: .semibold))
-                .foregroundStyle(AppTheme.text)
+        DisclosureGroup(isExpanded: $isSettingsExpanded) {
+            VStack(alignment: .leading, spacing: 10) {
+                DisclosureGroup(isExpanded: $isProfileExpanded) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 8) {
+                            Text("Name:")
+                                .font(AppTheme.font(.h3, weight: .semibold))
+                                .foregroundStyle(AppTheme.text.opacity(0.9))
+                            TextField("user_name", text: $container.profile.name)
+                                .font(AppTheme.font(.h3))
+                                .textInputAutocapitalization(.words)
+                        }
 
-            DisclosureGroup(isExpanded: $isProfileExpanded) {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 8) {
-                        Text("Name:")
-                            .font(AppTheme.font(.h3, weight: .semibold))
-                            .foregroundStyle(AppTheme.text.opacity(0.9))
-                        TextField("user_name", text: $container.profile.name)
-                            .font(AppTheme.font(.h3))
-                            .textInputAutocapitalization(.words)
-                    }
-
-                    HStack(spacing: 8) {
-                        Text("Goal:")
-                            .font(AppTheme.font(.h3, weight: .semibold))
-                            .foregroundStyle(AppTheme.text.opacity(0.9))
-                        Picker("user_goal", selection: $container.profile.goalType) {
-                            ForEach(GoalType.allCases) { goal in
-                                Text(goal.rawValue).tag(goal)
+                        HStack(spacing: 8) {
+                            Text("Goal:")
+                                .font(AppTheme.font(.h3, weight: .semibold))
+                                .foregroundStyle(AppTheme.text.opacity(0.9))
+                            Picker("user_goal", selection: $container.profile.goalType) {
+                                ForEach(GoalType.allCases) { goal in
+                                    Text(goal.rawValue).tag(goal)
+                                }
                             }
+                            .font(AppTheme.font(.h3))
                         }
-                        .font(AppTheme.font(.h3))
                     }
+                    .padding(.top, 4)
+                } label: {
+                    Text("Profile")
+                        .font(AppTheme.font(.h2, weight: .semibold))
                 }
-                .padding(.top, 4)
-            } label: {
-                Text("Profile")
-                    .font(AppTheme.font(.h2, weight: .semibold))
-            }
 
-            DisclosureGroup(isExpanded: $isTargetsExpanded) {
-                VStack(spacing: 8) {
-                    Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0...50)
-                        .font(AppTheme.font(.h3))
-                    Stepper("Dry day target: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0...7)
-                        .font(AppTheme.font(.h3))
+                DisclosureGroup(isExpanded: $isTargetsExpanded) {
+                    VStack(spacing: 8) {
+                        Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0...50)
+                            .font(AppTheme.font(.h3))
+                        Stepper("Dry day target: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0...7)
+                            .font(AppTheme.font(.h3))
+                    }
+                    .padding(.top, 4)
+                } label: {
+                    Text("Targets")
+                        .font(AppTheme.font(.h2, weight: .semibold))
                 }
-                .padding(.top, 4)
-            } label: {
-                Text("Targets")
-                    .font(AppTheme.font(.h2, weight: .semibold))
-            }
 
-            DisclosureGroup(isExpanded: $isReminderExpanded) {
-                VStack(spacing: 8) {
-                    Toggle("Reminders enabled", isOn: $container.settings.remindersEnabled)
-                        .font(AppTheme.font(.h3))
-                        .onChange(of: container.settings.remindersEnabled) { _ in
-                            container.saveSettings()
-                        }
-                    DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
-                        .font(AppTheme.font(.h3))
-                        .onChange(of: container.settings.reminderTime) { _ in
-                            if container.settings.remindersEnabled {
+                DisclosureGroup(isExpanded: $isReminderExpanded) {
+                    VStack(spacing: 8) {
+                        Toggle("Reminders enabled", isOn: $container.settings.remindersEnabled)
+                            .font(AppTheme.font(.h3))
+                            .onChange(of: container.settings.remindersEnabled) { _ in
                                 container.saveSettings()
                             }
-                        }
-                    Toggle("Avoid weekend auto dry days", isOn: $container.settings.avoidWeekendForAutoDry)
-                        .font(AppTheme.font(.h3))
+                        DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
+                            .font(AppTheme.font(.h3))
+                            .onChange(of: container.settings.reminderTime) { _ in
+                                if container.settings.remindersEnabled {
+                                    container.saveSettings()
+                                }
+                            }
+                        Toggle("Avoid weekend auto dry days", isOn: $container.settings.avoidWeekendForAutoDry)
+                            .font(AppTheme.font(.h3))
                 }
                 .padding(.top, 4)
             } label: {
@@ -263,7 +277,13 @@ struct PlanView: View {
                 showDeleteConfirmation = true
             }
             .buttonStyle(SecondaryButtonStyle())
+            .padding(.top, 2)
+        } label: {
+            Text("Settings")
+                .font(AppTheme.font(.h2, weight: .semibold))
+                .foregroundStyle(AppTheme.text)
         }
+        .padding(.top, 4)
         .foregroundStyle(AppTheme.text)
         .padding(14)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
