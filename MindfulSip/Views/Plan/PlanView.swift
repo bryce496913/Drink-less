@@ -257,27 +257,31 @@ struct PlanView: View {
                             }
                         Toggle("Avoid weekend auto dry days", isOn: $container.settings.avoidWeekendForAutoDry)
                             .font(AppTheme.font(.h3))
+                            .onChange(of: container.settings.avoidWeekendForAutoDry) { _ in
+                                container.saveSettings()
+                            }
+                    }
+                    .padding(.top, 4)
+                } label: {
+                    Text("Reminders")
+                        .font(AppTheme.font(.h2, weight: .semibold))
                 }
-                .padding(.top, 4)
-            } label: {
-                Text("Reminders")
-                    .font(AppTheme.font(.h2, weight: .semibold))
-            }
 
-            Button("Save settings") {
-                container.profile.name = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
-                if container.profile.name.isEmpty {
-                    container.profile.name = "Friend"
+                Button("Save settings") {
+                    container.profile.name = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if container.profile.name.isEmpty {
+                        container.profile.name = "Friend"
+                    }
+                    container.saveProfileAndSettings()
                 }
-                container.saveProfileAndSettings()
-            }
-            .buttonStyle(PrimaryButtonStyle())
+                .buttonStyle(PrimaryButtonStyle())
 
-            Button("Delete all data", role: .destructive) {
-                showDeleteConfirmation = true
+                Button("Delete all data", role: .destructive) {
+                    showDeleteConfirmation = true
+                }
+                .buttonStyle(SecondaryButtonStyle())
+                .padding(.top, 2)
             }
-            .buttonStyle(SecondaryButtonStyle())
-            .padding(.top, 2)
         } label: {
             Text("Settings")
                 .font(AppTheme.font(.h2, weight: .semibold))
