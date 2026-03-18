@@ -10,6 +10,7 @@ struct HomeView: View {
     @State private var addDrinkSaveMessage = ""
     @State private var showMondaySetupPrompt = false
     @State private var showWeeklyCelebration = false
+    @State private var pendingMondaySetupPrompt = false
 
     @AppStorage("lastWeeklySetupPromptWeekStart") private var lastWeeklySetupPromptWeekStart = ""
     @AppStorage("lastWeeklyCelebrationWeekStart") private var lastWeeklyCelebrationWeekStart = ""
@@ -275,10 +276,7 @@ struct HomeView: View {
         let isMonday = Calendar.current.component(.weekday, from: currentDay) == 2
         guard isMonday else { return }
 
-        if lastWeeklySetupPromptWeekStart != thisWeekKey {
-            showMondaySetupPrompt = true
-            lastWeeklySetupPromptWeekStart = thisWeekKey
-        }
+        let shouldPromptForSetup = lastWeeklySetupPromptWeekStart != thisWeekKey
 
         let previousWeekComplete = previousWeekTotal <= Double(container.profile.weeklyTarget)
         if lastWeeklyCelebrationWeekStart != thisWeekKey, previousWeekHadActivity, previousWeekComplete {
@@ -286,11 +284,25 @@ struct HomeView: View {
                 showWeeklyCelebration = true
             }
             lastWeeklyCelebrationWeekStart = thisWeekKey
+
+            if shouldPromptForSetup {
+                pendingMondaySetupPrompt = true
+            }
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                 withAnimation(.easeOut(duration: 0.25)) {
                     showWeeklyCelebration = false
                 }
+
+                if pendingMondaySetupPrompt {
+                    showMondaySetupPrompt = true
+                    lastWeeklySetupPromptWeekStart = thisWeekKey
+                    pendingMondaySetupPrompt = false
+                }
             }
+        } else if shouldPromptForSetup {
+            showMondaySetupPrompt = true
+            lastWeeklySetupPromptWeekStart = thisWeekKey
         }
     }
 }
