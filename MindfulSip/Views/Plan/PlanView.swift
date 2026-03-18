@@ -12,6 +12,7 @@ struct PlanView: View {
     @State private var isDailyTargetsExpanded = false
     @State private var isSettingsExpanded = false
     @State private var showDeleteConfirmation = false
+    @State private var settingsSaveMessage = ""
 
     private var weekDates: [Date] { dateService.weekDates(from: container.currentDate) }
 
@@ -62,6 +63,7 @@ struct PlanView: View {
             Text("Set daily limits and dry days. Your total is auto-capped to your weekly target.")
                 .font(AppTheme.font(.paragraph))
                 .foregroundStyle(AppTheme.text.opacity(0.9))
+                .fixedSize(horizontal: false, vertical: true)
 
             Text(weekRangeLabel)
                 .font(AppTheme.font(.caption, weight: .semibold))
@@ -273,8 +275,16 @@ struct PlanView: View {
                         container.profile.name = "Friend"
                     }
                     container.saveProfileAndSettings()
+                    showSettingsSavedFeedback()
                 }
                 .buttonStyle(PrimaryButtonStyle())
+
+                if !settingsSaveMessage.isEmpty {
+                    Label(settingsSaveMessage, systemImage: "checkmark.circle.fill")
+                        .font(AppTheme.font(.caption, weight: .semibold))
+                        .foregroundStyle(AppTheme.highlight)
+                        .transition(.opacity)
+                }
 
                 Button("Delete all data", role: .destructive) {
                     showDeleteConfirmation = true
@@ -300,6 +310,13 @@ struct PlanView: View {
             }
         } message: {
             Text("This action permanently removes your logs, profile, and app settings.")
+        }
+    }
+
+    private func showSettingsSavedFeedback() {
+        settingsSaveMessage = "Settings saved"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            settingsSaveMessage = ""
         }
     }
 

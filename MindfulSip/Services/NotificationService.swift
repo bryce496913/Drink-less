@@ -1,8 +1,10 @@
 import Foundation
 import UserNotifications
+import UIKit
 
 struct NotificationService {
     private let reminderIdPrefix = "dailyLogReminder"
+    private let weeklyPlanningReminderId = "weeklyPlanningReminder"
     private let reminderMessages = [
         "A mindful choice tonight can change tomorrow.",
         "Pause first. Your goal still matters.",
@@ -27,7 +29,7 @@ struct NotificationService {
     ]
 
     func requestIfNeeded() async {
-        _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert])
+        _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge])
     }
 
     func scheduleDailyReminder(at date: Date, from now: Date = .now, daysAhead: Int = 30) {
@@ -50,6 +52,7 @@ struct NotificationService {
             let content = UNMutableNotificationContent()
             content.title = "Mindful check-in"
             content.body = reminderMessage(for: fireDate)
+            content.badge = 1
             if #available(iOS 15.0, *) {
                 content.interruptionLevel = .timeSensitive
             }
@@ -61,6 +64,8 @@ struct NotificationService {
             )
             center.add(request)
         }
+
+        scheduleWeeklyPlanningReminder()
 
         clearStaleDeliveredReminders()
     }
@@ -94,11 +99,17 @@ struct NotificationService {
         }
     }
 
+    func clearBadgeCount() {
+        DispatchQueue.main.async {
+            UIApplication.shared.applicationIconBadgeNumber = 0
+        }
+    }
+
     private func removeAllScheduledReminders() {
         let center = UNUserNotificationCenter.current()
         center.getPendingNotificationRequests { requests in
             let ids = requests
-                .filter { $0.identifier.hasPrefix(reminderIdPrefix) }
+                .filter { $0.identifier.hasPrefix(reminderIdPrefix) || $0.identifier == weeklyPlanningReminderId }
                 .map(\.identifier)
             if !ids.isEmpty {
                 center.removePendingNotificationRequests(withIdentifiers: ids)
@@ -113,6 +124,26 @@ struct NotificationService {
                 center.removeDeliveredNotifications(withIdentifiers: ids)
             }
         }
+    }
+
+    private func scheduleWeeklyPlanningReminder() {
+        let center = UNUserNotificationCenter.current()
+        var mondayMorning = DateComponents()
+        mondayMorning.weekday = 2
+        mondayMorning.hour = 9
+        mondayMorning.minute = 0
+
+        let content = UNMutableNotificationContent()
+        content.title = "Plan your week"
+        content.body = "It’s Monday morning. Set your weekly target and daily plan in MindfulSip."
+        content.badge = 1
+        if #available(iOS 15.0, *) {
+            content.interruptionLevel = .active
+        }
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: mondayMorning, repeats: true)
+        let request = UNNotificationRequest(identifier: weeklyPlanningReminderId, content: content, trigger: trigger)
+        center.add(request)
     }
 
     private func reminderIdentifier(for date: Date) -> String {
