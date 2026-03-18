@@ -72,18 +72,15 @@ struct ProgressView: View {
                         }
                     }
 
-                    if container.logs.count >= 14 {
-                        let insight = analytics.insights(logs: container.logs)
-                        Text("Last 14 days: \(String(format: "%.1f", insight.last14)), previous: \(String(format: "%.1f", insight.previous14))")
-                        Text("No-drink streak: \(insight.dryStreak) days")
-                        Text("App-use streak: \(insight.loggingStreak) days")
+                    let achievementService = AchievementService()
+                    let achievementStats = achievementService.stats(logs: container.logs, today: container.currentDate)
+                    let achievements = achievementService.achievements(logs: container.logs, today: container.currentDate)
 
-                        Text("Achievements")
-                            .font(AppTheme.font(.headline, weight: .semibold))
-                        if insight.dryStreak >= 3 { Text("🏅 \(insight.dryStreak)-day dry streak") }
-                        if insight.loggingStreak >= 7 { Text("🏅 \(insight.loggingStreak)-day app consistency") }
-                        if drinks <= Double(container.profile.weeklyTarget) { Text("🏅 Weekly target met") }
-                    }
+                    AchievementsAccordionView(
+                        achievements: achievements,
+                        stats: achievementStats,
+                        achievementService: achievementService
+                    )
                 }
                 .font(AppTheme.font(.callout))
                 .foregroundStyle(AppTheme.text)
