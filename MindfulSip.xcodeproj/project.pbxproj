@@ -31,8 +31,14 @@
 		A023 /* MindfulSipModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B023 /* MindfulSipModel.xcdatamodeld */; };
 		A024 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B025 /* AppTheme.swift */; };
 		A025 /* Guidance/GuidanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B026 /* Guidance/GuidanceView.swift */; };
+		A026 /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = B027 /* Achievement.swift */; };
+		A027 /* AchievementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B028 /* AchievementService.swift */; };
+		A028 /* Progress/AchievementBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B029 /* Progress/AchievementBadgeView.swift */; };
+		A029 /* Progress/AchievementDetailPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B030 /* Progress/AchievementDetailPopupView.swift */; };
+		A030 /* Progress/AchievementsAccordionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031 /* Progress/AchievementsAccordionView.swift */; };
 		A101 /* PlanServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B101 /* PlanServiceTests.swift */; };
 		A102 /* AnalyticsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B102 /* AnalyticsServiceTests.swift */; };
+		A103 /* AchievementServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B103 /* AchievementServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,8 +78,14 @@
 		B024 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B025 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		B026 /* Guidance/GuidanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Guidance/GuidanceView.swift; sourceTree = "<group>"; };
+		B027 /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
+		B028 /* AchievementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementService.swift; sourceTree = "<group>"; };
+		B029 /* Progress/AchievementBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress/AchievementBadgeView.swift; sourceTree = "<group>"; };
+		B030 /* Progress/AchievementDetailPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress/AchievementDetailPopupView.swift; sourceTree = "<group>"; };
+		B031 /* Progress/AchievementsAccordionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress/AchievementsAccordionView.swift; sourceTree = "<group>"; };
 		B101 /* PlanServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanServiceTests.swift; sourceTree = "<group>"; };
 		B102 /* AnalyticsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsServiceTests.swift; sourceTree = "<group>"; };
+		B103 /* AchievementServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementServiceTests.swift; sourceTree = "<group>"; };
 		TST /* MindfulSipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = MindfulSipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -107,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				B002 /* Models.swift */,
+				B027 /* Achievement.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -158,6 +171,7 @@
 				B008 /* AnalyticsService.swift */,
 				B009 /* NotificationService.swift */,
 				B010 /* TipService.swift */,
+				B028 /* AchievementService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -181,6 +195,7 @@
 			children = (
 				B101 /* PlanServiceTests.swift */,
 				B102 /* AnalyticsServiceTests.swift */,
+				B103 /* AchievementServiceTests.swift */,
 			);
 			path = MindfulSipTests;
 			sourceTree = "<group>";
@@ -195,6 +210,9 @@
 				B016 /* Plan/PlanView.swift */,
 				B017 /* Track/TrackView.swift */,
 				B018 /* Progress/ProgressView.swift */,
+				B029 /* Progress/AchievementBadgeView.swift */,
+				B030 /* Progress/AchievementDetailPopupView.swift */,
+				B031 /* Progress/AchievementsAccordionView.swift */,
 				B019 /* Settings/SettingsView.swift */,
 				B025 /* AppTheme.swift */,
 				B026 /* Guidance/GuidanceView.swift */,
@@ -318,6 +336,11 @@
 				A023 /* MindfulSipModel.xcdatamodeld in Sources */,
 				A024 /* AppTheme.swift in Sources */,
 				A025 /* Guidance/GuidanceView.swift in Sources */,
+				A026 /* Achievement.swift in Sources */,
+				A027 /* AchievementService.swift in Sources */,
+				A028 /* Progress/AchievementBadgeView.swift in Sources */,
+				A029 /* Progress/AchievementDetailPopupView.swift in Sources */,
+				A030 /* Progress/AchievementsAccordionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,6 +350,7 @@
 			files = (
 				A101 /* PlanServiceTests.swift in Sources */,
 				A102 /* AnalyticsServiceTests.swift in Sources */,
+				A103 /* AchievementServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
