@@ -5,7 +5,7 @@ struct AchievementBadgeView: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            ZStack(alignment: .bottomTrailing) {
+            ZStack {
                 Circle()
                     .fill(badgeGradient)
                     .overlay(
@@ -16,14 +16,14 @@ struct AchievementBadgeView: View {
                     .shadow(color: achievement.isUnlocked ? AppTheme.accent.opacity(0.55) : .clear, radius: 10, y: 4)
 
                 Text(achievement.emoji)
-                    .font(.system(size: 30))
+                    .font(.system(size: 40))
+                    .opacity(0.16)
 
                 Image(systemName: achievement.iconName)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 36, weight: .semibold))
                     .foregroundStyle(symbolColor)
-                    .padding(6)
-                    .background(.ultraThinMaterial.opacity(0.65), in: Circle())
-                    .offset(x: 4, y: 4)
+                    .symbolRenderingMode(.hierarchical)
+                    .frame(width: 78, height: 78)
             }
 
             Text(achievement.title)
