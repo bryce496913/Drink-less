@@ -73,7 +73,7 @@ struct AchievementDetailPopupView: View {
                 }
             }
         }
-        .presentationDetents([.fraction(0.46), .medium])
+        .presentationDetents([.fraction(0.58), .medium, .large])
         .presentationDragIndicator(.visible)
     }
 
