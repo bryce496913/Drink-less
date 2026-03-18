@@ -11,7 +11,7 @@ struct AchievementDetailPopupView: View {
         NavigationStack {
             VStack(spacing: 18) {
                 VStack(spacing: 12) {
-                    ZStack(alignment: .bottomTrailing) {
+                    ZStack {
                         Circle()
                             .fill(
                                 LinearGradient(
@@ -27,14 +27,14 @@ struct AchievementDetailPopupView: View {
                             .shadow(color: achievement.isUnlocked ? AppTheme.accent.opacity(0.5) : .clear, radius: 14, y: 8)
 
                         Text(achievement.emoji)
-                            .font(.system(size: 54))
+                            .font(.system(size: 60))
+                            .opacity(0.14)
 
                         Image(systemName: achievement.iconName)
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(.system(size: 54, weight: .semibold))
                             .foregroundStyle(.white)
-                            .padding(10)
-                            .background(AppTheme.surface.opacity(0.78), in: Circle())
-                            .offset(x: 6, y: 6)
+                            .symbolRenderingMode(.hierarchical)
+                            .frame(width: 120, height: 120)
                     }
 
                     Text(achievement.title)
