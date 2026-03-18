@@ -60,7 +60,8 @@ struct AchievementDetailPopupView: View {
 
                 Spacer(minLength: 0)
             }
-            .padding(20)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 28)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(AppTheme.surface.ignoresSafeArea())
             .toolbar {

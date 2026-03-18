@@ -13,12 +13,6 @@ struct AchievementsAccordionView: View {
     var body: some View {
         DisclosureGroup(isExpanded: $isExpanded) {
             VStack(alignment: .leading, spacing: 14) {
-                statSummary
-
-                Text("Every badge stays visible so you can see the next uplifting milestone at a glance.")
-                    .font(AppTheme.font(.caption))
-                    .foregroundStyle(AppTheme.text.opacity(0.74))
-
                 LazyVGrid(columns: columns, alignment: .leading, spacing: 12) {
                     ForEach(achievements) { achievement in
                         Button {
@@ -82,25 +76,4 @@ struct AchievementsAccordionView: View {
         }
     }
 
-    private var statSummary: some View {
-        HStack(spacing: 10) {
-            statPill(emoji: "💧", title: "Dry streak", value: stats.dryStreak)
-            statPill(emoji: "📱", title: "App use", value: stats.appUseStreak)
-            statPill(emoji: "✅", title: "Goal met", value: stats.goalMetDays)
-        }
-    }
-
-    private func statPill(emoji: String, title: String, value: Int) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("\(emoji) \(title)")
-                .font(AppTheme.font(.caption2))
-                .foregroundStyle(AppTheme.text.opacity(0.72))
-            Text("\(value)")
-                .font(AppTheme.font(.subheadline, weight: .semibold))
-                .foregroundStyle(AppTheme.text)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(10)
-        .background(AppTheme.background.opacity(0.42), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-    }
 }
