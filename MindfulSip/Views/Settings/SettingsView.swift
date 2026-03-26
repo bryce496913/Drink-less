@@ -13,10 +13,38 @@ struct SettingsView: View {
                     Section {
                         Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0...50)
                             .font(AppTheme.font(.footnote))
+                            .disabled(container.areWeeklyTargetsLocked)
                         Stepper("Dry day target: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0...7)
                             .font(AppTheme.font(.footnote))
+                            .disabled(container.areWeeklyTargetsLocked)
+                        if container.areWeeklyTargetsLocked {
+                            Text("Weekly targets are locked for this week and can be changed again next Monday.")
+                                .font(AppTheme.font(.caption))
+                                .foregroundStyle(AppTheme.text.opacity(0.75))
+                        }
                     } header: {
                         Text("Targets")
+                            .font(AppTheme.font(.headline, weight: .semibold))
+                    }
+
+                    Section {
+                        Stepper(
+                            "Price per drink: $\(container.profile.costPerDrink, specifier: "%.2f")",
+                            value: $container.profile.costPerDrink,
+                            in: 0...100,
+                            step: 0.5
+                        )
+                        .font(AppTheme.font(.footnote))
+
+                        Stepper(
+                            "Calories per drink: \(container.profile.caloriesPerDrink, specifier: "%.0f")",
+                            value: $container.profile.caloriesPerDrink,
+                            in: 0...1500,
+                            step: 5
+                        )
+                        .font(AppTheme.font(.footnote))
+                    } header: {
+                        Text("Drink defaults")
                             .font(AppTheme.font(.headline, weight: .semibold))
                     }
 

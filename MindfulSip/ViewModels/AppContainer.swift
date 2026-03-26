@@ -40,19 +40,30 @@ final class AppContainer: ObservableObject {
         applyReminderSettings()
     }
 
+    var areWeeklyTargetsLocked: Bool {
+        guard let lockWeekStart = settings.targetsLockedWeekStart else { return false }
+        return dateService.startOfDay(lockWeekStart) == dateService.startOfDay(dateService.startOfWeek(currentDate))
+    }
+
     func refresh() {
         profile = store.loadProfile()
         settings = store.loadSettings()
         logs = store.fetchLogs(daysBack: 365)
     }
 
-    func saveProfile() { store.saveProfile(profile); refresh() }
+    func saveProfile() {
+        applyWeeklyTargetLock()
+        store.saveProfile(profile)
+        store.saveSettings(settings)
+        refresh()
+    }
     func saveSettings() {
         store.saveSettings(settings)
         applyReminderSettings()
         refresh()
     }
     func saveProfileAndSettings() {
+        applyWeeklyTargetLock()
         store.saveProfile(profile)
         store.saveSettings(settings)
         applyReminderSettings()
@@ -99,6 +110,29 @@ final class AppContainer: ObservableObject {
         Task {
             await notificationService.requestIfNeeded()
             notificationService.scheduleDailyReminder(at: settings.reminderTime)
+        }
+    }
+
+    private func applyWeeklyTargetLock() {
+        let persistedProfile = store.loadProfile()
+        let persistedSettings = store.loadSettings()
+
+        let currentWeekStart = dateService.startOfWeek(currentDate)
+        let lockIsActiveForCurrentWeek = persistedSettings.targetsLockedWeekStart.map {
+            dateService.startOfDay($0) == dateService.startOfDay(currentWeekStart)
+        } ?? false
+
+        if lockIsActiveForCurrentWeek {
+            profile.weeklyTarget = persistedProfile.weeklyTarget
+            profile.dryDaysTarget = persistedProfile.dryDaysTarget
+            settings.targetsLockedWeekStart = currentWeekStart
+            return
+        }
+
+        let isMonday = dateService.calendar.component(.weekday, from: currentDate) == 2
+        let targetsWereUpdated = profile.weeklyTarget != persistedProfile.weeklyTarget || profile.dryDaysTarget != persistedProfile.dryDaysTarget
+        if isMonday && targetsWereUpdated {
+            settings.targetsLockedWeekStart = currentWeekStart
         }
     }
 }

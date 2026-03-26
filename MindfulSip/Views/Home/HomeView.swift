@@ -253,7 +253,7 @@ struct HomeView: View {
                         }
                         .foregroundStyle(AppTheme.text)
                         .padding(14)
-                        .background(AppTheme.highlight.opacity(0.26), in: RoundedRectangle(cornerRadius: 14))
+                        .background(AppTheme.highlight, in: RoundedRectangle(cornerRadius: 14))
                         .padding(.top, 12)
                         .padding(.horizontal, 20)
                         .transition(.move(edge: .top).combined(with: .opacity))

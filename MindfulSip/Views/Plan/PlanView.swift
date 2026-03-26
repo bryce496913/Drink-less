@@ -234,8 +234,16 @@ struct PlanView: View {
                     VStack(spacing: 8) {
                         Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0...50)
                             .font(AppTheme.font(.h3))
+                            .disabled(container.areWeeklyTargetsLocked)
                         Stepper("Dry day target: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0...7)
                             .font(AppTheme.font(.h3))
+                            .disabled(container.areWeeklyTargetsLocked)
+                        if container.areWeeklyTargetsLocked {
+                            Text("Targets are locked for this week and can be adjusted again next Monday.")
+                                .font(AppTheme.font(.caption))
+                                .foregroundStyle(AppTheme.text.opacity(0.75))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
                     .padding(.top, 4)
                 } label: {
