@@ -223,6 +223,30 @@ struct PlanView: View {
                             }
                             .font(AppTheme.font(.h3))
                         }
+
+                        HStack(spacing: 8) {
+                            Text("Price per drink:")
+                                .font(AppTheme.font(.h3, weight: .semibold))
+                                .foregroundStyle(AppTheme.text.opacity(0.9))
+                            Spacer()
+                            TextField("", value: $container.profile.costPerDrink, format: .number)
+                                .font(AppTheme.font(.h3))
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                                .frame(maxWidth: 90)
+                        }
+
+                        HStack(spacing: 8) {
+                            Text("Calories per drink:")
+                                .font(AppTheme.font(.h3, weight: .semibold))
+                                .foregroundStyle(AppTheme.text.opacity(0.9))
+                            Spacer()
+                            TextField("", value: $container.profile.caloriesPerDrink, format: .number)
+                                .font(AppTheme.font(.h3))
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                                .frame(maxWidth: 90)
+                        }
                     }
                     .padding(.top, 4)
                 } label: {

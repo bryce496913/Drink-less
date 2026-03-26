@@ -10,6 +10,7 @@ struct TrackView: View {
     @State private var dayAmountDraft: Double = 0
     @State private var noteSaveMessage = ""
     @State private var drinksSaveMessage = ""
+    @State private var isAddDrinksExpanded = false
 
     private var monthDates: [Date] {
         guard let monthInterval = calendar.dateInterval(of: .month, for: selectedDate),
@@ -193,6 +194,22 @@ struct TrackView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 2)
 
+                HStack {
+                    Spacer()
+                    Button {
+                        withAnimation {
+                            showDayCard = false
+                        }
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(AppTheme.font(.caption, weight: .semibold))
+                            .foregroundStyle(AppTheme.text)
+                            .padding(7)
+                            .background(AppTheme.background.opacity(0.7), in: Circle())
+                    }
+                    .buttonStyle(.plain)
+                }
+
                 HStack(alignment: .center, spacing: 8) {
                     Button {
                         moveSelectedDay(by: -1)
@@ -212,20 +229,6 @@ struct TrackView: View {
                         Image(systemName: "chevron.right")
                     }
                     .buttonStyle(SecondaryButtonStyle())
-
-                    Spacer()
-                    Button {
-                        withAnimation {
-                            showDayCard = false
-                        }
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(AppTheme.font(.caption, weight: .semibold))
-                            .foregroundStyle(AppTheme.text)
-                            .padding(7)
-                            .background(AppTheme.background.opacity(0.7), in: Circle())
-                    }
-                    .buttonStyle(.plain)
                 }
 
                 HStack(spacing: 10) {
@@ -253,41 +256,47 @@ struct TrackView: View {
 
                 detailPill(title: "Types", value: drinkTypesSummary)
 
-                Text("Add drinks")
-                    .font(AppTheme.font(.footnote, weight: .semibold))
-                    .foregroundStyle(AppTheme.text.opacity(0.8))
+                DisclosureGroup(isExpanded: $isAddDrinksExpanded) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        TrackDrinkQuickAddGrid { amountToAdd, type in
+                            guard !isFutureDay else { return }
+                            container.updateDrinkTotal(
+                                date: selectedDate,
+                                total: selectedLog.totalDrinks + amountToAdd,
+                                type: type,
+                                delta: amountToAdd
+                            )
+                            dayAmountDraft = container.log(for: selectedDate).totalDrinks
+                            showDrinksSavedMessage()
+                        }
+                        .disabled(isFutureDay)
 
-                TrackDrinkQuickAddGrid { amountToAdd, type in
-                    guard !isFutureDay else { return }
-                    container.updateDrinkTotal(
-                        date: selectedDate,
-                        total: selectedLog.totalDrinks + amountToAdd,
-                        type: type,
-                        delta: amountToAdd
-                    )
-                    dayAmountDraft = container.log(for: selectedDate).totalDrinks
-                    showDrinksSavedMessage()
+                        Stepper("Set day total: \(dayAmountDraft, specifier: "%.1f")", value: $dayAmountDraft, in: 0...20, step: 0.5)
+                            .font(AppTheme.font(.body))
+                            .foregroundStyle(AppTheme.text)
+                            .disabled(isFutureDay)
+
+                        Button("Save drinks") {
+                            guard !isFutureDay else { return }
+                            container.updateDrinkTotal(date: selectedDate, total: dayAmountDraft)
+                            showDrinksSavedMessage()
+                        }
+                        .buttonStyle(PrimaryButtonStyle())
+                        .disabled(isFutureDay)
+
+                        if isFutureDay {
+                            Text("Future dates cannot be edited yet.")
+                                .font(AppTheme.font(.caption))
+                                .foregroundStyle(AppTheme.text.opacity(0.75))
+                        }
+                    }
+                    .padding(.top, 4)
+                } label: {
+                    Text("Add drinks")
+                        .font(AppTheme.font(.footnote, weight: .semibold))
+                        .foregroundStyle(AppTheme.text.opacity(0.8))
                 }
-                .disabled(isFutureDay)
-
-                Stepper("Set day total: \(dayAmountDraft, specifier: "%.1f")", value: $dayAmountDraft, in: 0...20, step: 0.5)
-                    .font(AppTheme.font(.body))
-                    .foregroundStyle(AppTheme.text)
-                    .disabled(isFutureDay)
-
-                Button("Save drinks") {
-                    guard !isFutureDay else { return }
-                    container.updateDrinkTotal(date: selectedDate, total: dayAmountDraft)
-                    showDrinksSavedMessage()
-                }
-                .buttonStyle(PrimaryButtonStyle())
-                .disabled(isFutureDay)
-
-                if isFutureDay {
-                    Text("Future dates cannot be edited yet.")
-                        .font(AppTheme.font(.caption))
-                        .foregroundStyle(AppTheme.text.opacity(0.75))
-                }
+                .tint(AppTheme.text)
 
                 if !drinksSaveMessage.isEmpty {
                     Text(drinksSaveMessage)
@@ -337,7 +346,7 @@ struct TrackView: View {
                 .stroke(AppTheme.accent.opacity(0.35), lineWidth: 1)
         )
         .padding(.horizontal)
-        .padding(.top, 110)
+        .padding(.top, 96)
         .padding(.bottom, 12)
     }
 
