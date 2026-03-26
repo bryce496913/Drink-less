@@ -28,6 +28,7 @@ struct AppSettings: Codable {
     var remindersEnabled: Bool = false
     var hasCompletedOnboarding: Bool = false
     var avoidWeekendForAutoDry: Bool = false
+    var targetsLockedWeekStart: Date? = nil
 }
 
 struct DrinkEntry: Codable, Identifiable {

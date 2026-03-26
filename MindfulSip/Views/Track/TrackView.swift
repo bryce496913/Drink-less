@@ -7,7 +7,9 @@ struct TrackView: View {
     @State private var selectedDate = Date.now
     @State private var showDayCard = false
     @State private var notesDraft = ""
+    @State private var dayAmountDraft: Double = 0
     @State private var noteSaveMessage = ""
+    @State private var drinksSaveMessage = ""
 
     private var monthDates: [Date] {
         guard let monthInterval = calendar.dateInterval(of: .month, for: selectedDate),
@@ -38,6 +40,10 @@ struct TrackView: View {
 
     private var selectedLog: DayLog {
         container.log(for: selectedDate)
+    }
+
+    private var isFutureDay: Bool {
+        calendar.startOfDay(for: selectedDate) > today
     }
 
     private var onboardingStartDate: Date? {
@@ -181,9 +187,32 @@ struct TrackView: View {
     private var dayInfoCard: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .center) {
+                Capsule()
+                    .fill(AppTheme.text.opacity(0.3))
+                    .frame(width: 44, height: 5)
+                    .frame(maxWidth: .infinity)
+                    .padding(.bottom, 2)
+
+                HStack(alignment: .center, spacing: 8) {
+                    Button {
+                        moveSelectedDay(by: -1)
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                    .buttonStyle(SecondaryButtonStyle())
+
                     Text(selectedDate.formatted(date: .complete, time: .omitted))
                         .font(AppTheme.font(.headline, weight: .semibold))
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+
+                    Button {
+                        moveSelectedDay(by: 1)
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                    .buttonStyle(SecondaryButtonStyle())
+
                     Spacer()
                     Button {
                         withAnimation {
@@ -224,6 +253,49 @@ struct TrackView: View {
 
                 detailPill(title: "Types", value: drinkTypesSummary)
 
+                Text("Add drinks")
+                    .font(AppTheme.font(.footnote, weight: .semibold))
+                    .foregroundStyle(AppTheme.text.opacity(0.8))
+
+                TrackDrinkQuickAddGrid { amountToAdd, type in
+                    guard !isFutureDay else { return }
+                    container.updateDrinkTotal(
+                        date: selectedDate,
+                        total: selectedLog.totalDrinks + amountToAdd,
+                        type: type,
+                        delta: amountToAdd
+                    )
+                    dayAmountDraft = container.log(for: selectedDate).totalDrinks
+                    showDrinksSavedMessage()
+                }
+                .disabled(isFutureDay)
+
+                Stepper("Set day total: \(dayAmountDraft, specifier: "%.1f")", value: $dayAmountDraft, in: 0...20, step: 0.5)
+                    .font(AppTheme.font(.body))
+                    .foregroundStyle(AppTheme.text)
+                    .disabled(isFutureDay)
+
+                Button("Save drinks") {
+                    guard !isFutureDay else { return }
+                    container.updateDrinkTotal(date: selectedDate, total: dayAmountDraft)
+                    showDrinksSavedMessage()
+                }
+                .buttonStyle(PrimaryButtonStyle())
+                .disabled(isFutureDay)
+
+                if isFutureDay {
+                    Text("Future dates cannot be edited yet.")
+                        .font(AppTheme.font(.caption))
+                        .foregroundStyle(AppTheme.text.opacity(0.75))
+                }
+
+                if !drinksSaveMessage.isEmpty {
+                    Text(drinksSaveMessage)
+                        .font(AppTheme.font(.caption))
+                        .foregroundStyle(.green)
+                        .transition(.opacity)
+                }
+
                 Text("Notes")
                     .font(AppTheme.font(.footnote, weight: .semibold))
                     .foregroundStyle(AppTheme.text.opacity(0.8))
@@ -252,9 +324,20 @@ struct TrackView: View {
             .padding(16)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
+        .background(
+            LinearGradient(
+                colors: [Color(red: 0.15, green: 0.06, blue: 0.25), Color(red: 0.09, green: 0.03, blue: 0.16)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ),
+            in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(AppTheme.accent.opacity(0.35), lineWidth: 1)
+        )
         .padding(.horizontal)
-        .padding(.top, 12)
+        .padding(.top, 110)
         .padding(.bottom, 12)
     }
 
@@ -288,10 +371,8 @@ struct TrackView: View {
 
         return Button {
             selectedDate = date
-            notesDraft = container.log(for: date).notes
-            withAnimation {
-                showDayCard = true
-            }
+            loadSelectedDayDrafts()
+            withAnimation { showDayCard = true }
         } label: {
             Text("\(calendar.component(.day, from: date))")
                 .font(AppTheme.font(.callout, weight: .semibold))
@@ -339,6 +420,26 @@ struct TrackView: View {
         }
     }
 
+    private func showDrinksSavedMessage() {
+        drinksSaveMessage = "Drinks saved"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            drinksSaveMessage = ""
+        }
+    }
+
+    private func moveSelectedDay(by value: Int) {
+        selectedDate = calendar.date(byAdding: .day, value: value, to: selectedDate) ?? selectedDate
+        loadSelectedDayDrafts()
+    }
+
+    private func loadSelectedDayDrafts() {
+        let log = container.log(for: selectedDate)
+        notesDraft = log.notes
+        dayAmountDraft = log.totalDrinks
+        noteSaveMessage = ""
+        drinksSaveMessage = ""
+    }
+
     private func isOnboardingStart(_ date: Date) -> Bool {
         guard let onboardingStartDate else { return false }
         return calendar.isDate(date, inSameDayAs: onboardingStartDate)
@@ -375,4 +476,58 @@ struct TrackView: View {
 
 #Preview {
     TrackView().environmentObject(AppContainer())
+}
+
+private struct TrackDrinkQuickAddGrid: View {
+    let onAdd: (Double, DrinkType) -> Void
+
+    private let options: [(title: String, icon: String, amount: Double)] = [
+        ("Wine", "🍷", 1.0),
+        ("Beer", "🍺", 1.0),
+        ("Shot", "🥃", 0.5),
+        ("Large Beer", "🍺", 1.5),
+        ("Cocktail", "🍸", 1.5),
+        ("Double Shot", "🥃", 2.0)
+    ]
+
+    private func drinkType(for title: String) -> DrinkType {
+        switch title {
+        case "Wine":
+            return .wine
+        case "Beer", "Large Beer":
+            return .beer
+        case "Shot", "Double Shot":
+            return .spirits
+        case "Cocktail":
+            return .cocktail
+        default:
+            return .other
+        }
+    }
+
+    var body: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
+            ForEach(options, id: \.title) { option in
+                Button {
+                    onAdd(option.amount, drinkType(for: option.title))
+                } label: {
+                    VStack(spacing: 4) {
+                        Text(option.icon)
+                            .font(.system(size: 18))
+                        Text(option.title)
+                            .font(AppTheme.font(.caption2, weight: .semibold))
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(AppTheme.text)
+                        Text("+\(option.amount, specifier: "%.1f")")
+                            .font(AppTheme.font(.caption2))
+                            .foregroundStyle(AppTheme.highlight)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(AppTheme.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
 }
