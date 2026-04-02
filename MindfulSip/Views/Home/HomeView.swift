@@ -11,11 +11,24 @@ struct HomeView: View {
     @State private var showMondaySetupPrompt = false
     @State private var showWeeklyCelebration = false
     @State private var pendingMondaySetupPrompt = false
+    @State private var targetReachedBannerMessage: String?
 
     @AppStorage("lastWeeklySetupPromptWeekStart") private var lastWeeklySetupPromptWeekStart = ""
     @AppStorage("lastWeeklyCelebrationWeekStart") private var lastWeeklyCelebrationWeekStart = ""
 
     private let analytics = AnalyticsService()
+    private let targetReachedMessages: [String] = [
+        "You hit your plan for today — a great place to pause and protect tomorrow.",
+        "Nice work sticking to your number so far. This is your moment to hold the line.",
+        "You reached today’s target. Staying here is a win.",
+        "You planned this number for a reason — trust that choice.",
+        "You’re exactly where you meant to be today. Keep that momentum going.",
+        "Goal reached. A pause now can turn a good night into a proud one.",
+        "You’ve met your plan for today — anything after this is your decision, so choose with intention.",
+        "This is a strong stopping point. You’re doing what you said you would do.",
+        "You made a plan and followed it. That kind of consistency matters.",
+        "Today’s target is done. Take a breath, check in, and back your goal."
+    ]
 
     private var displayName: String {
         let trimmed = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -133,19 +146,27 @@ struct HomeView: View {
                     DisclosureGroup(isExpanded: $showAddDrinks) {
                         VStack(spacing: 12) {
                             DrinkQuickAddGrid { amountToAdd, type in
+                                let previousTotal = todayLog.totalDrinks
+                                let target = todayLog.plannedTargetDrinks
                                 container.updateDrinkTotal(
                                     date: container.currentDate,
-                                    total: todayLog.totalDrinks + amountToAdd,
+                                    total: previousTotal + amountToAdd,
                                     type: type,
                                     delta: amountToAdd
                                 )
-                                amount = container.log(for: container.currentDate).totalDrinks
+                                let updatedTotal = container.log(for: container.currentDate).totalDrinks
+                                amount = updatedTotal
+                                showTargetReachedBannerIfNeeded(previousTotal: previousTotal, updatedTotal: updatedTotal, target: target)
                             }
 
                             Stepper("Set today total: \(amount, specifier: "%.1f")", value: $amount, in: 0 ... 20, step: 1)
                                 .foregroundStyle(AppTheme.text)
                             Button("Save total") {
+                                let previousTotal = todayLog.totalDrinks
+                                let target = todayLog.plannedTargetDrinks
                                 container.updateDrinkTotal(date: container.currentDate, total: amount)
+                                let updatedTotal = container.log(for: container.currentDate).totalDrinks
+                                showTargetReachedBannerIfNeeded(previousTotal: previousTotal, updatedTotal: updatedTotal, target: target)
                                 showSavedTotalMessage()
                             }
                             .buttonStyle(PrimaryButtonStyle())
@@ -243,20 +264,21 @@ struct HomeView: View {
                     Text("It is Monday. Set your weekly goal and assign daily drink targets for Monday through Sunday.")
                 }
                 .overlay(alignment: .top) {
-                    if showWeeklyCelebration {
-                        VStack(spacing: 8) {
-                            Label("🎉 Weekly goal complete!", systemImage: "sparkles")
-                                .font(AppTheme.font(.headline, weight: .bold))
-                            Text("Amazing work last week. You stayed on plan and gave your future self a strong start.")
-                                .font(AppTheme.font(.footnote))
-                                .multilineTextAlignment(.center)
+                    VStack(spacing: 8) {
+                        if let targetReachedBannerMessage {
+                            bannerCard(message: targetReachedBannerMessage, systemImage: "checkmark.seal.fill", background: AppTheme.accent.opacity(0.9))
+                                .transition(.move(edge: .top).combined(with: .opacity))
                         }
-                        .foregroundStyle(AppTheme.text)
-                        .padding(14)
-                        .background(AppTheme.highlight, in: RoundedRectangle(cornerRadius: 14))
-                        .padding(.top, 12)
-                        .padding(.horizontal, 20)
-                        .transition(.move(edge: .top).combined(with: .opacity))
+
+                        if showWeeklyCelebration {
+                            bannerCard(
+                                message: "Amazing work last week. You stayed on plan and gave your future self a strong start.",
+                                title: "🎉 Weekly goal complete!",
+                                systemImage: "sparkles",
+                                background: AppTheme.highlight
+                            )
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                        }
                     }
                 }
                 .appFullscreenContainer()
@@ -304,6 +326,42 @@ struct HomeView: View {
             showMondaySetupPrompt = true
             lastWeeklySetupPromptWeekStart = thisWeekKey
         }
+    }
+
+    private func showTargetReachedBannerIfNeeded(previousTotal: Double, updatedTotal: Double, target: Double) {
+        guard target > 0, previousTotal < target, updatedTotal == target else { return }
+        let daySeed = Calendar.current.ordinality(of: .day, in: .era, for: container.currentDate) ?? 0
+        let messageIndex = daySeed % targetReachedMessages.count
+
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+            targetReachedBannerMessage = targetReachedMessages[messageIndex]
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) {
+            withAnimation(.easeOut(duration: 0.25)) {
+                targetReachedBannerMessage = nil
+            }
+        }
+    }
+
+    private func bannerCard(message: String, title: String? = nil, systemImage: String, background: Color) -> some View {
+        VStack(spacing: 8) {
+            if let title {
+                Label(title, systemImage: systemImage)
+                    .font(AppTheme.font(.headline, weight: .bold))
+            } else {
+                Label("Target reached", systemImage: systemImage)
+                    .font(AppTheme.font(.headline, weight: .bold))
+            }
+            Text(message)
+                .font(AppTheme.font(.footnote))
+                .multilineTextAlignment(.center)
+        }
+        .foregroundStyle(AppTheme.text)
+        .padding(14)
+        .background(background, in: RoundedRectangle(cornerRadius: 14))
+        .padding(.top, 12)
+        .padding(.horizontal, 20)
     }
 }
 

@@ -18,6 +18,8 @@ struct PlanView: View {
 
     private var plannedTotal: Double { targets.reduce(0, +) }
     private var remaining: Double { max(0, Double(container.profile.weeklyTarget) - plannedTotal) }
+    private var isPlanLocked: Bool { !canEditPlan }
+    private var canEditPlan: Bool { container.canEditWeeklyPlan }
     private var weekRangeLabel: String {
         guard let weekStart = weekDates.first, let weekEnd = weekDates.last else {
             return "Monday - Sunday"
@@ -74,6 +76,13 @@ struct PlanView: View {
                 persist()
             }
             .buttonStyle(SecondaryButtonStyle())
+            .disabled(isPlanLocked)
+
+            if isPlanLocked {
+                Text("Your weekly plan is locked until next Monday to help you stay accountable.")
+                    .font(AppTheme.font(.caption))
+                    .foregroundStyle(AppTheme.text.opacity(0.75))
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
@@ -98,6 +107,11 @@ struct PlanView: View {
             VStack(alignment: .leading, spacing: 10) {
                 ForEach(Array(weekDates.enumerated()), id: \.offset) { index, date in
                     dayRow(index: index, date: date)
+                    if index < weekDates.count - 1 {
+                        Divider()
+                            .overlay(AppTheme.highlight.opacity(0.3))
+                            .padding(.horizontal, 8)
+                    }
                 }
             }
             .padding(.top, 8)
@@ -135,6 +149,7 @@ struct PlanView: View {
                 }))
                 .labelsHidden()
                 .tint(AppTheme.highlight)
+                .disabled(isPlanLocked)
             }
 
             HStack(spacing: 10) {
@@ -153,6 +168,7 @@ struct PlanView: View {
                     .font(AppTheme.font(.h3, weight: .medium))
                     .foregroundStyle(AppTheme.text)
             }
+            .disabled(isPlanLocked)
         }
         .padding(14)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
@@ -184,6 +200,7 @@ struct PlanView: View {
     }
 
     private func persist(_ changedIndex: Int? = nil) {
+        guard canEditPlan else { return }
         let sum = targets.reduce(0, +)
         if sum > Double(container.profile.weeklyTarget), let changedIndex {
             let overflow = sum - Double(container.profile.weeklyTarget)
@@ -196,6 +213,7 @@ struct PlanView: View {
             log.plannedTargetDrinks = targets[index]
             container.saveLog(log)
         }
+        container.registerWeeklyPlanSavedIfNeeded()
     }
 
     private var settingsSection: some View {
@@ -258,11 +276,11 @@ struct PlanView: View {
                     VStack(spacing: 8) {
                         Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0...50)
                             .font(AppTheme.font(.h3))
-                            .disabled(container.areWeeklyTargetsLocked)
+                            .disabled(isPlanLocked)
                         Stepper("Dry day target: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0...7)
                             .font(AppTheme.font(.h3))
-                            .disabled(container.areWeeklyTargetsLocked)
-                        if container.areWeeklyTargetsLocked {
+                            .disabled(isPlanLocked)
+                        if isPlanLocked {
                             Text("Targets are locked for this week and can be adjusted again next Monday.")
                                 .font(AppTheme.font(.caption))
                                 .foregroundStyle(AppTheme.text.opacity(0.75))
