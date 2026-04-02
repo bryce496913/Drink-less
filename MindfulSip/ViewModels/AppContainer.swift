@@ -45,6 +45,10 @@ final class AppContainer: ObservableObject {
         return dateService.startOfDay(lockWeekStart) == dateService.startOfDay(dateService.startOfWeek(currentDate))
     }
 
+    var canEditWeeklyPlan: Bool {
+        !areWeeklyTargetsLocked
+    }
+
     func refresh() {
         profile = store.loadProfile()
         settings = store.loadSettings()
@@ -81,6 +85,19 @@ final class AppContainer: ObservableObject {
     func updateDrinkTotal(date: Date, total: Double, type: DrinkType? = nil, delta: Double? = nil) {
         loggingService.update(date: date, total: total, type: type, delta: delta)
         logs = store.fetchLogs(daysBack: 365)
+    }
+
+    func registerWeeklyPlanSavedIfNeeded() {
+        let currentWeekStart = dateService.startOfWeek(currentDate)
+        let isMonday = dateService.calendar.component(.weekday, from: currentDate) == 2
+        let lockIsActiveForCurrentWeek = settings.targetsLockedWeekStart.map {
+            dateService.startOfDay($0) == dateService.startOfDay(currentWeekStart)
+        } ?? false
+
+        guard isMonday, !lockIsActiveForCurrentWeek else { return }
+        settings.targetsLockedWeekStart = currentWeekStart
+        store.saveSettings(settings)
+        refresh()
     }
 
     private func startClock() {

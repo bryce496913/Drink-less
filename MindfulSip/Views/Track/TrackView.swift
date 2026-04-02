@@ -11,6 +11,20 @@ struct TrackView: View {
     @State private var noteSaveMessage = ""
     @State private var drinksSaveMessage = ""
     @State private var isAddDrinksExpanded = false
+    @State private var targetReachedBannerMessage: String?
+
+    private let targetReachedMessages: [String] = [
+        "You hit your plan for today — a great place to pause and protect tomorrow.",
+        "Nice work sticking to your number so far. This is your moment to hold the line.",
+        "You reached today’s target. Staying here is a win.",
+        "You planned this number for a reason — trust that choice.",
+        "You’re exactly where you meant to be today. Keep that momentum going.",
+        "Goal reached. A pause now can turn a good night into a proud one.",
+        "You’ve met your plan for today — anything after this is your decision, so choose with intention.",
+        "This is a strong stopping point. You’re doing what you said you would do.",
+        "You made a plan and followed it. That kind of consistency matters.",
+        "Today’s target is done. Take a breath, check in, and back your goal."
+    ]
 
     private var monthDates: [Date] {
         guard let monthInterval = calendar.dateInterval(of: .month, for: selectedDate),
@@ -260,13 +274,17 @@ struct TrackView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         TrackDrinkQuickAddGrid { amountToAdd, type in
                             guard !isFutureDay else { return }
+                            let previousTotal = selectedLog.totalDrinks
+                            let target = selectedLog.plannedTargetDrinks
                             container.updateDrinkTotal(
                                 date: selectedDate,
-                                total: selectedLog.totalDrinks + amountToAdd,
+                                total: previousTotal + amountToAdd,
                                 type: type,
                                 delta: amountToAdd
                             )
-                            dayAmountDraft = container.log(for: selectedDate).totalDrinks
+                            let updatedTotal = container.log(for: selectedDate).totalDrinks
+                            dayAmountDraft = updatedTotal
+                            showTargetReachedBannerIfNeeded(previousTotal: previousTotal, updatedTotal: updatedTotal, target: target)
                             showDrinksSavedMessage()
                         }
                         .disabled(isFutureDay)
@@ -278,7 +296,11 @@ struct TrackView: View {
 
                         Button("Save drinks") {
                             guard !isFutureDay else { return }
+                            let previousTotal = selectedLog.totalDrinks
+                            let target = selectedLog.plannedTargetDrinks
                             container.updateDrinkTotal(date: selectedDate, total: dayAmountDraft)
+                            let updatedTotal = container.log(for: selectedDate).totalDrinks
+                            showTargetReachedBannerIfNeeded(previousTotal: previousTotal, updatedTotal: updatedTotal, target: target)
                             showDrinksSavedMessage()
                         }
                         .buttonStyle(PrimaryButtonStyle())
@@ -303,6 +325,16 @@ struct TrackView: View {
                         .font(AppTheme.font(.caption))
                         .foregroundStyle(.green)
                         .transition(.opacity)
+                }
+
+                if let targetReachedBannerMessage {
+                    Text(targetReachedBannerMessage)
+                        .font(AppTheme.font(.caption, weight: .semibold))
+                        .foregroundStyle(AppTheme.text)
+                        .padding(10)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AppTheme.accent.opacity(0.75), in: RoundedRectangle(cornerRadius: 10))
+                        .transition(.move(edge: .top).combined(with: .opacity))
                 }
 
                 Text("Notes")
@@ -436,6 +468,20 @@ struct TrackView: View {
         }
     }
 
+    private func showTargetReachedBannerIfNeeded(previousTotal: Double, updatedTotal: Double, target: Double) {
+        guard target > 0, previousTotal < target, updatedTotal == target else { return }
+        let daySeed = calendar.ordinality(of: .day, in: .era, for: selectedDate) ?? 0
+        let messageIndex = daySeed % targetReachedMessages.count
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+            targetReachedBannerMessage = targetReachedMessages[messageIndex]
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) {
+            withAnimation(.easeOut(duration: 0.25)) {
+                targetReachedBannerMessage = nil
+            }
+        }
+    }
+
     private func moveSelectedDay(by value: Int) {
         selectedDate = calendar.date(byAdding: .day, value: value, to: selectedDate) ?? selectedDate
         loadSelectedDayDrafts()
@@ -447,6 +493,7 @@ struct TrackView: View {
         dayAmountDraft = log.totalDrinks
         noteSaveMessage = ""
         drinksSaveMessage = ""
+        targetReachedBannerMessage = nil
     }
 
     private func isOnboardingStart(_ date: Date) -> Bool {
