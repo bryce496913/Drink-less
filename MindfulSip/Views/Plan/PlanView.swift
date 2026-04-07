@@ -13,6 +13,9 @@ struct PlanView: View {
     @State private var isSettingsExpanded = false
     @State private var showDeleteConfirmation = false
     @State private var settingsSaveMessage = ""
+    private let settingsItemIndent: CGFloat = 14
+    private let settingsContentIndent: CGFloat = 14
+    private let settingsExtraContentIndent: CGFloat = 14
 
     private var weekDates: [Date] { dateService.weekDates(from: container.currentDate) }
 
@@ -284,41 +287,50 @@ struct PlanView: View {
                         }
                     }
                     .padding(.top, 4)
+                    .padding(.leading, settingsContentIndent)
                 } label: {
                     Text("Profile")
                         .accordionTitleStyle()
                 }
+                .padding(.leading, settingsItemIndent)
 
                 DisclosureGroup(isExpanded: $isTargetsExpanded) {
                     VStack(spacing: 8) {
                         Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0...50)
                             .appTextStyle(.body)
                             .disabled(isPlanLocked)
+                            .padding(.leading, settingsExtraContentIndent)
                         Stepper("Dry day target: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0...7)
                             .appTextStyle(.body)
                             .disabled(isPlanLocked)
+                            .padding(.leading, settingsExtraContentIndent)
                         if isPlanLocked {
                             Text("Targets are locked for this week and can be adjusted again next Monday.")
                                 .appTextStyle(.caption)
                                 .appTextColor(.mutedText)
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.leading, settingsExtraContentIndent)
                         }
                     }
                     .padding(.top, 4)
+                    .padding(.leading, settingsContentIndent)
                 } label: {
                     Text("Targets")
                         .accordionTitleStyle()
                 }
+                .padding(.leading, settingsItemIndent)
 
                 DisclosureGroup(isExpanded: $isReminderExpanded) {
                     VStack(spacing: 8) {
                         Toggle("Reminders enabled", isOn: $container.settings.remindersEnabled)
                             .appTextStyle(.body)
+                            .padding(.leading, settingsExtraContentIndent)
                             .onChange(of: container.settings.remindersEnabled) { _ in
                                 container.saveSettings()
                             }
                         DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
                             .appTextStyle(.body)
+                            .padding(.leading, settingsExtraContentIndent)
                             .onChange(of: container.settings.reminderTime) { _ in
                                 if container.settings.remindersEnabled {
                                     container.saveSettings()
@@ -326,15 +338,18 @@ struct PlanView: View {
                             }
                         Toggle("Avoid weekend auto dry days", isOn: $container.settings.avoidWeekendForAutoDry)
                             .appTextStyle(.body)
+                            .padding(.leading, settingsExtraContentIndent)
                             .onChange(of: container.settings.avoidWeekendForAutoDry) { _ in
                                 container.saveSettings()
                             }
                     }
                     .padding(.top, 4)
+                    .padding(.leading, settingsContentIndent)
                 } label: {
                     Text("Reminders")
                         .accordionTitleStyle()
                 }
+                .padding(.leading, settingsItemIndent)
 
                 Button("Save settings") {
                     container.profile.name = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -345,12 +360,14 @@ struct PlanView: View {
                     showSettingsSavedFeedback()
                 }
                 .buttonStyle(PrimaryButtonStyle())
+                .padding(.leading, settingsItemIndent)
 
                 if !settingsSaveMessage.isEmpty {
                     Label(settingsSaveMessage, systemImage: "checkmark.circle.fill")
                         .appTextStyle(.caption)
                         .appTextColor(.accentHeading)
                         .transition(.opacity)
+                        .padding(.leading, settingsItemIndent)
                 }
 
                 Button("Delete all data", role: .destructive) {
@@ -358,6 +375,7 @@ struct PlanView: View {
                 }
                 .buttonStyle(SecondaryButtonStyle())
                 .padding(.top, 2)
+                .padding(.leading, settingsItemIndent)
             }
         }
         .padding(.top, 4)
