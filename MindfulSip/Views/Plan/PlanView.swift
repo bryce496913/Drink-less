@@ -9,6 +9,7 @@ struct PlanView: View {
     @State private var isProfileExpanded = false
     @State private var isTargetsExpanded = false
     @State private var isReminderExpanded = false
+    @State private var isModesExpanded = false
     @State private var isDailyTargetsExpanded = false
     @State private var isSettingsExpanded = false
     @State private var showDeleteConfirmation = false
@@ -375,6 +376,94 @@ struct PlanView: View {
                     .padding(.leading, settingsContentIndent)
                 } label: {
                     Text("Reminders")
+                        .accordionTitleStyle()
+                }
+                .padding(.leading, settingsItemIndent)
+
+                DisclosureGroup(isExpanded: $isModesExpanded) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Booze Mode lets you quick-log drinks from notifications on nights out.")
+                            .appTextStyle(.caption)
+                            .appTextColor(.mutedText)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, settingsExtraContentIndent)
+
+                        Toggle("Enable Booze Mode", isOn: $container.settings.boozeModeEnabled)
+                            .appTextStyle(.body)
+                            .padding(.leading, settingsExtraContentIndent)
+                            .onChange(of: container.settings.boozeModeEnabled) { _ in
+                                container.saveSettings()
+                            }
+
+                        if container.settings.boozeModeEnabled {
+                            Text("Booze Mode active")
+                                .appTextStyle(.caption)
+                                .appTextColor(.accentHeading)
+                                .padding(.leading, settingsExtraContentIndent)
+                        }
+
+                        Divider()
+                            .overlay(AppTheme.highlight.opacity(0.25))
+                            .padding(.horizontal, settingsExtraContentIndent)
+
+                        Text("Holiday Mode keeps tracking on while pausing goals and dry-day progress.")
+                            .appTextStyle(.caption)
+                            .appTextColor(.mutedText)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, settingsExtraContentIndent)
+
+                        Toggle("Enable Holiday Mode", isOn: $container.settings.holidayModeEnabled)
+                            .appTextStyle(.body)
+                            .padding(.leading, settingsExtraContentIndent)
+                            .onChange(of: container.settings.holidayModeEnabled) { _ in
+                                container.saveSettings()
+                            }
+
+                        DatePicker(
+                            "Holiday start",
+                            selection: Binding(
+                                get: { container.settings.holidayStartDate ?? container.currentDate },
+                                set: { container.settings.holidayStartDate = $0 }
+                            ),
+                            displayedComponents: .date
+                        )
+                        .appTextStyle(.body)
+                        .padding(.leading, settingsExtraContentIndent)
+                        .disabled(!container.settings.holidayModeEnabled)
+                        .onChange(of: container.settings.holidayStartDate) { _ in
+                            container.saveSettings()
+                        }
+
+                        DatePicker(
+                            "Holiday end",
+                            selection: Binding(
+                                get: {
+                                    container.settings.holidayEndDate
+                                    ?? container.settings.holidayStartDate
+                                    ?? container.currentDate
+                                },
+                                set: { container.settings.holidayEndDate = $0 }
+                            ),
+                            displayedComponents: .date
+                        )
+                        .appTextStyle(.body)
+                        .padding(.leading, settingsExtraContentIndent)
+                        .disabled(!container.settings.holidayModeEnabled)
+                        .onChange(of: container.settings.holidayEndDate) { _ in
+                            container.saveSettings()
+                        }
+
+                        if container.isHolidayModeActive {
+                            Text("Holiday Mode active — tracking only")
+                                .appTextStyle(.caption)
+                                .appTextColor(.primaryText)
+                                .padding(.leading, settingsExtraContentIndent)
+                        }
+                    }
+                    .padding(.top, 4)
+                    .padding(.leading, settingsContentIndent)
+                } label: {
+                    Text("Modes")
                         .accordionTitleStyle()
                 }
                 .padding(.leading, settingsItemIndent)
