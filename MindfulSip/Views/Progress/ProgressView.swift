@@ -67,7 +67,7 @@ struct ProgressView: View {
                                     .fill(drinkTypeColor(type))
                                     .frame(width: 8, height: 8)
                                 Text(type.rawValue.capitalized)
-                                    .font(AppTheme.font(.caption2))
+                                    .appTextStyle(.helper)
                             }
                         }
                     }
@@ -82,8 +82,8 @@ struct ProgressView: View {
                         achievementService: achievementService
                     )
                 }
-                .font(AppTheme.font(.callout))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.body)
+                .appTextColor(.primaryText)
                 .padding()
                 .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
                 .padding(.horizontal)
@@ -104,11 +104,11 @@ struct ProgressView: View {
     private func progressMetric(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 1) {
             Text(title)
-                .font(AppTheme.font(.caption2, weight: .medium))
-                .foregroundStyle(AppTheme.text.opacity(0.7))
+                .appTextStyle(.cardLabel)
+                .appTextColor(.mutedText)
             Text(value)
-                .font(AppTheme.font(.footnote, weight: .semibold))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.body)
+                .appTextColor(.primaryText)
         }
     }
 
@@ -130,8 +130,8 @@ struct ProgressView: View {
     private var topHeaderBar: some View {
         VStack(spacing: 0) {
             Text("Progress")
-                .font(AppTheme.font(.headline, weight: .semibold))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.sectionTitle)
+                .appTextColor(.primaryText)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
                 .padding(.top, 6)

@@ -127,12 +127,12 @@ struct GuidanceView: View {
             ScrollView {
                     VStack(alignment: .leading, spacing: 14) {
                         Text("Guidance for \(trimmedName.isEmpty ? "Friend" : trimmedName)")
-                            .font(AppTheme.font(.title2, weight: .bold))
-                            .foregroundStyle(AppTheme.text)
+                            .appTextStyle(.screenTitle)
+                            .appTextColor(.primaryText)
 
                         Text("Daily support and practical coaching based on your recent progress.")
-                            .font(AppTheme.font(.footnote))
-                            .foregroundStyle(AppTheme.text.opacity(0.9))
+                            .appTextStyle(.screenSubtitle)
+                            .appTextColor(.secondaryText)
 
                         guidanceAccordion(title: "Daily Support", message: dailySupport, icon: "sun.max", isExpanded: $showDailySupport)
                         guidanceAccordion(title: "Advice", message: advice, icon: "lightbulb", isExpanded: $showAdvice)
@@ -159,12 +159,13 @@ struct GuidanceView: View {
     private func guidanceAccordion(title: String, message: String, icon: String, isExpanded: Binding<Bool>) -> some View {
         DisclosureGroup(isExpanded: isExpanded) {
             Text(message)
-                .font(AppTheme.font(.footnote))
-                .foregroundStyle(AppTheme.text.opacity(0.95))
+                .appTextStyle(.body)
+                .appTextColor(.secondaryText)
                 .padding(.top, 8)
         } label: {
             Label(title, systemImage: icon)
-                .font(AppTheme.font(.subheadline, weight: .semibold))
+                .appTextStyle(.accordionTitle)
+                .appTextColor(.primaryText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
