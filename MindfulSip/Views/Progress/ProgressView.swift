@@ -104,11 +104,10 @@ struct ProgressView: View {
     private func progressMetric(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 1) {
             Text(title)
-                .appTextStyle(.statLabel)
-                .appTextColor(.mutedText)
+                .statLabelStyle()
             Text(value)
                 .appTextStyle(.body)
-                .appTextColor(.primaryText)
+                .appTextColor(.highlightValue)
         }
     }
 
@@ -130,8 +129,7 @@ struct ProgressView: View {
     private var topHeaderBar: some View {
         VStack(spacing: 0) {
             Text("Progress")
-                .appTextStyle(.sectionTitle)
-                .appTextColor(.accentHeading)
+                .pageTitleStyle()
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
                 .padding(.top, 6)

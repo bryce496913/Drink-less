@@ -118,8 +118,7 @@ struct TrackView: View {
 
                                 Spacer()
                                 Text(monthTitle)
-                                    .appTextStyle(.sectionTitle)
-                                    .appTextColor(.accentHeading)
+                                    .sectionTitleStyle()
                                 Spacer()
 
                                 Button {
@@ -182,8 +181,7 @@ struct TrackView: View {
     private var legend: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Color key")
-                .appTextStyle(.statLabel)
-                .appTextColor(.secondaryText)
+                .statLabelStyle()
             HStack {
                 legendItem(color: .green, label: "0 drinks")
                 legendItem(color: .mint, label: "Met goal")
@@ -257,7 +255,7 @@ struct TrackView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Status")
                             .appTextStyle(.statLabel)
-                            .appTextColor(.mutedText)
+                            .appTextColor(.secondaryText)
 
                         Label(targetStatus.text, systemImage: targetStatus.text == "Above target" ? "arrow.up.circle.fill" : "checkmark.circle.fill")
                             .appTextStyle(.body)
@@ -315,8 +313,7 @@ struct TrackView: View {
                     .padding(.top, 4)
                 } label: {
                 Text("Add drinks")
-                    .appTextStyle(.cardTitle)
-                    .appTextColor(.accentHeading)
+                    .accordionTitleStyle()
                 }
                 .tint(AppTheme.text)
 
@@ -338,8 +335,7 @@ struct TrackView: View {
                 }
 
                 Text("Notes")
-                    .appTextStyle(.cardTitle)
-                    .appTextColor(.accentHeading)
+                    .sectionTitleStyle()
 
                 TextEditor(text: $notesDraft)
                     .appTextStyle(.body)
@@ -385,11 +381,9 @@ struct TrackView: View {
     private func detailPill(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .appTextStyle(.statLabel)
-                .appTextColor(.mutedText)
+                .statLabelStyle()
             Text(value)
-                .appTextStyle(.value)
-                .appTextColor(.highlightValue)
+                .statValueStyle()
                 .multilineTextAlignment(.leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -514,8 +508,7 @@ struct TrackView: View {
     private func topHeaderBar(title: String) -> some View {
         VStack(spacing: 0) {
             Text(title)
-                .appTextStyle(.sectionTitle)
-                .appTextColor(.accentHeading)
+                .pageTitleStyle()
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
                 .padding(.top, 6)

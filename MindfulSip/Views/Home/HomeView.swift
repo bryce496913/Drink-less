@@ -109,11 +109,10 @@ struct HomeView: View {
                 VStack(spacing: 14) {
                     VStack(spacing: 8) {
                         Text("Welcome, \(displayName)")
-                            .appTextStyle(.pageTitle)
-                            .appTextColor(.primaryText)
+                            .pageTitleStyle()
                         Text("Today: \(todayLog.totalDrinks, specifier: "%.1f") drinks")
-                            .appTextStyle(.subtitle)
-                            .appTextColor(.accentHeading)
+                            .appTextStyle(.body)
+                            .appTextColor(.secondaryText)
                     }
                     .frame(maxWidth: .infinity)
 
@@ -137,8 +136,7 @@ struct HomeView: View {
                         .padding(.top, 8)
                     } label: {
                         Text("Stats")
-                            .appTextStyle(.cardTitle)
-                            .appTextColor(.accentHeading)
+                            .accordionTitleStyle()
                     }
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
@@ -183,8 +181,7 @@ struct HomeView: View {
                         .padding(.top, 8)
                     } label: {
                         Text("Add Drinks")
-                            .appTextStyle(.cardTitle)
-                            .appTextColor(.accentHeading)
+                            .accordionTitleStyle()
                     }
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
@@ -202,8 +199,7 @@ struct HomeView: View {
                         .padding(.top, 8)
                     } label: {
                         Text("Daily Achievements")
-                            .appTextStyle(.cardTitle)
-                            .appTextColor(.accentHeading)
+                            .accordionTitleStyle()
                     }
                     .appTextStyle(.body)
                     .appTextColor(.secondaryText)
@@ -218,8 +214,7 @@ struct HomeView: View {
                             .padding(.top, 8)
                     } label: {
                         Text("Tip of The Day")
-                            .appTextStyle(.cardTitle)
-                            .appTextColor(.accentHeading)
+                            .accordionTitleStyle()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(16)
@@ -228,8 +223,7 @@ struct HomeView: View {
                     if let reminderMessage = container.todaysReminderMessage {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Today’s reminder")
-                                .appTextStyle(.sectionTitle)
-                                .appTextColor(.accentHeading)
+                                .sectionTitleStyle()
                             Text(reminderMessage)
                                 .appTextStyle(.body)
                         }
@@ -406,8 +400,7 @@ private struct DrinkQuickAddGrid: View {
                         Text(option.icon)
                             .font(.system(size: 21))
                         Text(option.title)
-                            .appTextStyle(.statLabel)
-                            .appTextColor(.primaryText)
+                            .statLabelStyle()
                             .multilineTextAlignment(.center)
                         Text("+\(option.amount, specifier: "%.1f")")
                             .appTextStyle(.caption)
@@ -430,11 +423,9 @@ private struct StatPill: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .appTextStyle(.statLabel)
-                .appTextColor(.secondaryText)
+                .statLabelStyle()
             Text(value)
-                .appTextStyle(.value)
-                .appTextColor(.highlightValue)
+                .statValueStyle()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
