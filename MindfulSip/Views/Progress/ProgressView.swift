@@ -67,7 +67,7 @@ struct ProgressView: View {
                                     .fill(drinkTypeColor(type))
                                     .frame(width: 8, height: 8)
                                 Text(type.rawValue.capitalized)
-                                    .appTextStyle(.helper)
+                                    .appTextStyle(.caption)
                             }
                         }
                     }
@@ -104,7 +104,7 @@ struct ProgressView: View {
     private func progressMetric(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 1) {
             Text(title)
-                .appTextStyle(.cardLabel)
+                .appTextStyle(.statLabel)
                 .appTextColor(.mutedText)
             Text(value)
                 .appTextStyle(.body)
@@ -131,7 +131,7 @@ struct ProgressView: View {
         VStack(spacing: 0) {
             Text("Progress")
                 .appTextStyle(.sectionTitle)
-                .appTextColor(.primaryText)
+                .appTextColor(.accentHeading)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
                 .padding(.top, 6)

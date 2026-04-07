@@ -127,11 +127,11 @@ struct GuidanceView: View {
             ScrollView {
                     VStack(alignment: .leading, spacing: 14) {
                         Text("Guidance for \(trimmedName.isEmpty ? "Friend" : trimmedName)")
-                            .appTextStyle(.screenTitle)
+                            .appTextStyle(.pageTitle)
                             .appTextColor(.primaryText)
 
                         Text("Daily support and practical coaching based on your recent progress.")
-                            .appTextStyle(.screenSubtitle)
+                            .appTextStyle(.subtitle)
                             .appTextColor(.secondaryText)
 
                         guidanceAccordion(title: "Daily Support", message: dailySupport, icon: "sun.max", isExpanded: $showDailySupport)
@@ -164,8 +164,8 @@ struct GuidanceView: View {
                 .padding(.top, 8)
         } label: {
             Label(title, systemImage: icon)
-                .appTextStyle(.accordionTitle)
-                .appTextColor(.primaryText)
+                .appTextStyle(.cardTitle)
+                .appTextColor(.accentHeading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)

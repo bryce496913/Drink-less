@@ -109,11 +109,11 @@ struct HomeView: View {
                 VStack(spacing: 14) {
                     VStack(spacing: 8) {
                         Text("Welcome, \(displayName)")
-                            .appTextStyle(.screenTitle)
+                            .appTextStyle(.pageTitle)
                             .appTextColor(.primaryText)
                         Text("Today: \(todayLog.totalDrinks, specifier: "%.1f") drinks")
-                            .appTextStyle(.screenSubtitle)
-                            .appTextColor(.accentText)
+                            .appTextStyle(.subtitle)
+                            .appTextColor(.accentHeading)
                     }
                     .frame(maxWidth: .infinity)
 
@@ -137,8 +137,8 @@ struct HomeView: View {
                         .padding(.top, 8)
                     } label: {
                         Text("Stats")
-                            .appTextStyle(.accordionTitle)
-                            .appTextColor(.primaryText)
+                            .appTextStyle(.cardTitle)
+                            .appTextColor(.accentHeading)
                     }
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
@@ -174,7 +174,7 @@ struct HomeView: View {
 
                             if !addDrinkSaveMessage.isEmpty {
                                 Text(addDrinkSaveMessage)
-                                    .appTextStyle(.helper)
+                                    .appTextStyle(.caption)
                                     .appTextColor(.positiveText)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .transition(.opacity)
@@ -183,8 +183,8 @@ struct HomeView: View {
                         .padding(.top, 8)
                     } label: {
                         Text("Add Drinks")
-                            .appTextStyle(.accordionTitle)
-                            .appTextColor(.primaryText)
+                            .appTextStyle(.cardTitle)
+                            .appTextColor(.accentHeading)
                     }
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
@@ -202,7 +202,8 @@ struct HomeView: View {
                         .padding(.top, 8)
                     } label: {
                         Text("Daily Achievements")
-                            .appTextStyle(.accordionTitle)
+                            .appTextStyle(.cardTitle)
+                            .appTextColor(.accentHeading)
                     }
                     .appTextStyle(.body)
                     .appTextColor(.secondaryText)
@@ -217,8 +218,8 @@ struct HomeView: View {
                             .padding(.top, 8)
                     } label: {
                         Text("Tip of The Day")
-                            .appTextStyle(.accordionTitle)
-                            .appTextColor(.primaryText)
+                            .appTextStyle(.cardTitle)
+                            .appTextColor(.accentHeading)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(16)
@@ -228,6 +229,7 @@ struct HomeView: View {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Today’s reminder")
                                 .appTextStyle(.sectionTitle)
+                                .appTextColor(.accentHeading)
                             Text(reminderMessage)
                                 .appTextStyle(.body)
                         }
@@ -239,7 +241,7 @@ struct HomeView: View {
 
                     if todayLog.totalDrinks > todayLog.plannedTargetDrinks, todayLog.plannedTargetDrinks > 0 {
                         Text("You are above today’s target. Try water between drinks, \(displayName).")
-                            .appTextStyle(.bodySecondary)
+                            .appTextStyle(.secondary)
                             .appTextColor(.primaryText)
                             .padding(12)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -356,7 +358,7 @@ struct HomeView: View {
                     .appTextStyle(.sectionTitle)
             }
             Text(message)
-                .appTextStyle(.bodySecondary)
+                .appTextStyle(.secondary)
                 .multilineTextAlignment(.center)
         }
         .appTextColor(.primaryText)
@@ -404,12 +406,13 @@ private struct DrinkQuickAddGrid: View {
                         Text(option.icon)
                             .font(.system(size: 21))
                         Text(option.title)
-                            .appTextStyle(.cardLabel)
+                            .appTextStyle(.statLabel)
+                            .appTextColor(.primaryText)
                             .multilineTextAlignment(.center)
                         Text("+\(option.amount, specifier: "%.1f")")
-                            .appTextStyle(.helper)
+                            .appTextStyle(.caption)
+                            .appTextColor(.highlightValue)
                     }
-                    .foregroundStyle(AppTheme.text)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
                     .background(AppTheme.background.opacity(0.6), in: RoundedRectangle(cornerRadius: 12))
@@ -427,11 +430,11 @@ private struct StatPill: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .appTextStyle(.cardLabel)
-                .appTextColor(.tertiaryText)
+                .appTextStyle(.statLabel)
+                .appTextColor(.secondaryText)
             Text(value)
-                .appTextStyle(.statValue)
-                .appTextColor(.accentText)
+                .appTextStyle(.value)
+                .appTextColor(.highlightValue)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)

@@ -119,7 +119,7 @@ struct TrackView: View {
                                 Spacer()
                                 Text(monthTitle)
                                     .appTextStyle(.sectionTitle)
-                                    .appTextColor(.primaryText)
+                                    .appTextColor(.accentHeading)
                                 Spacer()
 
                                 Button {
@@ -172,7 +172,7 @@ struct TrackView: View {
         return HStack {
             ForEach(mondayFirst, id: \.self) { day in
                 Text(day)
-                    .appTextStyle(.helper)
+                    .appTextStyle(.caption)
                     .appTextColor(.mutedText)
                     .frame(maxWidth: .infinity)
             }
@@ -182,8 +182,8 @@ struct TrackView: View {
     private var legend: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Color key")
-                .appTextStyle(.cardLabel)
-                .appTextColor(.tertiaryText)
+                .appTextStyle(.statLabel)
+                .appTextColor(.secondaryText)
             HStack {
                 legendItem(color: .green, label: "0 drinks")
                 legendItem(color: .mint, label: "Met goal")
@@ -191,8 +191,8 @@ struct TrackView: View {
                 legendItem(color: .gray, label: "Future")
             }
             Text("★ Setup completed")
-                .appTextStyle(.helper)
-                .appTextColor(.accentText)
+                .appTextStyle(.caption)
+                .appTextColor(.accentHeading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
@@ -233,7 +233,7 @@ struct TrackView: View {
                     .buttonStyle(SecondaryButtonStyle())
 
                     Text(selectedDate.formatted(date: .complete, time: .omitted))
-                        .appTextStyle(.modalTitle)
+                        .appTextStyle(.dialogTitle)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
 
@@ -256,7 +256,7 @@ struct TrackView: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Status")
-                            .appTextStyle(.cardLabel)
+                            .appTextStyle(.statLabel)
                             .appTextColor(.mutedText)
 
                         Label(targetStatus.text, systemImage: targetStatus.text == "Above target" ? "arrow.up.circle.fill" : "checkmark.circle.fill")
@@ -308,28 +308,28 @@ struct TrackView: View {
 
                         if isFutureDay {
                             Text("Future dates cannot be edited yet.")
-                                .appTextStyle(.helper)
+                                .appTextStyle(.caption)
                                 .appTextColor(.mutedText)
                         }
                     }
                     .padding(.top, 4)
                 } label: {
-                    Text("Add drinks")
-                        .appTextStyle(.accordionTitle)
-                        .appTextColor(.primaryText)
+                Text("Add drinks")
+                    .appTextStyle(.cardTitle)
+                    .appTextColor(.accentHeading)
                 }
                 .tint(AppTheme.text)
 
                 if !drinksSaveMessage.isEmpty {
                     Text(drinksSaveMessage)
-                        .appTextStyle(.helper)
+                        .appTextStyle(.caption)
                         .appTextColor(.positiveText)
                         .transition(.opacity)
                 }
 
                 if let targetReachedBannerMessage {
                     Text(targetReachedBannerMessage)
-                        .appTextStyle(.bodySecondary)
+                        .appTextStyle(.secondary)
                         .appTextColor(.primaryText)
                         .padding(10)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -338,11 +338,11 @@ struct TrackView: View {
                 }
 
                 Text("Notes")
-                    .appTextStyle(.accordionTitle)
-                    .appTextColor(.primaryText)
+                    .appTextStyle(.cardTitle)
+                    .appTextColor(.accentHeading)
 
                 TextEditor(text: $notesDraft)
-                    .appTextStyle(.modalBody)
+                    .appTextStyle(.body)
                     .frame(minHeight: 72, maxHeight: 110)
                     .padding(6)
                     .background(AppTheme.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
@@ -357,7 +357,7 @@ struct TrackView: View {
 
                 if !noteSaveMessage.isEmpty {
                     Text(noteSaveMessage)
-                        .appTextStyle(.helper)
+                        .appTextStyle(.caption)
                         .appTextColor(.positiveText)
                         .transition(.opacity)
                 }
@@ -385,11 +385,11 @@ struct TrackView: View {
     private func detailPill(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .appTextStyle(.cardLabel)
+                .appTextStyle(.statLabel)
                 .appTextColor(.mutedText)
             Text(value)
-                .appTextStyle(.statValue)
-                .appTextColor(.accentText)
+                .appTextStyle(.value)
+                .appTextColor(.highlightValue)
                 .multilineTextAlignment(.leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -401,7 +401,7 @@ struct TrackView: View {
         HStack(spacing: 5) {
             Circle().fill(color).frame(width: 9, height: 9)
             Text(label)
-                .appTextStyle(.helper)
+                .appTextStyle(.caption)
                 .appTextColor(.primaryText)
         }
     }
@@ -416,7 +416,7 @@ struct TrackView: View {
             withAnimation { showDayCard = true }
         } label: {
             Text("\(calendar.component(.day, from: date))")
-                .appTextStyle(.bodySecondary)
+                .appTextStyle(.secondary)
                 .appTextColor(.primaryText)
                 .frame(maxWidth: .infinity)
                 .frame(height: 42)
@@ -428,8 +428,8 @@ struct TrackView: View {
                 .overlay(alignment: .topTrailing) {
                     if isOnboardingStart(date) {
                         Text("★")
-                            .appTextStyle(.helper)
-                            .appTextColor(.accentText)
+                            .appTextStyle(.caption)
+                            .appTextColor(.accentHeading)
                             .padding(3)
                     }
                 }
@@ -515,7 +515,7 @@ struct TrackView: View {
         VStack(spacing: 0) {
             Text(title)
                 .appTextStyle(.sectionTitle)
-                .appTextColor(.primaryText)
+                .appTextColor(.accentHeading)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
                 .padding(.top, 6)
@@ -571,12 +571,12 @@ private struct TrackDrinkQuickAddGrid: View {
                         Text(option.icon)
                             .font(.system(size: 18))
                         Text(option.title)
-                            .appTextStyle(.cardLabel)
+                            .appTextStyle(.statLabel)
                             .multilineTextAlignment(.center)
                             .appTextColor(.primaryText)
                         Text("+\(option.amount, specifier: "%.1f")")
-                            .appTextStyle(.helper)
-                            .appTextColor(.accentText)
+                            .appTextStyle(.caption)
+                            .appTextColor(.highlightValue)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)

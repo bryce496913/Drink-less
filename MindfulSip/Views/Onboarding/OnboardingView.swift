@@ -44,11 +44,11 @@ struct OnboardingView: View {
     private var onboardingHeader: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Welcome")
-                .font(AppTheme.font(.h1, weight: .bold))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.pageTitle)
+                .appTextColor(.primaryText)
             Text("Step \(step + 1) of \(totalSteps)")
-                .font(AppTheme.font(.h3))
-                .foregroundStyle(AppTheme.highlight)
+                .appTextStyle(.caption)
+                .appTextColor(.accentHeading)
             SwiftUI.ProgressView(value: Double(step + 1), total: Double(totalSteps))
                 .tint(AppTheme.highlight)
         }
@@ -60,16 +60,20 @@ struct OnboardingView: View {
             switch step {
             case 0:
                 Text("Tell us about you")
-                    .font(AppTheme.font(.h2, weight: .semibold))
+                    .appTextStyle(.sectionTitle)
+                    .appTextColor(.accentHeading)
                 TextField("Your name", text: $container.profile.name)
+                    .appTextStyle(.body)
+                    .appTextColor(.primaryText)
                     .textInputAutocapitalization(.words)
                 if !isNameValid {
                     Text("Name is required to continue.")
-                        .font(AppTheme.font(.h3))
-                        .foregroundStyle(AppTheme.highlight)
+                        .appTextStyle(.caption)
+                        .appTextColor(.highlightValue)
                 }
                 Text("What is your current goal?")
-                    .font(AppTheme.font(.h2, weight: .semibold))
+                    .appTextStyle(.cardTitle)
+                    .appTextColor(.accentHeading)
                 Picker("Goal type", selection: $container.profile.goalType) {
                     ForEach(GoalType.allCases) { goal in
                         Text(goal.rawValue).tag(goal)
@@ -78,18 +82,25 @@ struct OnboardingView: View {
                 .pickerStyle(.segmented)
             case 1:
                 Text("Set your weekly plan")
-                    .font(AppTheme.font(.h2, weight: .semibold))
+                    .appTextStyle(.sectionTitle)
+                    .appTextColor(.accentHeading)
                 Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0 ... 50)
+                    .appTextStyle(.body)
                 Stepper("Dry days per week: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0 ... 7)
+                    .appTextStyle(.body)
             default:
                 Text("Reminder and estimates")
-                    .font(AppTheme.font(.h2, weight: .semibold))
+                    .appTextStyle(.sectionTitle)
+                    .appTextColor(.accentHeading)
                 DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
+                    .appTextStyle(.body)
 
                 HStack {
                     Text("Cost per drink")
+                        .appTextStyle(.secondary)
                     Spacer(minLength: 8)
                     TextField("", value: $container.profile.costPerDrink, format: .number)
+                        .appTextStyle(.body)
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.trailing)
                         .frame(maxWidth: 90)
@@ -97,8 +108,10 @@ struct OnboardingView: View {
 
                 HStack {
                     Text("Calories per drink")
+                        .appTextStyle(.secondary)
                     Spacer(minLength: 8)
                     TextField("", value: $container.profile.caloriesPerDrink, format: .number)
+                        .appTextStyle(.body)
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.trailing)
                         .frame(maxWidth: 90)
@@ -107,7 +120,6 @@ struct OnboardingView: View {
         }
         .padding(16)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
-        .foregroundStyle(AppTheme.text)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
