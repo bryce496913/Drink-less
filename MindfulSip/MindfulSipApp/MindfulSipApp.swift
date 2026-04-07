@@ -8,12 +8,12 @@ struct MindfulSipApp: App {
 
     init() {
         let normalAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont(name: "Poppins-Medium", size: 11) ?? UIFont.systemFont(ofSize: 11, weight: .medium),
-            .foregroundColor: UIColor.white.withAlphaComponent(0.72)
+            .font: UIFont(name: "Poppins-Medium", size: 12) ?? UIFont.systemFont(ofSize: 12, weight: .medium),
+            .foregroundColor: UIColor.white.withAlphaComponent(0.68)
         ]
         let selectedAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont(name: "Poppins-Medium", size: 11) ?? UIFont.systemFont(ofSize: 11, weight: .medium),
-            .foregroundColor: UIColor(AppTheme.highlight)
+            .font: UIFont(name: "Poppins-Medium", size: 12) ?? UIFont.systemFont(ofSize: 12, weight: .medium),
+            .foregroundColor: UIColor(AppTheme.accent)
         ]
 
         UITabBarItem.appearance().setTitleTextAttributes(normalAttributes, for: .normal)

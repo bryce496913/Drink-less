@@ -7,52 +7,34 @@ enum AppTheme {
     static let highlight = Color(red: 0.98, green: 0.32, blue: 0.67)
     static let text = Color.white
 
-    enum Typography {
-        case h1
-        case h2
-        case h3
-        case paragraph
-
-        fileprivate var size: CGFloat {
-            switch self {
-            case .h1: return 16
-            case .h2: return 14
-            case .h3: return 12
-            case .paragraph: return 10
-            }
-        }
-    }
-
     enum TextStyle {
-        case screenTitle
-        case screenSubtitle
+        case pageTitle
         case sectionTitle
-        case accordionTitle
-        case cardLabel
-        case statValue
+        case cardTitle
+        case value
         case body
-        case bodySecondary
-        case helper
+        case secondary
+        case statLabel
+        case subtitle
+        case caption
         case button
         case tabLabel
-        case modalTitle
-        case modalBody
+        case dialogTitle
 
         fileprivate var definition: (size: CGFloat, weight: Font.Weight) {
             switch self {
-            case .screenTitle: return (30, .bold)
-            case .screenSubtitle: return (16, .medium)
-            case .sectionTitle: return (22, .semibold)
-            case .accordionTitle: return (18, .semibold)
-            case .cardLabel: return (13, .medium)
-            case .statValue: return (24, .bold)
-            case .body: return (16, .regular)
-            case .bodySecondary: return (15, .regular)
-            case .helper: return (13, .regular)
+            case .pageTitle: return (32, .bold)
+            case .sectionTitle: return (24, .semibold)
+            case .cardTitle: return (19, .medium)
+            case .value: return (26, .bold)
+            case .body: return (17, .regular)
+            case .secondary: return (15, .regular)
+            case .statLabel: return (13, .medium)
+            case .subtitle: return (16, .regular)
+            case .caption: return (13, .regular)
             case .button: return (16, .semibold)
-            case .tabLabel: return (11, .medium)
-            case .modalTitle: return (24, .semibold)
-            case .modalBody: return (16, .regular)
+            case .tabLabel: return (12, .medium)
+            case .dialogTitle: return (25, .semibold)
             }
         }
     }
@@ -60,21 +42,21 @@ enum AppTheme {
     enum TextColorRole {
         case primaryText
         case secondaryText
-        case tertiaryText
-        case accentText
+        case accentHeading
+        case highlightValue
+        case mutedText
         case positiveText
         case warningText
-        case mutedText
 
         fileprivate var color: Color {
             switch self {
             case .primaryText: return Color.white
-            case .secondaryText: return Color.white.opacity(0.9)
-            case .tertiaryText: return Color.white.opacity(0.74)
-            case .accentText: return AppTheme.highlight
+            case .secondaryText: return Color.white.opacity(0.88)
+            case .accentHeading: return AppTheme.accent
+            case .highlightValue: return AppTheme.highlight
+            case .mutedText: return Color.white.opacity(0.62)
             case .positiveText: return Color.green
             case .warningText: return Color.orange
-            case .mutedText: return Color.white.opacity(0.58)
             }
         }
     }
@@ -84,26 +66,22 @@ enum AppTheme {
         return font(size: definition.size, weight: definition.weight)
     }
 
-    static func font(_ typography: Typography, weight: Font.Weight = .regular) -> Font {
-        font(size: typography.size, weight: weight)
-    }
-
     static func font(_ style: Font.TextStyle, weight: Font.Weight = .regular) -> Font {
         switch style {
         case .largeTitle:
-            return font(.screenTitle)
+            return font(.pageTitle)
         case .title, .title2, .title3:
-            return font(size: 20, weight: weight)
+            return font(.sectionTitle)
         case .headline:
-            return font(size: 17, weight: weight)
+            return font(.cardTitle)
         case .subheadline:
-            return font(size: 15, weight: weight)
+            return font(.secondary)
         case .body, .callout:
             return font(.body)
         case .footnote:
-            return font(.bodySecondary)
+            return font(.secondary)
         case .caption, .caption2:
-            return font(.helper)
+            return font(.caption)
         @unknown default:
             return font(.body)
         }

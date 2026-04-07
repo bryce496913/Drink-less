@@ -38,12 +38,12 @@ struct AchievementDetailPopupView: View {
                     }
 
                     Text(achievement.title)
-                        .appTextStyle(.modalTitle)
+                        .appTextStyle(.dialogTitle)
                         .appTextColor(.primaryText)
 
                     Text(achievement.isUnlocked ? "Unlocked" : "Locked")
-                        .appTextStyle(.helper)
-                        .foregroundStyle(achievement.isUnlocked ? AppTheme.textColor(.accentText) : AppTheme.textColor(.mutedText))
+                        .appTextStyle(.caption)
+                        .foregroundStyle(achievement.isUnlocked ? AppTheme.textColor(.highlightValue) : AppTheme.textColor(.mutedText))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(AppTheme.background.opacity(0.6), in: Capsule())
@@ -69,7 +69,7 @@ struct AchievementDetailPopupView: View {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundStyle(AppTheme.highlight)
+                    .foregroundStyle(AppTheme.textColor(.highlightValue))
                 }
             }
         }
@@ -80,10 +80,10 @@ struct AchievementDetailPopupView: View {
     private func detailRow(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .appTextStyle(.cardLabel)
+                .appTextStyle(.statLabel)
                 .appTextColor(.mutedText)
             Text(value)
-                .appTextStyle(.modalBody)
+                .appTextStyle(.body)
                 .appTextColor(.primaryText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

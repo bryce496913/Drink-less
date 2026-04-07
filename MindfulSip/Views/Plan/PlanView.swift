@@ -59,7 +59,7 @@ struct PlanView: View {
     private var planHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Weekly planning")
-                .appTextStyle(.screenTitle)
+                .appTextStyle(.pageTitle)
                 .appTextColor(.primaryText)
 
             Text("Set daily limits and dry days. Your total is auto-capped to your weekly target.")
@@ -68,8 +68,8 @@ struct PlanView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             Text(weekRangeLabel)
-                .appTextStyle(.helper)
-                .appTextColor(.accentText)
+                .appTextStyle(.caption)
+                .appTextColor(.accentHeading)
 
             Button("Auto-distribute my target") {
                 targets = container.planService.distributeTarget(weeklyTarget: container.profile.weeklyTarget, dryDayIndexes: dryDays)
@@ -80,7 +80,7 @@ struct PlanView: View {
 
             if isPlanLocked {
                 Text("Your weekly plan is locked until next Monday to help you stay accountable.")
-                    .appTextStyle(.helper)
+                    .appTextStyle(.caption)
                     .appTextColor(.mutedText)
             }
         }
@@ -117,8 +117,8 @@ struct PlanView: View {
             .padding(.top, 8)
         } label: {
             Text("Daily targets")
-                .appTextStyle(.accordionTitle)
-                .appTextColor(.primaryText)
+                .appTextStyle(.cardTitle)
+                .appTextColor(.accentHeading)
         }
         .padding(14)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
@@ -134,7 +134,7 @@ struct PlanView: View {
                     Text(date.formatted(.dateTime.weekday(.wide)))
                         .appTextStyle(.sectionTitle)
                     Text(date.formatted(date: .abbreviated, time: .omitted))
-                        .appTextStyle(.helper)
+                        .appTextStyle(.caption)
                         .appTextColor(.mutedText)
                 }
                 Spacer()
@@ -177,11 +177,11 @@ struct PlanView: View {
     private func planStat(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .appTextStyle(.cardLabel)
-                .appTextColor(.tertiaryText)
+                .appTextStyle(.statLabel)
+                .appTextColor(.secondaryText)
             Text(value)
-                .appTextStyle(.statValue)
-                .appTextColor(.accentText)
+                .appTextStyle(.value)
+                .appTextColor(.highlightValue)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
@@ -223,7 +223,7 @@ struct PlanView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 8) {
                             Text("Name:")
-                                .appTextStyle(.bodySecondary)
+                                .appTextStyle(.secondary)
                                 .appTextColor(.secondaryText)
                             TextField("user_name", text: $container.profile.name)
                                 .appTextStyle(.body)
@@ -232,7 +232,7 @@ struct PlanView: View {
 
                         HStack(spacing: 8) {
                             Text("Goal:")
-                                .appTextStyle(.bodySecondary)
+                                .appTextStyle(.secondary)
                                 .appTextColor(.secondaryText)
                             Picker("user_goal", selection: $container.profile.goalType) {
                                 ForEach(GoalType.allCases) { goal in
@@ -244,7 +244,7 @@ struct PlanView: View {
 
                         HStack(spacing: 8) {
                             Text("Price per drink:")
-                                .appTextStyle(.bodySecondary)
+                                .appTextStyle(.secondary)
                                 .appTextColor(.secondaryText)
                             Spacer()
                             TextField("", value: $container.profile.costPerDrink, format: .number)
@@ -256,7 +256,7 @@ struct PlanView: View {
 
                         HStack(spacing: 8) {
                             Text("Calories per drink:")
-                                .appTextStyle(.bodySecondary)
+                                .appTextStyle(.secondary)
                                 .appTextColor(.secondaryText)
                             Spacer()
                             TextField("", value: $container.profile.caloriesPerDrink, format: .number)
@@ -269,7 +269,8 @@ struct PlanView: View {
                     .padding(.top, 4)
                 } label: {
                     Text("Profile")
-                        .appTextStyle(.accordionTitle)
+                        .appTextStyle(.cardTitle)
+                        .appTextColor(.accentHeading)
                 }
 
                 DisclosureGroup(isExpanded: $isTargetsExpanded) {
@@ -282,7 +283,7 @@ struct PlanView: View {
                             .disabled(isPlanLocked)
                         if isPlanLocked {
                             Text("Targets are locked for this week and can be adjusted again next Monday.")
-                                .appTextStyle(.helper)
+                                .appTextStyle(.caption)
                                 .appTextColor(.mutedText)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
@@ -290,7 +291,8 @@ struct PlanView: View {
                     .padding(.top, 4)
                 } label: {
                     Text("Targets")
-                        .appTextStyle(.accordionTitle)
+                        .appTextStyle(.cardTitle)
+                        .appTextColor(.accentHeading)
                 }
 
                 DisclosureGroup(isExpanded: $isReminderExpanded) {
@@ -316,7 +318,8 @@ struct PlanView: View {
                     .padding(.top, 4)
                 } label: {
                     Text("Reminders")
-                        .appTextStyle(.accordionTitle)
+                        .appTextStyle(.cardTitle)
+                        .appTextColor(.accentHeading)
                 }
 
                 Button("Save settings") {
@@ -331,8 +334,8 @@ struct PlanView: View {
 
                 if !settingsSaveMessage.isEmpty {
                     Label(settingsSaveMessage, systemImage: "checkmark.circle.fill")
-                        .appTextStyle(.helper)
-                        .appTextColor(.accentText)
+                        .appTextStyle(.caption)
+                        .appTextColor(.accentHeading)
                         .transition(.opacity)
                 }
 
@@ -344,11 +347,10 @@ struct PlanView: View {
             }
         } label: {
             Text("Settings")
-                .appTextStyle(.accordionTitle)
-                .appTextColor(.primaryText)
+                .appTextStyle(.cardTitle)
+                .appTextColor(.accentHeading)
         }
         .padding(.top, 4)
-        .foregroundStyle(AppTheme.text)
         .padding(14)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
         .alert("Delete all data?", isPresented: $showDeleteConfirmation) {
@@ -374,7 +376,7 @@ struct PlanView: View {
         VStack(spacing: 0) {
             Text("\(displayName)'s Plan")
                 .appTextStyle(.sectionTitle)
-                .appTextColor(.primaryText)
+                .appTextColor(.accentHeading)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
                 .padding(.top, 6)

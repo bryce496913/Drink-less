@@ -43,11 +43,11 @@ struct AchievementsAccordionView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Achievements")
-                        .appTextStyle(.accordionTitle)
-                        .appTextColor(.primaryText)
+                        .appTextStyle(.cardTitle)
+                        .appTextColor(.accentHeading)
                     Text("\(achievementService.unlockedCount(for: achievements)) of \(achievements.count) unlocked")
-                        .appTextStyle(.helper)
-                        .appTextColor(.accentText)
+                        .appTextStyle(.caption)
+                        .appTextColor(.secondaryText)
                 }
 
                 Spacer()
