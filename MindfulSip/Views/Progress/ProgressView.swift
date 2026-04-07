@@ -10,14 +10,14 @@ struct ProgressView: View {
         GeometryReader { geometry in
             ScrollView {
                 let weekStart = dateService.startOfWeek(container.currentDate)
-                let drinks = analytics.weeklyTotal(logs: container.logs, weekStart: weekStart)
-                let dryDays = analytics.weeklyDryDays(logs: container.logs, weekStart: weekStart)
+                let drinks = analytics.weeklyTotal(logs: container.logs, weekStart: weekStart, shouldIgnoreGoals: container.shouldIgnoreGoals(for:))
+                let dryDays = analytics.weeklyDryDays(logs: container.logs, weekStart: weekStart, shouldIgnoreDryDayPenalty: container.shouldIgnoreDryDayPenalty(for:))
                 let moneySpentWeek = drinks * container.profile.costPerDrink
                 let caloriesWeek = drinks * container.profile.caloriesPerDrink
                 let totalDrinks = container.logs.reduce(0) { $0 + $1.totalDrinks }
                 let moneySpentTotal = totalDrinks * container.profile.costPerDrink
                 let caloriesTotal = totalDrinks * container.profile.caloriesPerDrink
-                let weeklyGoalStreak = analytics.weeklyGoalSuccessStreak(logs: container.logs, weeklyTarget: container.profile.weeklyTarget, setupDate: container.profile.createdAt, asOf: container.currentDate)
+                let weeklyGoalStreak = analytics.weeklyGoalSuccessStreak(logs: container.logs, weeklyTarget: container.profile.weeklyTarget, setupDate: container.profile.createdAt, asOf: container.currentDate, shouldIgnoreGoals: container.shouldIgnoreGoals(for:))
 
                 VStack(alignment: .leading, spacing: 16) {
                     HStack(alignment: .top, spacing: 12) {

@@ -69,6 +69,69 @@ struct SettingsView: View {
                     }
 
                     Section {
+                        Text("Quick logging for a big night out. Add drinks fast without opening the full app.")
+                            .font(AppTheme.font(.caption))
+                            .foregroundStyle(AppTheme.text.opacity(0.75))
+
+                        Toggle("Enable Booze Mode", isOn: $container.settings.boozeModeEnabled)
+                            .font(AppTheme.font(.footnote))
+
+                        if container.settings.boozeModeEnabled {
+                            Text("Booze Mode active")
+                                .font(AppTheme.font(.caption, weight: .semibold))
+                                .foregroundStyle(AppTheme.highlight)
+                        }
+                    } header: {
+                        Text("Booze Mode")
+                            .font(AppTheme.font(.headline, weight: .semibold))
+                    }
+
+                    Section {
+                        Text("Keep tracking during time away, without affecting dry days or daily targets.")
+                            .font(AppTheme.font(.caption))
+                            .foregroundStyle(AppTheme.text.opacity(0.75))
+
+                        Toggle("Enable Holiday Mode", isOn: $container.settings.holidayModeEnabled)
+                            .font(AppTheme.font(.footnote))
+
+                        DatePicker(
+                            "Holiday start",
+                            selection: Binding(
+                                get: { container.settings.holidayStartDate ?? container.currentDate },
+                                set: { container.settings.holidayStartDate = $0 }
+                            ),
+                            displayedComponents: .date
+                        )
+                        .disabled(!container.settings.holidayModeEnabled)
+
+                        DatePicker(
+                            "Holiday end",
+                            selection: Binding(
+                                get: {
+                                    container.settings.holidayEndDate
+                                    ?? container.settings.holidayStartDate
+                                    ?? container.currentDate
+                                },
+                                set: { container.settings.holidayEndDate = $0 }
+                            ),
+                            displayedComponents: .date
+                        )
+                        .disabled(!container.settings.holidayModeEnabled)
+
+                        if container.isHolidayModeActive {
+                            Text("Holiday Mode active — tracking only")
+                                .font(AppTheme.font(.caption, weight: .semibold))
+                                .foregroundStyle(AppTheme.holiday)
+                            Text("You’re still tracking, but your goals are paused for now.")
+                                .font(AppTheme.font(.caption))
+                                .foregroundStyle(AppTheme.text.opacity(0.75))
+                        }
+                    } header: {
+                        Text("Holiday Mode")
+                            .font(AppTheme.font(.headline, weight: .semibold))
+                    }
+
+                    Section {
                         Button("Save settings") {
                             container.saveProfileAndSettings()
                         }
@@ -95,6 +158,10 @@ struct SettingsView: View {
                 }
             }
         }
+        .onChange(of: container.settings.boozeModeEnabled) { _ in container.saveSettings() }
+        .onChange(of: container.settings.holidayModeEnabled) { _ in container.saveSettings() }
+        .onChange(of: container.settings.holidayStartDate) { _ in container.saveSettings() }
+        .onChange(of: container.settings.holidayEndDate) { _ in container.saveSettings() }
         .appFullscreenContainer()
     }
 }

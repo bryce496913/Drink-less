@@ -3,36 +3,51 @@ import Foundation
 struct AnalyticsService {
     let dateService = DateService()
 
-    func weeklyTotal(logs: [DayLog], weekStart: Date) -> Double {
-        let week = Set(dateService.weekDates(from: weekStart).map(dateService.startOfDay))
-        return logs.filter { week.contains(dateService.startOfDay($0.date)) }.reduce(0) { $0 + $1.totalDrinks }
+    func weeklyTotal(logs: [DayLog], weekStart: Date, shouldIgnoreGoals: (Date) -> Bool = { _ in false }) -> Double {
+        let weekDays = dateService.weekDates(from: weekStart).map(dateService.startOfDay)
+        return logs
+            .filter { weekDays.contains(dateService.startOfDay($0.date)) }
+            .reduce(0) { partial, log in
+                shouldIgnoreGoals(log.date) ? partial : partial + log.totalDrinks
+            }
     }
 
-    func weeklyDryDays(logs: [DayLog], weekStart: Date) -> Int {
-        let week = Set(dateService.weekDates(from: weekStart).map(dateService.startOfDay))
-        return logs.filter { week.contains(dateService.startOfDay($0.date)) && $0.totalDrinks == 0 }.count
+    func weeklyDryDays(logs: [DayLog], weekStart: Date, shouldIgnoreDryDayPenalty: (Date) -> Bool = { _ in false }) -> Int {
+        let weekDays = dateService.weekDates(from: weekStart).map(dateService.startOfDay)
+        return logs.filter {
+            let day = dateService.startOfDay($0.date)
+            return weekDays.contains(day) && !shouldIgnoreDryDayPenalty(day) && $0.totalDrinks == 0
+        }.count
     }
 
     func saved(actualWeekly: Double, baselineWeekly: Double, perDrink: Double) -> Double {
         max(0, (baselineWeekly - actualWeekly) * perDrink)
     }
 
-    func insights(logs: [DayLog], today: Date = .now) -> Insights {
+    func insights(logs: [DayLog], today: Date = .now, shouldIgnoreGoals: (Date) -> Bool = { _ in false }, shouldIgnoreDryDayPenalty: (Date) -> Bool = { _ in false }) -> Insights {
         let sorted = logs.sorted { $0.date < $1.date }
         let last14Start = Calendar.current.date(byAdding: .day, value: -13, to: today) ?? today
         let prev14Start = Calendar.current.date(byAdding: .day, value: -27, to: today) ?? today
         let previous14End = Calendar.current.date(byAdding: .day, value: -14, to: today) ?? today
-        let last14 = sorted.filter { $0.date >= last14Start && $0.date <= today }.reduce(0) { $0 + $1.totalDrinks }
-        let previous14 = sorted.filter { $0.date >= prev14Start && $0.date <= previous14End }.reduce(0) { $0 + $1.totalDrinks }
+        let last14 = sorted.filter { $0.date >= last14Start && $0.date <= today && !shouldIgnoreGoals($0.date) }.reduce(0) { $0 + $1.totalDrinks }
+        let previous14 = sorted.filter { $0.date >= prev14Start && $0.date <= previous14End && !shouldIgnoreGoals($0.date) }.reduce(0) { $0 + $1.totalDrinks }
 
         var weekdayTotals = Array(repeating: 0.0, count: 7)
-        sorted.forEach { weekdayTotals[Calendar.current.component(.weekday, from: $0.date) - 1] += $0.totalDrinks }
+        sorted.filter { !shouldIgnoreGoals($0.date) }.forEach {
+            weekdayTotals[Calendar.current.component(.weekday, from: $0.date) - 1] += $0.totalDrinks
+        }
         let top = weekdayTotals.enumerated().max(by: { $0.element < $1.element })?.offset ?? 0
 
-        return Insights(last14: last14, previous14: previous14, topWeekday: top, dryStreak: dryStreak(logs: sorted, today: today), loggingStreak: loggingStreak(logs: sorted, today: today))
+        return Insights(
+            last14: last14,
+            previous14: previous14,
+            topWeekday: top,
+            dryStreak: dryStreak(logs: sorted, today: today, shouldIgnoreDryDayPenalty: shouldIgnoreDryDayPenalty),
+            loggingStreak: loggingStreak(logs: sorted, today: today)
+        )
     }
 
-    func weeklyGoalSuccessStreak(logs: [DayLog], weeklyTarget: Int, setupDate: Date, asOf date: Date = .now) -> Int {
+    func weeklyGoalSuccessStreak(logs: [DayLog], weeklyTarget: Int, setupDate: Date, asOf date: Date = .now, shouldIgnoreGoals: (Date) -> Bool = { _ in false }) -> Int {
         let target = Double(weeklyTarget)
         let calendar = Calendar.current
         let currentWeekStart = dateService.startOfWeek(date)
@@ -44,7 +59,7 @@ struct AnalyticsService {
             let weekStart = dateService.startOfWeek(cursor)
             guard weekStart >= firstTrackableWeekStart else { break }
 
-            let weekTotal = weeklyTotal(logs: logs, weekStart: weekStart)
+            let weekTotal = weeklyTotal(logs: logs, weekStart: weekStart, shouldIgnoreGoals: shouldIgnoreGoals)
             if weekTotal <= target {
                 streak += 1
             } else {
@@ -60,12 +75,16 @@ struct AnalyticsService {
         return streak
     }
 
-    func dryStreak(logs: [DayLog], today: Date = .now) -> Int {
+    func dryStreak(logs: [DayLog], today: Date = .now, shouldIgnoreDryDayPenalty: (Date) -> Bool = { _ in false }) -> Int {
         let map = Dictionary(uniqueKeysWithValues: logs.map { (dateService.startOfDay($0.date), $0.totalDrinks) })
         var streak = 0
         for offset in 0..<365 {
             guard let date = Calendar.current.date(byAdding: .day, value: -offset, to: today) else { continue }
             let day = dateService.startOfDay(date)
+            if shouldIgnoreDryDayPenalty(day) {
+                streak += 1
+                continue
+            }
             guard let value = map[day], value == 0 else { break }
             streak += 1
         }

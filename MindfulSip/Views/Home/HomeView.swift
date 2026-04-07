@@ -39,6 +39,7 @@ struct HomeView: View {
         container.log(for: container.currentDate)
     }
 
+
     private var weekStart: Date {
         analytics.dateService.startOfWeek(container.currentDate)
     }
@@ -48,11 +49,11 @@ struct HomeView: View {
     }
 
     private var weekTotal: Double {
-        analytics.weeklyTotal(logs: container.logs, weekStart: weekStart)
+        analytics.weeklyTotal(logs: container.logs, weekStart: weekStart, shouldIgnoreGoals: container.shouldIgnoreGoals(for:))
     }
 
     private var previousWeekTotal: Double {
-        analytics.weeklyTotal(logs: container.logs, weekStart: previousWeekStart)
+        analytics.weeklyTotal(logs: container.logs, weekStart: previousWeekStart, shouldIgnoreGoals: container.shouldIgnoreGoals(for:))
     }
 
     private var previousWeekHadActivity: Bool {
@@ -63,7 +64,7 @@ struct HomeView: View {
     }
 
     private var dryStreak: Int {
-        analytics.dryStreak(logs: container.logs)
+        analytics.dryStreak(logs: container.logs, shouldIgnoreDryDayPenalty: container.shouldIgnoreDryDayPenalty(for:))
     }
 
     private var loggingStreak: Int {
@@ -113,8 +114,33 @@ struct HomeView: View {
                         Text("Today: \(todayLog.totalDrinks, specifier: "%.1f") drinks")
                             .appTextStyle(.body)
                             .appTextColor(.secondaryText)
+
+                        HStack(spacing: 8) {
+                            if container.settings.boozeModeEnabled {
+                                modePill(text: "Booze Mode active", color: AppTheme.highlight)
+                            }
+                            if container.isHolidayModeActive {
+                                modePill(text: "Holiday Mode active — tracking only", color: AppTheme.holiday)
+                            }
+                        }
                     }
                     .frame(maxWidth: .infinity)
+
+
+                    if container.settings.boozeModeEnabled {
+                        HStack(spacing: 10) {
+                            Text("Quick logging for a big night out")
+                                .appTextStyle(.body)
+                                .appTextColor(.primaryText)
+                            Spacer()
+                            Button("Add Drink") {
+                                container.quickAddDrink()
+                            }
+                            .buttonStyle(SecondaryButtonStyle())
+                        }
+                        .padding(12)
+                        .background(AppTheme.highlight.opacity(0.25), in: RoundedRectangle(cornerRadius: 12))
+                    }
 
                     DisclosureGroup(isExpanded: $showStats) {
                         VStack(spacing: 10) {
@@ -233,7 +259,14 @@ struct HomeView: View {
                         .background(AppTheme.highlight.opacity(0.18), in: RoundedRectangle(cornerRadius: 12))
                     }
 
-                    if todayLog.totalDrinks > todayLog.plannedTargetDrinks, todayLog.plannedTargetDrinks > 0 {
+                    if container.isHolidayModeActive {
+                        Text("Holiday Mode active — tracking only. Goals are paused during your holiday.")
+                            .appTextStyle(.secondary)
+                            .appTextColor(.primaryText)
+                            .padding(12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(AppTheme.holiday.opacity(0.35), in: RoundedRectangle(cornerRadius: 12))
+                    } else if todayLog.totalDrinks > todayLog.plannedTargetDrinks, todayLog.plannedTargetDrinks > 0 {
                         Text("You are above today’s target. Try water between drinks, \(displayName).")
                             .appTextStyle(.secondary)
                             .appTextColor(.primaryText)
@@ -340,6 +373,15 @@ struct HomeView: View {
                 targetReachedBannerMessage = nil
             }
         }
+    }
+
+    private func modePill(text: String, color: Color) -> some View {
+        Text(text)
+            .appTextStyle(.caption)
+            .appTextColor(.primaryText)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(color.opacity(0.35), in: Capsule())
     }
 
     private func bannerCard(message: String, title: String? = nil, systemImage: String, background: Color) -> some View {

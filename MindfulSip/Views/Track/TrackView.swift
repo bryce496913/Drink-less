@@ -61,6 +61,10 @@ struct TrackView: View {
         calendar.startOfDay(for: selectedDate) > today
     }
 
+    private var isSelectedDateHoliday: Bool {
+        container.isDateInHolidayRange(selectedDate)
+    }
+
     private var onboardingStartDate: Date? {
         guard container.settings.hasCompletedOnboarding else { return nil }
         return calendar.startOfDay(for: container.profile.createdAt)
@@ -75,6 +79,9 @@ struct TrackView: View {
     }
 
     private var targetStatus: (text: String, color: Color) {
+        if isSelectedDateHoliday {
+            return ("Tracking only", AppTheme.holiday)
+        }
         if selectedLog.plannedTargetDrinks == 0 {
             return selectedLog.totalDrinks == 0 ? ("On target", .green) : ("Above target", .red)
         }
@@ -128,6 +135,16 @@ struct TrackView: View {
                                 }
                                 .buttonStyle(SecondaryButtonStyle())
                             }
+
+                            HStack(spacing: 8) {
+                                if container.settings.boozeModeEnabled {
+                                    statusPill(text: "Booze Mode Active", color: AppTheme.highlight)
+                                }
+                                if container.isHolidayModeActive {
+                                    statusPill(text: "Holiday Mode active — tracking only", color: AppTheme.holiday)
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
 
                             weekHeader
 
@@ -186,9 +203,10 @@ struct TrackView: View {
                 legendItem(color: .green, label: "0 drinks")
                 legendItem(color: .mint, label: "Met goal")
                 legendItem(color: .red, label: "Missed goal")
+                legendItem(color: AppTheme.holiday.opacity(0.85), label: "Holiday")
                 legendItem(color: .gray, label: "Future")
             }
-            Text("★ Setup completed")
+            Text("★ Setup completed • Holiday Mode is active for these dates.")
                 .appTextStyle(.caption)
                 .appTextColor(.accentHeading)
         }
@@ -243,6 +261,15 @@ struct TrackView: View {
                     .buttonStyle(SecondaryButtonStyle())
                 }
 
+                if isSelectedDateHoliday {
+                    HStack(spacing: 8) {
+                        statusPill(text: "Holiday Mode", color: AppTheme.holiday)
+                        Text("Goals are paused during your holiday")
+                            .appTextStyle(.caption)
+                            .appTextColor(.secondaryText)
+                    }
+                }
+
                 HStack(spacing: 10) {
                     detailPill(title: "Money spent", value: "$\(String(format: "%.0f", dayMoneySpent))")
                     detailPill(title: "Calories", value: "\(String(format: "%.0f", dayCalories))")
@@ -257,7 +284,7 @@ struct TrackView: View {
                             .appTextStyle(.statLabel)
                             .appTextColor(.secondaryText)
 
-                        Label(targetStatus.text, systemImage: targetStatus.text == "Above target" ? "arrow.up.circle.fill" : "checkmark.circle.fill")
+                        Label(targetStatus.text, systemImage: isSelectedDateHoliday ? "sun.max.fill" : (targetStatus.text == "Above target" ? "arrow.up.circle.fill" : "checkmark.circle.fill"))
                             .appTextStyle(.body)
                             .foregroundStyle(targetStatus.color)
                     }
@@ -378,6 +405,15 @@ struct TrackView: View {
         .padding(.bottom, 12)
     }
 
+    private func statusPill(text: String, color: Color) -> some View {
+        Text(text)
+            .appTextStyle(.caption)
+            .appTextColor(.primaryText)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(color.opacity(0.35), in: Capsule())
+    }
+
     private func detailPill(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
@@ -440,6 +476,10 @@ struct TrackView: View {
             return .gray.opacity(0.45)
         }
 
+        if container.isDateInHolidayRange(date) {
+            return AppTheme.holiday.opacity(0.85)
+        }
+
         if log.totalDrinks == 0 {
             return .green.opacity(0.85)
         }
@@ -463,7 +503,7 @@ struct TrackView: View {
     }
 
     private func showTargetReachedBannerIfNeeded(previousTotal: Double, updatedTotal: Double, target: Double) {
-        guard target > 0, previousTotal < target, updatedTotal == target else { return }
+        guard !isSelectedDateHoliday, target > 0, previousTotal < target, updatedTotal == target else { return }
         let daySeed = calendar.ordinality(of: .day, in: .era, for: selectedDate) ?? 0
         let messageIndex = daySeed % targetReachedMessages.count
         withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
