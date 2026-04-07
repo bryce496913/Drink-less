@@ -109,11 +109,11 @@ struct HomeView: View {
                 VStack(spacing: 14) {
                     VStack(spacing: 8) {
                         Text("Welcome, \(displayName)")
-                            .font(AppTheme.font(.title, weight: .bold))
-                            .foregroundStyle(AppTheme.text)
+                            .appTextStyle(.screenTitle)
+                            .appTextColor(.primaryText)
                         Text("Today: \(todayLog.totalDrinks, specifier: "%.1f") drinks")
-                            .font(AppTheme.font(.title3, weight: .medium))
-                            .foregroundStyle(AppTheme.highlight)
+                            .appTextStyle(.screenSubtitle)
+                            .appTextColor(.accentText)
                     }
                     .frame(maxWidth: .infinity)
 
@@ -137,8 +137,8 @@ struct HomeView: View {
                         .padding(.top, 8)
                     } label: {
                         Text("Stats")
-                            .font(AppTheme.font(.headline, weight: .semibold))
-                            .foregroundStyle(AppTheme.text)
+                            .appTextStyle(.accordionTitle)
+                            .appTextColor(.primaryText)
                     }
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
@@ -160,7 +160,8 @@ struct HomeView: View {
                             }
 
                             Stepper("Set today total: \(amount, specifier: "%.1f")", value: $amount, in: 0 ... 20, step: 1)
-                                .foregroundStyle(AppTheme.text)
+                                .appTextStyle(.body)
+                                .appTextColor(.primaryText)
                             Button("Save total") {
                                 let previousTotal = todayLog.totalDrinks
                                 let target = todayLog.plannedTargetDrinks
@@ -173,8 +174,8 @@ struct HomeView: View {
 
                             if !addDrinkSaveMessage.isEmpty {
                                 Text(addDrinkSaveMessage)
-                                    .font(AppTheme.font(.caption))
-                                    .foregroundStyle(.green)
+                                    .appTextStyle(.helper)
+                                    .appTextColor(.positiveText)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .transition(.opacity)
                             }
@@ -182,8 +183,8 @@ struct HomeView: View {
                         .padding(.top, 8)
                     } label: {
                         Text("Add Drinks")
-                            .font(AppTheme.font(.headline, weight: .semibold))
-                            .foregroundStyle(AppTheme.text)
+                            .appTextStyle(.accordionTitle)
+                            .appTextColor(.primaryText)
                     }
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
@@ -201,22 +202,23 @@ struct HomeView: View {
                         .padding(.top, 8)
                     } label: {
                         Text("Daily Achievements")
-                            .font(AppTheme.font(.headline, weight: .semibold))
+                            .appTextStyle(.accordionTitle)
                     }
-                    .font(AppTheme.font(.body))
-                    .foregroundStyle(AppTheme.text.opacity(0.95))
+                    .appTextStyle(.body)
+                    .appTextColor(.secondaryText)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
 
                     DisclosureGroup(isExpanded: $showTip) {
                         Text(container.tipService.tip(for: container.currentDate))
-                            .font(AppTheme.font(.body))
-                            .foregroundStyle(AppTheme.text.opacity(0.9))
+                            .appTextStyle(.body)
+                            .appTextColor(.secondaryText)
                             .padding(.top, 8)
                     } label: {
                         Text("Tip of The Day")
-                            .font(AppTheme.font(.headline, weight: .semibold))
+                            .appTextStyle(.accordionTitle)
+                            .appTextColor(.primaryText)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(16)
@@ -225,11 +227,11 @@ struct HomeView: View {
                     if let reminderMessage = container.todaysReminderMessage {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Today’s reminder")
-                                .font(AppTheme.font(.headline, weight: .semibold))
+                                .appTextStyle(.sectionTitle)
                             Text(reminderMessage)
-                                .font(AppTheme.font(.body))
+                                .appTextStyle(.body)
                         }
-                        .foregroundStyle(AppTheme.text)
+                        .appTextColor(.primaryText)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(12)
                         .background(AppTheme.highlight.opacity(0.18), in: RoundedRectangle(cornerRadius: 12))
@@ -237,8 +239,8 @@ struct HomeView: View {
 
                     if todayLog.totalDrinks > todayLog.plannedTargetDrinks, todayLog.plannedTargetDrinks > 0 {
                         Text("You are above today’s target. Try water between drinks, \(displayName).")
-                            .font(AppTheme.font(.footnote))
-                            .foregroundStyle(AppTheme.text)
+                            .appTextStyle(.bodySecondary)
+                            .appTextColor(.primaryText)
                             .padding(12)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(AppTheme.highlight.opacity(0.35), in: RoundedRectangle(cornerRadius: 12))
@@ -348,16 +350,16 @@ struct HomeView: View {
         VStack(spacing: 8) {
             if let title {
                 Label(title, systemImage: systemImage)
-                    .font(AppTheme.font(.headline, weight: .bold))
+                    .appTextStyle(.sectionTitle)
             } else {
                 Label("Target reached", systemImage: systemImage)
-                    .font(AppTheme.font(.headline, weight: .bold))
+                    .appTextStyle(.sectionTitle)
             }
             Text(message)
-                .font(AppTheme.font(.footnote))
+                .appTextStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
         }
-        .foregroundStyle(AppTheme.text)
+        .appTextColor(.primaryText)
         .padding(14)
         .background(background, in: RoundedRectangle(cornerRadius: 14))
         .padding(.top, 12)
@@ -402,10 +404,10 @@ private struct DrinkQuickAddGrid: View {
                         Text(option.icon)
                             .font(.system(size: 21))
                         Text(option.title)
-                            .font(AppTheme.font(.caption, weight: .semibold))
+                            .appTextStyle(.cardLabel)
                             .multilineTextAlignment(.center)
                         Text("+\(option.amount, specifier: "%.1f")")
-                            .font(AppTheme.font(.caption2))
+                            .appTextStyle(.helper)
                     }
                     .foregroundStyle(AppTheme.text)
                     .frame(maxWidth: .infinity)
@@ -425,11 +427,11 @@ private struct StatPill: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(AppTheme.font(.footnote))
-                .foregroundStyle(AppTheme.text.opacity(0.8))
+                .appTextStyle(.cardLabel)
+                .appTextColor(.tertiaryText)
             Text(value)
-                .font(AppTheme.font(.headline, weight: .bold))
-                .foregroundStyle(AppTheme.highlight)
+                .appTextStyle(.statValue)
+                .appTextColor(.accentText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)

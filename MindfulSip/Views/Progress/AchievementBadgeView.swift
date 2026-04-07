@@ -27,14 +27,14 @@ struct AchievementBadgeView: View {
             }
 
             Text(achievement.title)
-                .font(AppTheme.font(.caption, weight: .semibold))
+                .appTextStyle(.cardLabel)
                 .foregroundStyle(AppTheme.text.opacity(achievement.isUnlocked ? 1 : 0.7))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
 
             Text(achievement.isUnlocked ? "Unlocked" : "Locked")
-                .font(AppTheme.font(.caption2))
+                .appTextStyle(.helper)
                 .foregroundStyle(achievement.isUnlocked ? AppTheme.highlight : AppTheme.text.opacity(0.45))
         }
         .frame(maxWidth: .infinity)

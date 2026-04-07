@@ -59,17 +59,17 @@ struct PlanView: View {
     private var planHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Weekly planning")
-                .font(AppTheme.font(.h1, weight: .bold))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.screenTitle)
+                .appTextColor(.primaryText)
 
             Text("Set daily limits and dry days. Your total is auto-capped to your weekly target.")
-                .font(AppTheme.font(.paragraph))
-                .foregroundStyle(AppTheme.text.opacity(0.9))
+                .appTextStyle(.body)
+                .appTextColor(.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
 
             Text(weekRangeLabel)
-                .font(AppTheme.font(.caption, weight: .semibold))
-                .foregroundStyle(AppTheme.highlight)
+                .appTextStyle(.helper)
+                .appTextColor(.accentText)
 
             Button("Auto-distribute my target") {
                 targets = container.planService.distributeTarget(weeklyTarget: container.profile.weeklyTarget, dryDayIndexes: dryDays)
@@ -80,8 +80,8 @@ struct PlanView: View {
 
             if isPlanLocked {
                 Text("Your weekly plan is locked until next Monday to help you stay accountable.")
-                    .font(AppTheme.font(.caption))
-                    .foregroundStyle(AppTheme.text.opacity(0.75))
+                    .appTextStyle(.helper)
+                    .appTextColor(.mutedText)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -117,8 +117,8 @@ struct PlanView: View {
             .padding(.top, 8)
         } label: {
             Text("Daily targets")
-                .font(AppTheme.font(.h2, weight: .semibold))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.accordionTitle)
+                .appTextColor(.primaryText)
         }
         .padding(14)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
@@ -132,10 +132,10 @@ struct PlanView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(date.formatted(.dateTime.weekday(.wide)))
-                        .font(AppTheme.font(.h2, weight: .semibold))
+                        .appTextStyle(.sectionTitle)
                     Text(date.formatted(date: .abbreviated, time: .omitted))
-                        .font(AppTheme.font(.h3))
-                        .foregroundStyle(AppTheme.text.opacity(0.75))
+                        .appTextStyle(.helper)
+                        .appTextColor(.mutedText)
                 }
                 Spacer()
                 Toggle("Dry", isOn: Binding(get: { dryDays.contains(index) }, set: { isDry in
@@ -165,8 +165,8 @@ struct PlanView: View {
                 persist(index)
             }), in: 0 ... 20, step: 0.5) {
                 Text("Adjust daily target")
-                    .font(AppTheme.font(.h3, weight: .medium))
-                    .foregroundStyle(AppTheme.text)
+                    .appTextStyle(.body)
+                    .appTextColor(.primaryText)
             }
             .disabled(isPlanLocked)
         }
@@ -177,11 +177,11 @@ struct PlanView: View {
     private func planStat(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(AppTheme.font(.h3))
-                .foregroundStyle(AppTheme.text.opacity(0.8))
+                .appTextStyle(.cardLabel)
+                .appTextColor(.tertiaryText)
             Text(value)
-                .font(AppTheme.font(.h3, weight: .bold))
-                .foregroundStyle(AppTheme.highlight)
+                .appTextStyle(.statValue)
+                .appTextColor(.accentText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
@@ -223,32 +223,32 @@ struct PlanView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 8) {
                             Text("Name:")
-                                .font(AppTheme.font(.h3, weight: .semibold))
-                                .foregroundStyle(AppTheme.text.opacity(0.9))
+                                .appTextStyle(.bodySecondary)
+                                .appTextColor(.secondaryText)
                             TextField("user_name", text: $container.profile.name)
-                                .font(AppTheme.font(.h3))
+                                .appTextStyle(.body)
                                 .textInputAutocapitalization(.words)
                         }
 
                         HStack(spacing: 8) {
                             Text("Goal:")
-                                .font(AppTheme.font(.h3, weight: .semibold))
-                                .foregroundStyle(AppTheme.text.opacity(0.9))
+                                .appTextStyle(.bodySecondary)
+                                .appTextColor(.secondaryText)
                             Picker("user_goal", selection: $container.profile.goalType) {
                                 ForEach(GoalType.allCases) { goal in
                                     Text(goal.rawValue).tag(goal)
                                 }
                             }
-                            .font(AppTheme.font(.h3))
+                            .appTextStyle(.body)
                         }
 
                         HStack(spacing: 8) {
                             Text("Price per drink:")
-                                .font(AppTheme.font(.h3, weight: .semibold))
-                                .foregroundStyle(AppTheme.text.opacity(0.9))
+                                .appTextStyle(.bodySecondary)
+                                .appTextColor(.secondaryText)
                             Spacer()
                             TextField("", value: $container.profile.costPerDrink, format: .number)
-                                .font(AppTheme.font(.h3))
+                                .appTextStyle(.body)
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(maxWidth: 90)
@@ -256,11 +256,11 @@ struct PlanView: View {
 
                         HStack(spacing: 8) {
                             Text("Calories per drink:")
-                                .font(AppTheme.font(.h3, weight: .semibold))
-                                .foregroundStyle(AppTheme.text.opacity(0.9))
+                                .appTextStyle(.bodySecondary)
+                                .appTextColor(.secondaryText)
                             Spacer()
                             TextField("", value: $container.profile.caloriesPerDrink, format: .number)
-                                .font(AppTheme.font(.h3))
+                                .appTextStyle(.body)
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(maxWidth: 90)
@@ -269,46 +269,46 @@ struct PlanView: View {
                     .padding(.top, 4)
                 } label: {
                     Text("Profile")
-                        .font(AppTheme.font(.h2, weight: .semibold))
+                        .appTextStyle(.accordionTitle)
                 }
 
                 DisclosureGroup(isExpanded: $isTargetsExpanded) {
                     VStack(spacing: 8) {
                         Stepper("Weekly target: \(container.profile.weeklyTarget)", value: $container.profile.weeklyTarget, in: 0...50)
-                            .font(AppTheme.font(.h3))
+                            .appTextStyle(.body)
                             .disabled(isPlanLocked)
                         Stepper("Dry day target: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0...7)
-                            .font(AppTheme.font(.h3))
+                            .appTextStyle(.body)
                             .disabled(isPlanLocked)
                         if isPlanLocked {
                             Text("Targets are locked for this week and can be adjusted again next Monday.")
-                                .font(AppTheme.font(.caption))
-                                .foregroundStyle(AppTheme.text.opacity(0.75))
+                                .appTextStyle(.helper)
+                                .appTextColor(.mutedText)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
                     .padding(.top, 4)
                 } label: {
                     Text("Targets")
-                        .font(AppTheme.font(.h2, weight: .semibold))
+                        .appTextStyle(.accordionTitle)
                 }
 
                 DisclosureGroup(isExpanded: $isReminderExpanded) {
                     VStack(spacing: 8) {
                         Toggle("Reminders enabled", isOn: $container.settings.remindersEnabled)
-                            .font(AppTheme.font(.h3))
+                            .appTextStyle(.body)
                             .onChange(of: container.settings.remindersEnabled) { _ in
                                 container.saveSettings()
                             }
                         DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
-                            .font(AppTheme.font(.h3))
+                            .appTextStyle(.body)
                             .onChange(of: container.settings.reminderTime) { _ in
                                 if container.settings.remindersEnabled {
                                     container.saveSettings()
                                 }
                             }
                         Toggle("Avoid weekend auto dry days", isOn: $container.settings.avoidWeekendForAutoDry)
-                            .font(AppTheme.font(.h3))
+                            .appTextStyle(.body)
                             .onChange(of: container.settings.avoidWeekendForAutoDry) { _ in
                                 container.saveSettings()
                             }
@@ -316,7 +316,7 @@ struct PlanView: View {
                     .padding(.top, 4)
                 } label: {
                     Text("Reminders")
-                        .font(AppTheme.font(.h2, weight: .semibold))
+                        .appTextStyle(.accordionTitle)
                 }
 
                 Button("Save settings") {
@@ -331,8 +331,8 @@ struct PlanView: View {
 
                 if !settingsSaveMessage.isEmpty {
                     Label(settingsSaveMessage, systemImage: "checkmark.circle.fill")
-                        .font(AppTheme.font(.caption, weight: .semibold))
-                        .foregroundStyle(AppTheme.highlight)
+                        .appTextStyle(.helper)
+                        .appTextColor(.accentText)
                         .transition(.opacity)
                 }
 
@@ -344,8 +344,8 @@ struct PlanView: View {
             }
         } label: {
             Text("Settings")
-                .font(AppTheme.font(.h2, weight: .semibold))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.accordionTitle)
+                .appTextColor(.primaryText)
         }
         .padding(.top, 4)
         .foregroundStyle(AppTheme.text)
@@ -373,8 +373,8 @@ struct PlanView: View {
     private var planHeaderBar: some View {
         VStack(spacing: 0) {
             Text("\(displayName)'s Plan")
-                .font(AppTheme.font(.headline, weight: .semibold))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.sectionTitle)
+                .appTextColor(.primaryText)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
                 .padding(.top, 6)

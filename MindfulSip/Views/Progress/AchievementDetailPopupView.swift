@@ -38,12 +38,12 @@ struct AchievementDetailPopupView: View {
                     }
 
                     Text(achievement.title)
-                        .font(AppTheme.font(.headline, weight: .semibold))
-                        .foregroundStyle(AppTheme.text)
+                        .appTextStyle(.modalTitle)
+                        .appTextColor(.primaryText)
 
                     Text(achievement.isUnlocked ? "Unlocked" : "Locked")
-                        .font(AppTheme.font(.caption, weight: .semibold))
-                        .foregroundStyle(achievement.isUnlocked ? AppTheme.highlight : AppTheme.text.opacity(0.6))
+                        .appTextStyle(.helper)
+                        .foregroundStyle(achievement.isUnlocked ? AppTheme.textColor(.accentText) : AppTheme.textColor(.mutedText))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(AppTheme.background.opacity(0.6), in: Capsule())
@@ -80,11 +80,11 @@ struct AchievementDetailPopupView: View {
     private func detailRow(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(AppTheme.font(.caption2))
-                .foregroundStyle(AppTheme.text.opacity(0.72))
+                .appTextStyle(.cardLabel)
+                .appTextColor(.mutedText)
             Text(value)
-                .font(AppTheme.font(.body))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.modalBody)
+                .appTextColor(.primaryText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

@@ -118,8 +118,8 @@ struct TrackView: View {
 
                                 Spacer()
                                 Text(monthTitle)
-                                    .font(AppTheme.font(.headline, weight: .semibold))
-                                    .foregroundStyle(AppTheme.text)
+                                    .appTextStyle(.sectionTitle)
+                                    .appTextColor(.primaryText)
                                 Spacer()
 
                                 Button {
@@ -172,8 +172,8 @@ struct TrackView: View {
         return HStack {
             ForEach(mondayFirst, id: \.self) { day in
                 Text(day)
-                    .font(AppTheme.font(.caption, weight: .semibold))
-                    .foregroundStyle(AppTheme.text.opacity(0.75))
+                    .appTextStyle(.helper)
+                    .appTextColor(.mutedText)
                     .frame(maxWidth: .infinity)
             }
         }
@@ -182,8 +182,8 @@ struct TrackView: View {
     private var legend: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Color key")
-                .font(AppTheme.font(.footnote, weight: .semibold))
-                .foregroundStyle(AppTheme.text.opacity(0.8))
+                .appTextStyle(.cardLabel)
+                .appTextColor(.tertiaryText)
             HStack {
                 legendItem(color: .green, label: "0 drinks")
                 legendItem(color: .mint, label: "Met goal")
@@ -191,8 +191,8 @@ struct TrackView: View {
                 legendItem(color: .gray, label: "Future")
             }
             Text("★ Setup completed")
-                .font(AppTheme.font(.paragraph))
-                .foregroundStyle(AppTheme.highlight)
+                .appTextStyle(.helper)
+                .appTextColor(.accentText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
@@ -233,7 +233,7 @@ struct TrackView: View {
                     .buttonStyle(SecondaryButtonStyle())
 
                     Text(selectedDate.formatted(date: .complete, time: .omitted))
-                        .font(AppTheme.font(.headline, weight: .semibold))
+                        .appTextStyle(.modalTitle)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
 
@@ -256,11 +256,11 @@ struct TrackView: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Status")
-                            .font(AppTheme.font(.caption2))
-                            .foregroundStyle(AppTheme.text.opacity(0.75))
+                            .appTextStyle(.cardLabel)
+                            .appTextColor(.mutedText)
 
                         Label(targetStatus.text, systemImage: targetStatus.text == "Above target" ? "arrow.up.circle.fill" : "checkmark.circle.fill")
-                            .font(AppTheme.font(.body, weight: .semibold))
+                            .appTextStyle(.body)
                             .foregroundStyle(targetStatus.color)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -290,8 +290,8 @@ struct TrackView: View {
                         .disabled(isFutureDay)
 
                         Stepper("Set day total: \(dayAmountDraft, specifier: "%.1f")", value: $dayAmountDraft, in: 0...20, step: 0.5)
-                            .font(AppTheme.font(.body))
-                            .foregroundStyle(AppTheme.text)
+                            .appTextStyle(.body)
+                            .appTextColor(.primaryText)
                             .disabled(isFutureDay)
 
                         Button("Save drinks") {
@@ -308,29 +308,29 @@ struct TrackView: View {
 
                         if isFutureDay {
                             Text("Future dates cannot be edited yet.")
-                                .font(AppTheme.font(.caption))
-                                .foregroundStyle(AppTheme.text.opacity(0.75))
+                                .appTextStyle(.helper)
+                                .appTextColor(.mutedText)
                         }
                     }
                     .padding(.top, 4)
                 } label: {
                     Text("Add drinks")
-                        .font(AppTheme.font(.footnote, weight: .semibold))
-                        .foregroundStyle(AppTheme.text.opacity(0.8))
+                        .appTextStyle(.accordionTitle)
+                        .appTextColor(.primaryText)
                 }
                 .tint(AppTheme.text)
 
                 if !drinksSaveMessage.isEmpty {
                     Text(drinksSaveMessage)
-                        .font(AppTheme.font(.caption))
-                        .foregroundStyle(.green)
+                        .appTextStyle(.helper)
+                        .appTextColor(.positiveText)
                         .transition(.opacity)
                 }
 
                 if let targetReachedBannerMessage {
                     Text(targetReachedBannerMessage)
-                        .font(AppTheme.font(.caption, weight: .semibold))
-                        .foregroundStyle(AppTheme.text)
+                        .appTextStyle(.bodySecondary)
+                        .appTextColor(.primaryText)
                         .padding(10)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(AppTheme.accent.opacity(0.75), in: RoundedRectangle(cornerRadius: 10))
@@ -338,11 +338,11 @@ struct TrackView: View {
                 }
 
                 Text("Notes")
-                    .font(AppTheme.font(.footnote, weight: .semibold))
-                    .foregroundStyle(AppTheme.text.opacity(0.8))
+                    .appTextStyle(.accordionTitle)
+                    .appTextColor(.primaryText)
 
                 TextEditor(text: $notesDraft)
-                    .font(AppTheme.font(.body))
+                    .appTextStyle(.modalBody)
                     .frame(minHeight: 72, maxHeight: 110)
                     .padding(6)
                     .background(AppTheme.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
@@ -357,8 +357,8 @@ struct TrackView: View {
 
                 if !noteSaveMessage.isEmpty {
                     Text(noteSaveMessage)
-                        .font(AppTheme.font(.caption))
-                        .foregroundStyle(.green)
+                        .appTextStyle(.helper)
+                        .appTextColor(.positiveText)
                         .transition(.opacity)
                 }
             }
@@ -385,11 +385,11 @@ struct TrackView: View {
     private func detailPill(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(AppTheme.font(.caption2))
-                .foregroundStyle(AppTheme.text.opacity(0.75))
+                .appTextStyle(.cardLabel)
+                .appTextColor(.mutedText)
             Text(value)
-                .font(AppTheme.font(.footnote, weight: .semibold))
-                .foregroundStyle(AppTheme.highlight)
+                .appTextStyle(.statValue)
+                .appTextColor(.accentText)
                 .multilineTextAlignment(.leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -401,8 +401,8 @@ struct TrackView: View {
         HStack(spacing: 5) {
             Circle().fill(color).frame(width: 9, height: 9)
             Text(label)
-                .font(AppTheme.font(.caption2))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.helper)
+                .appTextColor(.primaryText)
         }
     }
 
@@ -416,8 +416,8 @@ struct TrackView: View {
             withAnimation { showDayCard = true }
         } label: {
             Text("\(calendar.component(.day, from: date))")
-                .font(AppTheme.font(.callout, weight: .semibold))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.bodySecondary)
+                .appTextColor(.primaryText)
                 .frame(maxWidth: .infinity)
                 .frame(height: 42)
                 .background(drinkColor(for: log, on: date), in: RoundedRectangle(cornerRadius: 10))
@@ -428,8 +428,8 @@ struct TrackView: View {
                 .overlay(alignment: .topTrailing) {
                     if isOnboardingStart(date) {
                         Text("★")
-                            .font(AppTheme.font(.paragraph, weight: .bold))
-                            .foregroundStyle(AppTheme.highlight)
+                            .appTextStyle(.helper)
+                            .appTextColor(.accentText)
                             .padding(3)
                     }
                 }
@@ -514,8 +514,8 @@ struct TrackView: View {
     private func topHeaderBar(title: String) -> some View {
         VStack(spacing: 0) {
             Text(title)
-                .font(AppTheme.font(.headline, weight: .semibold))
-                .foregroundStyle(AppTheme.text)
+                .appTextStyle(.sectionTitle)
+                .appTextColor(.primaryText)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
                 .padding(.top, 6)
@@ -571,12 +571,12 @@ private struct TrackDrinkQuickAddGrid: View {
                         Text(option.icon)
                             .font(.system(size: 18))
                         Text(option.title)
-                            .font(AppTheme.font(.caption2, weight: .semibold))
+                            .appTextStyle(.cardLabel)
                             .multilineTextAlignment(.center)
-                            .foregroundStyle(AppTheme.text)
+                            .appTextColor(.primaryText)
                         Text("+\(option.amount, specifier: "%.1f")")
-                            .font(AppTheme.font(.caption2))
-                            .foregroundStyle(AppTheme.highlight)
+                            .appTextStyle(.helper)
+                            .appTextColor(.accentText)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
