@@ -23,18 +23,18 @@ enum AppTheme {
 
         fileprivate var definition: (size: CGFloat, weight: Font.Weight) {
             switch self {
-            case .pageTitle: return (32, .bold)
-            case .sectionTitle: return (24, .semibold)
-            case .cardTitle: return (19, .medium)
-            case .value: return (26, .bold)
-            case .body: return (17, .regular)
-            case .secondary: return (15, .regular)
-            case .statLabel: return (13, .medium)
-            case .subtitle: return (16, .regular)
-            case .caption: return (13, .regular)
-            case .button: return (16, .semibold)
-            case .tabLabel: return (12, .medium)
-            case .dialogTitle: return (25, .semibold)
+            case .pageTitle: return (16, .semibold)   // h1
+            case .sectionTitle: return (14, .semibold) // h2
+            case .cardTitle: return (14, .semibold)    // h2
+            case .value: return (14, .semibold)        // h2 for highlighted stats
+            case .body: return (12, .regular)          // h3
+            case .secondary: return (10, .regular)     // paragraph
+            case .statLabel: return (10, .medium)      // paragraph
+            case .subtitle: return (12, .regular)      // h3
+            case .caption: return (10, .regular)       // paragraph
+            case .button: return (12, .semibold)       // h3
+            case .tabLabel: return (10, .medium)       // paragraph
+            case .dialogTitle: return (16, .semibold)  // h1
             }
         }
     }
@@ -50,11 +50,11 @@ enum AppTheme {
 
         fileprivate var color: Color {
             switch self {
-            case .primaryText: return Color.white
-            case .secondaryText: return Color.white.opacity(0.88)
-            case .accentHeading: return AppTheme.accent
+            case .primaryText: return AppTheme.text
+            case .secondaryText: return AppTheme.text.opacity(0.82)
+            case .accentHeading: return AppTheme.highlight
             case .highlightValue: return AppTheme.highlight
-            case .mutedText: return Color.white.opacity(0.62)
+            case .mutedText: return AppTheme.text.opacity(0.75)
             case .positiveText: return Color.green
             case .warningText: return Color.orange
             }
@@ -114,6 +114,34 @@ extension View {
 
     func appTextColor(_ role: AppTheme.TextColorRole) -> some View {
         foregroundStyle(AppTheme.textColor(role))
+    }
+
+    func pageTitleStyle() -> some View {
+        appTextStyle(.pageTitle).appTextColor(.primaryText)
+    }
+
+    func sectionTitleStyle() -> some View {
+        appTextStyle(.sectionTitle).appTextColor(.primaryText)
+    }
+
+    func accordionTitleStyle() -> some View {
+        appTextStyle(.cardTitle).appTextColor(.accentHeading)
+    }
+
+    func bodyTextStyle() -> some View {
+        appTextStyle(.body).appTextColor(.primaryText)
+    }
+
+    func secondaryTextStyle() -> some View {
+        appTextStyle(.secondary).appTextColor(.secondaryText)
+    }
+
+    func statLabelStyle() -> some View {
+        appTextStyle(.statLabel).appTextColor(.secondaryText)
+    }
+
+    func statValueStyle() -> some View {
+        appTextStyle(.value).appTextColor(.highlightValue)
     }
 }
 
