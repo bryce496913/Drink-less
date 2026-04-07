@@ -29,6 +29,10 @@ struct AppSettings: Codable {
     var hasCompletedOnboarding: Bool = false
     var avoidWeekendForAutoDry: Bool = false
     var targetsLockedWeekStart: Date? = nil
+    var boozeModeEnabled: Bool = false
+    var holidayModeEnabled: Bool = false
+    var holidayStartDate: Date? = nil
+    var holidayEndDate: Date? = nil
 }
 
 struct DrinkEntry: Codable, Identifiable {

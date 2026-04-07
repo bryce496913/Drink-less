@@ -6,6 +6,7 @@ enum AppTheme {
     static let accent = Color(red: 0.72, green: 0.29, blue: 0.95)
     static let highlight = Color(red: 0.98, green: 0.32, blue: 0.67)
     static let text = Color.white
+    static let holiday = Color(red: 0.45, green: 0.72, blue: 0.9)
 
     enum TextStyle {
         case pageTitle

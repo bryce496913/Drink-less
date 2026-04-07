@@ -45,6 +45,11 @@ final class AppSettingsEntity: NSManagedObject {
     @NSManaged var remindersEnabled: Bool
     @NSManaged var hasCompletedOnboarding: Bool
     @NSManaged var avoidWeekendForAutoDry: Bool
+    @NSManaged var targetsLockedWeekStart: Date?
+    @NSManaged var boozeModeEnabled: Bool
+    @NSManaged var holidayModeEnabled: Bool
+    @NSManaged var holidayStartDate: Date?
+    @NSManaged var holidayEndDate: Date?
 }
 
 @objc(DayLogEntity)

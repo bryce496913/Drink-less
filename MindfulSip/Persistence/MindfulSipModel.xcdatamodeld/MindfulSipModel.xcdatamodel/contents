@@ -16,6 +16,11 @@
         <attribute name="remindersEnabled" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="hasCompletedOnboarding" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="avoidWeekendForAutoDry" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="targetsLockedWeekStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="boozeModeEnabled" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="holidayModeEnabled" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="holidayStartDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="holidayEndDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <entity name="DayLogEntity" representedClassName="DayLogEntity" syncable="YES">
         <attribute name="id" optional="NO" attributeType="UUID" usesScalarValueType="NO"/>

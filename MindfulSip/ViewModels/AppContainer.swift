@@ -27,6 +27,11 @@ final class AppContainer: ObservableObject {
         return notificationService.reminderMessage(for: triggerDate)
     }
 
+    var isHolidayModeActive: Bool {
+        guard settings.holidayModeEnabled else { return false }
+        return isDateInHolidayRange(currentDate)
+    }
+
     private let dateService = DateService()
     private var clockCancellable: AnyCancellable?
     private var lastReminderRefreshDay: Date
@@ -38,6 +43,7 @@ final class AppContainer: ObservableObject {
         lastReminderRefreshDay = dateService.startOfDay(.now)
         startClock()
         applyReminderSettings()
+        syncBoozeModeExperience()
     }
 
     var areWeeklyTargetsLocked: Bool {
@@ -49,10 +55,32 @@ final class AppContainer: ObservableObject {
         !areWeeklyTargetsLocked
     }
 
+    func isDateInHolidayRange(_ date: Date) -> Bool {
+        guard settings.holidayModeEnabled,
+              let start = settings.holidayStartDate,
+              let end = settings.holidayEndDate else {
+            return false
+        }
+        let day = dateService.startOfDay(date)
+        let startDay = dateService.startOfDay(start)
+        let endDay = dateService.startOfDay(end)
+        guard startDay <= endDay else { return false }
+        return day >= startDay && day <= endDay
+    }
+
+    func shouldIgnoreGoals(for date: Date) -> Bool {
+        isDateInHolidayRange(date)
+    }
+
+    func shouldIgnoreDryDayPenalty(for date: Date) -> Bool {
+        isDateInHolidayRange(date)
+    }
+
     func refresh() {
         profile = store.loadProfile()
         settings = store.loadSettings()
         logs = store.fetchLogs(daysBack: 365)
+        syncBoozeModeExperience()
     }
 
     func saveProfile() {
@@ -62,15 +90,19 @@ final class AppContainer: ObservableObject {
         refresh()
     }
     func saveSettings() {
+        normalizeHolidayDatesIfNeeded()
         store.saveSettings(settings)
         applyReminderSettings()
+        syncBoozeModeExperience()
         refresh()
     }
     func saveProfileAndSettings() {
         applyWeeklyTargetLock()
+        normalizeHolidayDatesIfNeeded()
         store.saveProfile(profile)
         store.saveSettings(settings)
         applyReminderSettings()
+        syncBoozeModeExperience()
         refresh()
     }
 
@@ -85,6 +117,14 @@ final class AppContainer: ObservableObject {
     func updateDrinkTotal(date: Date, total: Double, type: DrinkType? = nil, delta: Double? = nil) {
         loggingService.update(date: date, total: total, type: type, delta: delta)
         logs = store.fetchLogs(daysBack: 365)
+        if settings.boozeModeEnabled {
+            notificationService.scheduleBoozeModeQuickAdd(todayCount: log(for: currentDate).totalDrinks)
+        }
+    }
+
+    func quickAddDrink(amount: Double = 1.0, type: DrinkType? = .other) {
+        let today = log(for: currentDate)
+        updateDrinkTotal(date: currentDate, total: today.totalDrinks + amount, type: type, delta: amount)
     }
 
     func registerWeeklyPlanSavedIfNeeded() {
@@ -113,6 +153,9 @@ final class AppContainer: ObservableObject {
                     if settings.remindersEnabled {
                         applyReminderSettings()
                     }
+                    if settings.boozeModeEnabled {
+                        syncBoozeModeExperience()
+                    }
                     notificationService.clearStaleDeliveredReminders(referenceDate: now)
                 }
             }
@@ -127,6 +170,25 @@ final class AppContainer: ObservableObject {
         Task {
             await notificationService.requestIfNeeded()
             notificationService.scheduleDailyReminder(at: settings.reminderTime)
+        }
+    }
+
+    private func syncBoozeModeExperience() {
+        if settings.boozeModeEnabled {
+            Task {
+                await notificationService.requestIfNeeded()
+                notificationService.scheduleBoozeModeQuickAdd(todayCount: log(for: currentDate).totalDrinks)
+            }
+        } else {
+            notificationService.cancelBoozeModeQuickAdd()
+        }
+    }
+
+    private func normalizeHolidayDatesIfNeeded() {
+        guard settings.holidayModeEnabled else { return }
+        guard let start = settings.holidayStartDate, let end = settings.holidayEndDate else { return }
+        if dateService.startOfDay(start) > dateService.startOfDay(end) {
+            settings.holidayEndDate = start
         }
     }
 

@@ -3,8 +3,12 @@ import UserNotifications
 import UIKit
 
 struct NotificationService {
+    static let boozeModeCategoryId = "BOOZE_MODE_CATEGORY"
+    static let boozeModeAddDrinkActionId = "BOOZE_MODE_ADD_DRINK"
+
     private let reminderIdPrefix = "dailyLogReminder"
     private let weeklyPlanningReminderId = "weeklyPlanningReminder"
+    private let boozeModeNotificationId = "boozeModeQuickAdd"
     private let reminderMessages = [
         "A mindful choice tonight can change tomorrow.",
         "Pause first. Your goal still matters.",
@@ -29,7 +33,8 @@ struct NotificationService {
     ]
 
     func requestIfNeeded() async {
-        _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge])
+        _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])
+        registerBoozeModeCategory()
     }
 
     func scheduleDailyReminder(at date: Date, from now: Date = .now, daysAhead: Int = 30) {
@@ -74,6 +79,32 @@ struct NotificationService {
         removeAllScheduledReminders()
     }
 
+    func scheduleBoozeModeQuickAdd(todayCount: Double) {
+        registerBoozeModeCategory()
+
+        let content = UNMutableNotificationContent()
+        content.title = "Booze Mode active"
+        content.body = "MindfulSip • Today: \(String(format: "%.1f", todayCount)) drinks. Tap Add Drink for a quick log."
+        content.categoryIdentifier = Self.boozeModeCategoryId
+        content.sound = .default
+        if #available(iOS 15.0, *) {
+            content.interruptionLevel = .active
+        }
+
+        // iOS does not support permanently pinned local notifications.
+        // We keep one quickly-available local notification with an action button
+        // and refresh it after each quick log.
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: boozeModeNotificationId, content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request)
+    }
+
+    func cancelBoozeModeQuickAdd() {
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [boozeModeNotificationId])
+        center.removeDeliveredNotifications(withIdentifiers: [boozeModeNotificationId])
+    }
+
     func reminderMessage(for date: Date) -> String {
         let dayIndex = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
         let index = abs(dayIndex) % reminderMessages.count
@@ -103,6 +134,21 @@ struct NotificationService {
         DispatchQueue.main.async {
             UIApplication.shared.applicationIconBadgeNumber = 0
         }
+    }
+
+    private func registerBoozeModeCategory() {
+        let addDrink = UNNotificationAction(
+            identifier: Self.boozeModeAddDrinkActionId,
+            title: "Add Drink",
+            options: [.foreground]
+        )
+        let category = UNNotificationCategory(
+            identifier: Self.boozeModeCategoryId,
+            actions: [addDrink],
+            intentIdentifiers: [],
+            options: []
+        )
+        UNUserNotificationCenter.current().setNotificationCategories([category])
     }
 
     private func removeAllScheduledReminders() {

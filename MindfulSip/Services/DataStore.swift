@@ -48,7 +48,17 @@ final class DataStore: ObservableObject {
     func loadSettings() -> AppSettings {
         let request = NSFetchRequest<AppSettingsEntity>(entityName: "AppSettingsEntity")
         if let entity = try? context.fetch(request).first {
-            return AppSettings(reminderTime: entity.reminderTime, remindersEnabled: entity.remindersEnabled, hasCompletedOnboarding: entity.hasCompletedOnboarding, avoidWeekendForAutoDry: entity.avoidWeekendForAutoDry)
+            return AppSettings(
+                reminderTime: entity.reminderTime,
+                remindersEnabled: entity.remindersEnabled,
+                hasCompletedOnboarding: entity.hasCompletedOnboarding,
+                avoidWeekendForAutoDry: entity.avoidWeekendForAutoDry,
+                targetsLockedWeekStart: entity.targetsLockedWeekStart,
+                boozeModeEnabled: entity.boozeModeEnabled,
+                holidayModeEnabled: entity.holidayModeEnabled,
+                holidayStartDate: entity.holidayStartDate,
+                holidayEndDate: entity.holidayEndDate
+            )
         }
         let settings = AppSettings()
         saveSettings(settings)
@@ -62,6 +72,11 @@ final class DataStore: ObservableObject {
         entity.remindersEnabled = settings.remindersEnabled
         entity.hasCompletedOnboarding = settings.hasCompletedOnboarding
         entity.avoidWeekendForAutoDry = settings.avoidWeekendForAutoDry
+        entity.targetsLockedWeekStart = settings.targetsLockedWeekStart
+        entity.boozeModeEnabled = settings.boozeModeEnabled
+        entity.holidayModeEnabled = settings.holidayModeEnabled
+        entity.holidayStartDate = settings.holidayStartDate
+        entity.holidayEndDate = settings.holidayEndDate
         persistence.save()
     }
 

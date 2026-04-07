@@ -73,6 +73,15 @@ struct PlanView: View {
                 .appTextStyle(.caption)
                 .appTextColor(.accentHeading)
 
+            if container.isHolidayModeActive {
+                Text("Holiday Mode active — tracking only. Goals are paused during your holiday.")
+                    .appTextStyle(.caption)
+                    .appTextColor(.primaryText)
+                    .padding(8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(AppTheme.holiday.opacity(0.3), in: RoundedRectangle(cornerRadius: 10))
+            }
+
             Button("Auto-distribute my target") {
                 targets = container.planService.distributeTarget(weeklyTarget: container.profile.weeklyTarget, dryDayIndexes: dryDays)
                 persist()
@@ -93,6 +102,15 @@ struct PlanView: View {
 
     private var weeklySummary: some View {
         VStack(spacing: 10) {
+            if container.isHolidayModeActive {
+                Text("Tracking only — goals paused")
+                    .appTextStyle(.caption)
+                    .appTextColor(.primaryText)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
+                    .background(AppTheme.holiday.opacity(0.3), in: Capsule())
+            }
+
             HStack(spacing: 10) {
                 planStat(title: "Weekly target", value: "\(container.profile.weeklyTarget)")
                 planStat(title: "Dry day goal", value: "\(container.profile.dryDaysTarget)")
@@ -128,6 +146,7 @@ struct PlanView: View {
 
     private func dayRow(index: Int, date: Date) -> some View {
         let dayLog = container.log(for: date)
+        let isHolidayDate = container.isDateInHolidayRange(date)
 
         return VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -150,7 +169,16 @@ struct PlanView: View {
                 }))
                 .labelsHidden()
                 .tint(AppTheme.highlight)
-                .disabled(isPlanLocked)
+                .disabled(isPlanLocked || isHolidayDate)
+            }
+
+            if isHolidayDate {
+                Text("Tracking only — goals paused")
+                    .appTextStyle(.caption)
+                    .appTextColor(.primaryText)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
+                    .background(AppTheme.holiday.opacity(0.3), in: Capsule())
             }
 
             HStack(spacing: 10) {
@@ -168,7 +196,7 @@ struct PlanView: View {
                 Text("Adjust daily target")
                     .bodyTextStyle()
             }
-            .disabled(isPlanLocked)
+            .disabled(isPlanLocked || isHolidayDate)
         }
         .padding(14)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
