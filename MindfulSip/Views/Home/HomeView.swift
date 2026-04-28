@@ -2,12 +2,10 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var container: AppContainer
-    @State private var amount: Double = 1
     @State private var showStats = true
     @State private var showAddDrinks = false
     @State private var showAchievements = false
     @State private var showTip = false
-    @State private var addDrinkSaveMessage = ""
     @State private var showMondaySetupPrompt = false
     @State private var showWeeklyCelebration = false
     @State private var pendingMondaySetupPrompt = false
@@ -179,29 +177,7 @@ struct HomeView: View {
                                     delta: amountToAdd
                                 )
                                 let updatedTotal = container.log(for: container.currentDate).totalDrinks
-                                amount = updatedTotal
                                 showTargetReachedBannerIfNeeded(previousTotal: previousTotal, updatedTotal: updatedTotal, target: target)
-                            }
-
-                            Stepper("Set today total: \(amount, specifier: "%.1f")", value: $amount, in: 0 ... 20, step: 1)
-                                .appTextStyle(.body)
-                                .appTextColor(.primaryText)
-                            Button("Save total") {
-                                let previousTotal = todayLog.totalDrinks
-                                let target = todayLog.plannedTargetDrinks
-                                container.updateDrinkTotal(date: container.currentDate, total: amount)
-                                let updatedTotal = container.log(for: container.currentDate).totalDrinks
-                                showTargetReachedBannerIfNeeded(previousTotal: previousTotal, updatedTotal: updatedTotal, target: target)
-                                showSavedTotalMessage()
-                            }
-                            .buttonStyle(PrimaryButtonStyle())
-
-                            if !addDrinkSaveMessage.isEmpty {
-                                Text(addDrinkSaveMessage)
-                                    .appTextStyle(.caption)
-                                    .appTextColor(.positiveText)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .transition(.opacity)
                             }
                         }
                         .padding(.top, 8)
@@ -283,7 +259,6 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .background(AppTheme.background)
                 .onAppear {
-                    amount = todayLog.totalDrinks
                     handleMondayExperience()
                 }
                 .alert("Weekly planning time", isPresented: $showMondaySetupPrompt) {
@@ -313,13 +288,6 @@ struct HomeView: View {
                     }
                 }
                 .appFullscreenContainer()
-        }
-    }
-
-    private func showSavedTotalMessage() {
-        addDrinkSaveMessage = "Drinks total saved"
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            addDrinkSaveMessage = ""
         }
     }
 

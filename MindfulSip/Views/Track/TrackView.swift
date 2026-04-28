@@ -7,7 +7,6 @@ struct TrackView: View {
     @State private var selectedDate = Date.now
     @State private var showDayCard = false
     @State private var notesDraft = ""
-    @State private var dayAmountDraft: Double = 0
     @State private var noteSaveMessage = ""
     @State private var drinksSaveMessage = ""
     @State private var isAddDrinksExpanded = false
@@ -61,6 +60,10 @@ struct TrackView: View {
         calendar.startOfDay(for: selectedDate) > today
     }
 
+    private var isEditableDay: Bool {
+        calendar.isDate(selectedDate, inSameDayAs: today)
+    }
+
     private var isSelectedDateHoliday: Bool {
         container.isDateInHolidayRange(selectedDate)
     }
@@ -95,17 +98,15 @@ struct TrackView: View {
     }
 
     private var drinkTypesSummary: String {
-        let typedEntries = selectedLog.entries.compactMap(\.type)
-        guard !typedEntries.isEmpty else {
+        let totals = drinkTypeTotals(for: selectedLog)
+        guard !totals.isEmpty else {
             return "No drink types logged for this day."
         }
-
-        let counts = Dictionary(grouping: typedEntries, by: { $0 }).mapValues(\.count)
         let ordered: [DrinkType] = [.wine, .beer, .spirits, .cocktail, .other]
 
         return ordered.compactMap { type in
-            guard let count = counts[type] else { return nil }
-            return "\(emoji(for: type)) x\(count)"
+            guard let total = totals[type], total > 0 else { return nil }
+            return "\(emoji(for: type)) \(total, specifier: "%.1f")"
         }
         .joined(separator: "  ")
     }
@@ -298,7 +299,7 @@ struct TrackView: View {
                 DisclosureGroup(isExpanded: $isAddDrinksExpanded) {
                     VStack(alignment: .leading, spacing: 10) {
                         TrackDrinkQuickAddGrid { amountToAdd, type in
-                            guard !isFutureDay else { return }
+                            guard isEditableDay else { return }
                             let previousTotal = selectedLog.totalDrinks
                             let target = selectedLog.plannedTargetDrinks
                             container.updateDrinkTotal(
@@ -308,31 +309,39 @@ struct TrackView: View {
                                 delta: amountToAdd
                             )
                             let updatedTotal = container.log(for: selectedDate).totalDrinks
-                            dayAmountDraft = updatedTotal
                             showTargetReachedBannerIfNeeded(previousTotal: previousTotal, updatedTotal: updatedTotal, target: target)
                             showDrinksSavedMessage()
                         }
-                        .disabled(isFutureDay)
+                        .disabled(!isEditableDay)
 
-                        Stepper("Set day total: \(dayAmountDraft, specifier: "%.1f")", value: $dayAmountDraft, in: 0...20, step: 0.5)
-                            .appTextStyle(.body)
-                            .appTextColor(.primaryText)
-                            .disabled(isFutureDay)
+                        if isEditableDay {
+                            Text("Edit drink type for any log from today:")
+                                .appTextStyle(.caption)
+                                .appTextColor(.secondaryText)
 
-                        Button("Save drinks") {
-                            guard !isFutureDay else { return }
-                            let previousTotal = selectedLog.totalDrinks
-                            let target = selectedLog.plannedTargetDrinks
-                            container.updateDrinkTotal(date: selectedDate, total: dayAmountDraft)
-                            let updatedTotal = container.log(for: selectedDate).totalDrinks
-                            showTargetReachedBannerIfNeeded(previousTotal: previousTotal, updatedTotal: updatedTotal, target: target)
-                            showDrinksSavedMessage()
-                        }
-                        .buttonStyle(PrimaryButtonStyle())
-                        .disabled(isFutureDay)
-
-                        if isFutureDay {
-                            Text("Future dates cannot be edited yet.")
+                            ForEach(selectedLog.entries) { entry in
+                                if let currentType = entry.type {
+                                    HStack(spacing: 10) {
+                                        Text("\(entry.amount, specifier: "%.1f") unit")
+                                            .appTextStyle(.body)
+                                            .appTextColor(.primaryText)
+                                        Spacer()
+                                        Picker("Drink type", selection: Binding(
+                                            get: { currentType },
+                                            set: { newType in
+                                                updateDrinkType(entryId: entry.id, to: newType)
+                                            }
+                                        )) {
+                                            ForEach(DrinkType.allCases) { type in
+                                                Text(type.rawValue.capitalized).tag(type)
+                                            }
+                                        }
+                                        .labelsHidden()
+                                    }
+                                }
+                            }
+                        } else {
+                            Text(isFutureDay ? "Future dates cannot be edited yet." : "Only today’s drinks can be added or edited.")
                                 .appTextStyle(.caption)
                                 .appTextColor(.mutedText)
                         }
@@ -524,10 +533,26 @@ struct TrackView: View {
     private func loadSelectedDayDrafts() {
         let log = container.log(for: selectedDate)
         notesDraft = log.notes
-        dayAmountDraft = log.totalDrinks
         noteSaveMessage = ""
         drinksSaveMessage = ""
         targetReachedBannerMessage = nil
+    }
+
+    private func drinkTypeTotals(for log: DayLog) -> [DrinkType: Double] {
+        log.entries.reduce(into: [:]) { partial, entry in
+            guard let type = entry.type else { return }
+            partial[type, default: 0] += entry.amount
+        }
+    }
+
+    private func updateDrinkType(entryId: UUID, to newType: DrinkType) {
+        guard isEditableDay else { return }
+        var updated = selectedLog
+        guard let entryIndex = updated.entries.firstIndex(where: { $0.id == entryId }) else { return }
+        let entry = updated.entries[entryIndex]
+        updated.entries[entryIndex] = DrinkEntry(id: entry.id, dateTime: entry.dateTime, amount: entry.amount, type: newType)
+        container.saveLog(updated)
+        showDrinksSavedMessage()
     }
 
     private func isOnboardingStart(_ date: Date) -> Bool {
