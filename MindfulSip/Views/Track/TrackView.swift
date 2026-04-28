@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 struct TrackView: View {
     @EnvironmentObject var container: AppContainer
@@ -104,11 +105,13 @@ struct TrackView: View {
         }
         let ordered: [DrinkType] = [.wine, .beer, .spirits, .cocktail, .other]
 
-        return ordered.compactMap { type in
-            guard let total = totals[type], total > 0 else { return nil }
-            return "\(emoji(for: type)) \(total, specifier: "%.1f")"
-        }
-        .joined(separator: "  ")
+        return ordered
+            .filter { (totals[$0] ?? 0) > 0 }
+            .map { type in
+                let total = totals[type] ?? 0
+                return "\(emoji(for: type)) \(String(format: "%.1f", total))"
+            }
+            .joined(separator: "  ")
     }
 
     var body: some View {
