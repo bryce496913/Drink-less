@@ -47,12 +47,16 @@ final class AppContainer: ObservableObject {
     }
 
     var areWeeklyTargetsLocked: Bool {
-        guard let lockWeekStart = settings.targetsLockedWeekStart else { return false }
+        guard isLockEnforcedToday, let lockWeekStart = settings.targetsLockedWeekStart else { return false }
         return dateService.startOfDay(lockWeekStart) == dateService.startOfDay(dateService.startOfWeek(currentDate))
     }
 
     var canEditWeeklyPlan: Bool {
         !areWeeklyTargetsLocked
+    }
+
+    private var isLockEnforcedToday: Bool {
+        dateService.calendar.component(.weekday, from: currentDate) != 2
     }
 
     func isDateInHolidayRange(_ date: Date) -> Bool {
@@ -201,14 +205,14 @@ final class AppContainer: ObservableObject {
             dateService.startOfDay($0) == dateService.startOfDay(currentWeekStart)
         } ?? false
 
-        if lockIsActiveForCurrentWeek {
+        if lockIsActiveForCurrentWeek, isLockEnforcedToday {
             profile.weeklyTarget = persistedProfile.weeklyTarget
             profile.dryDaysTarget = persistedProfile.dryDaysTarget
             settings.targetsLockedWeekStart = currentWeekStart
             return
         }
 
-        let isMonday = dateService.calendar.component(.weekday, from: currentDate) == 2
+        let isMonday = !isLockEnforcedToday
         let targetsWereUpdated = profile.weeklyTarget != persistedProfile.weeklyTarget || profile.dryDaysTarget != persistedProfile.dryDaysTarget
         if isMonday && targetsWereUpdated {
             settings.targetsLockedWeekStart = currentWeekStart
