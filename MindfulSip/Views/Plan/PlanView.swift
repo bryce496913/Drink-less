@@ -117,8 +117,8 @@ struct PlanView: View {
                 planStat(title: "Dry day goal", value: "\(container.profile.dryDaysTarget)")
             }
             HStack(spacing: 10) {
-                planStat(title: "Planned", value: String(format: "%.1f", plannedTotal))
-                planStat(title: "Remaining", value: String(format: "%.1f", remaining))
+                planStat(title: "Planned", value: "\(Int(plannedTotal))")
+                planStat(title: "Remaining", value: "\(Int(remaining))")
             }
         }
     }
@@ -183,8 +183,8 @@ struct PlanView: View {
             }
 
             HStack(spacing: 10) {
-                planStat(title: "Logged", value: String(format: "%.1f", dayLog.totalDrinks))
-                planStat(title: "Target", value: String(format: "%.1f", targets[index]))
+                planStat(title: "Logged", value: "\(Int(dayLog.totalDrinks))")
+                planStat(title: "Target", value: "\(Int(targets[index]))")
             }
 
             Stepper(value: Binding(get: { targets[index] }, set: { newValue in
@@ -193,7 +193,7 @@ struct PlanView: View {
                     dryDays.remove(index)
                 }
                 persist(index)
-            }), in: 0 ... 20, step: 0.5) {
+            }), in: 0 ... 20, step: 1) {
                 Text("Adjust daily target")
                     .bodyTextStyle()
             }
@@ -252,7 +252,7 @@ struct PlanView: View {
             } label: {
                 HStack {
                     Text("Settings")
-                        .sectionTitleStyle()
+                        .accordionTitleStyle()
                     Spacer()
                     Image(systemName: isSettingsExpanded ? "chevron.up" : "chevron.down")
                         .font(AppTheme.font(.caption, weight: .semibold))
@@ -260,6 +260,8 @@ struct PlanView: View {
                 }
             }
             .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             if isSettingsExpanded {
                 Divider()
