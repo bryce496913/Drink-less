@@ -109,7 +109,7 @@ struct TrackView: View {
             .filter { (totals[$0] ?? 0) > 0 }
             .map { type in
                 let total = totals[type] ?? 0
-                return "\(emoji(for: type)) \(String(format: "%.1f", total))"
+                return "\(emoji(for: type)) \(Int(total))"
             }
             .joined(separator: "  ")
     }
@@ -280,7 +280,7 @@ struct TrackView: View {
                 }
 
                 HStack(alignment: .top, spacing: 10) {
-                    detailPill(title: "Target", value: "\(String(format: "%.1f", selectedLog.plannedTargetDrinks))")
+                    detailPill(title: "Target", value: "\(Int(selectedLog.plannedTargetDrinks))")
                         .frame(maxWidth: 130)
 
                     VStack(alignment: .leading, spacing: 8) {
@@ -325,7 +325,7 @@ struct TrackView: View {
                             ForEach(selectedLog.entries) { entry in
                                 if let currentType = entry.type {
                                     HStack(spacing: 10) {
-                                        Text("\(entry.amount, specifier: "%.1f") unit")
+                                        Text("\(Int(entry.amount)) unit")
                                             .appTextStyle(.body)
                                             .appTextColor(.primaryText)
                                         Spacer()
@@ -598,13 +598,13 @@ struct TrackView: View {
 private struct TrackDrinkQuickAddGrid: View {
     let onAdd: (Double, DrinkType) -> Void
 
-    private let options: [(title: String, icon: String, amount: Double)] = [
-        ("Wine", "🍷", 1.0),
-        ("Beer", "🍺", 1.0),
-        ("Shot", "🥃", 0.5),
-        ("Large Beer", "🍺", 1.5),
-        ("Cocktail", "🍸", 1.5),
-        ("Double Shot", "🥃", 2.0)
+    private let options: [(title: String, icon: String)] = [
+        ("Wine", "🍷"),
+        ("Beer", "🍺"),
+        ("Shot", "🥃"),
+        ("Large Beer", "🍺"),
+        ("Cocktail", "🍸"),
+        ("Double Shot", "🥃")
     ]
 
     private func drinkType(for title: String) -> DrinkType {
@@ -626,7 +626,7 @@ private struct TrackDrinkQuickAddGrid: View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
             ForEach(options, id: \.title) { option in
                 Button {
-                    onAdd(option.amount, drinkType(for: option.title))
+                    onAdd(1, drinkType(for: option.title))
                 } label: {
                     VStack(spacing: 4) {
                         Text(option.icon)
@@ -635,7 +635,7 @@ private struct TrackDrinkQuickAddGrid: View {
                             .appTextStyle(.statLabel)
                             .multilineTextAlignment(.center)
                             .appTextColor(.primaryText)
-                        Text("+\(option.amount, specifier: "%.1f")")
+                        Text("+1")
                             .appTextStyle(.caption)
                             .appTextColor(.highlightValue)
                     }
