@@ -14,7 +14,6 @@ struct PlanView: View {
     @State private var isSettingsExpanded = false
     @State private var showDeleteConfirmation = false
     @State private var settingsSaveMessage = ""
-    @State private var drinkSaveMessageDate: Date?
     private let settingsItemIndent: CGFloat = 14
     private let settingsContentIndent: CGFloat = 14
     private let settingsExtraContentIndent: CGFloat = 14
@@ -213,9 +212,7 @@ struct PlanView: View {
                 planStat(title: "Target", value: "\(Int(targets[index]))")
             }
 
-            if canAddDrinks(to: date) {
-                pastDrinkAddControls(for: date)
-            } else if isFutureDate(date) {
+            if isFutureDate(date) {
                 Text("Future dates can be planned now and logged later.")
                     .appTextStyle(.caption)
                     .appTextColor(.mutedText)
@@ -237,35 +234,8 @@ struct PlanView: View {
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
     }
 
-    private func pastDrinkAddControls(for date: Date) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Add missed drinks for this past day:")
-                .appTextStyle(.caption)
-                .appTextColor(.secondaryText)
-
-            HStack(spacing: 8) {
-                ForEach(DrinkType.allCases) { type in
-                    Button {
-                        addPastDrink(to: date, type: type)
-                    } label: {
-                        Text("+1 \(emoji(for: type))")
-                            .appTextStyle(.caption)
-                            .appTextColor(.primaryText)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
-                            .background(AppTheme.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-
-            if drinkSaveMessageDate.map({ dateService.calendar.isDate($0, inSameDayAs: date) }) == true {
-                Text("Drink added")
-                    .appTextStyle(.caption)
-                    .appTextColor(.positiveText)
-                    .transition(.opacity)
-            }
-        }
+    private func isFutureDate(_ date: Date) -> Bool {
+        dateService.startOfDay(date) > today
     }
 
     private func planStat(title: String, value: String) -> some View {
@@ -278,41 +248,6 @@ struct PlanView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
         .background(AppTheme.background.opacity(0.45), in: RoundedRectangle(cornerRadius: 12))
-    }
-
-    private func canAddDrinks(to date: Date) -> Bool {
-        dateService.startOfDay(date) < today
-    }
-
-    private func isFutureDate(_ date: Date) -> Bool {
-        dateService.startOfDay(date) > today
-    }
-
-    private func addPastDrink(to date: Date, type: DrinkType) {
-        guard canAddDrinks(to: date) else { return }
-        let currentLog = container.log(for: date)
-        container.updateDrinkTotal(
-            date: date,
-            total: currentLog.totalDrinks + 1,
-            type: type,
-            delta: 1
-        )
-        drinkSaveMessageDate = dateService.startOfDay(date)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            if drinkSaveMessageDate.map({ dateService.calendar.isDate($0, inSameDayAs: date) }) == true {
-                drinkSaveMessageDate = nil
-            }
-        }
-    }
-
-    private func emoji(for type: DrinkType) -> String {
-        switch type {
-        case .wine: return "🍷"
-        case .beer: return "🍺"
-        case .spirits: return "🥃"
-        case .cocktail: return "🍸"
-        case .other: return "🍹"
-        }
     }
 
     private func loadWeek() {

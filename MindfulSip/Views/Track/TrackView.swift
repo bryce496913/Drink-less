@@ -62,7 +62,7 @@ struct TrackView: View {
     }
 
     private var isEditableDay: Bool {
-        calendar.isDate(selectedDate, inSameDayAs: today)
+        calendar.startOfDay(for: selectedDate) <= today
     }
 
     private var isSelectedDateHoliday: Bool {
@@ -318,7 +318,7 @@ struct TrackView: View {
                         .disabled(!isEditableDay)
 
                         if isEditableDay {
-                            Text("Edit drink type for any log from today:")
+                            Text("Edit drink type for any log from this day:")
                                 .appTextStyle(.caption)
                                 .appTextColor(.secondaryText)
 
@@ -344,7 +344,7 @@ struct TrackView: View {
                                 }
                             }
                         } else {
-                            Text(isFutureDay ? "Future dates cannot be edited yet." : "Only today’s drinks can be added or edited.")
+                            Text("Future dates cannot be edited yet.")
                                 .appTextStyle(.caption)
                                 .appTextColor(.mutedText)
                         }
