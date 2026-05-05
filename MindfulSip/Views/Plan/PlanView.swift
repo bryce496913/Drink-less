@@ -268,26 +268,8 @@ struct PlanView: View {
     }
 
     private var settingsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    isSettingsExpanded.toggle()
-                }
-            } label: {
-                HStack {
-                    Text("Settings")
-                        .accordionTitleStyle()
-                    Spacer()
-                    Image(systemName: isSettingsExpanded ? "chevron.up" : "chevron.down")
-                        .font(AppTheme.font(.caption, weight: .semibold))
-                        .foregroundStyle(AppTheme.highlight)
-                }
-            }
-            .buttonStyle(.plain)
-            .contentShape(Rectangle())
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            if isSettingsExpanded {
+        DisclosureGroup(isExpanded: $isSettingsExpanded) {
+            VStack(alignment: .leading, spacing: 12) {
                 Divider()
                     .overlay(AppTheme.highlight.opacity(0.3))
 
@@ -520,10 +502,18 @@ struct PlanView: View {
                 .padding(.top, 2)
                 .padding(.leading, settingsItemIndent)
             }
+            .padding(.top, 8)
+        } label: {
+            HStack {
+                Text("Settings")
+                    .accordionTitleStyle()
+                Spacer()
+            }
+            .contentShape(Rectangle())
         }
-        .padding(.top, 4)
         .padding(14)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+        .frame(maxWidth: .infinity, alignment: .leading)
         .alert("Delete all data?", isPresented: $showDeleteConfirmation) {
             Button("Cancel", role: .cancel) { }
             Button("Delete", role: .destructive) {
