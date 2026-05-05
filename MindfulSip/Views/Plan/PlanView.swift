@@ -10,7 +10,7 @@ struct PlanView: View {
     @State private var isTargetsExpanded = false
     @State private var isReminderExpanded = false
     @State private var isModesExpanded = false
-    @State private var isDailyTargetsExpanded = false
+    @State private var isDailyTargetsExpanded = true
     @State private var isSettingsExpanded = false
     @State private var showDeleteConfirmation = false
     @State private var settingsSaveMessage = ""
@@ -57,6 +57,30 @@ struct PlanView: View {
                 planHeaderBar
             }
             .onAppear(perform: loadWeek)
+            .onChange(of: isProfileExpanded) { _, isExpanded in
+                guard isExpanded else { return }
+                isTargetsExpanded = false
+                isReminderExpanded = false
+                isModesExpanded = false
+            }
+            .onChange(of: isTargetsExpanded) { _, isExpanded in
+                guard isExpanded else { return }
+                isProfileExpanded = false
+                isReminderExpanded = false
+                isModesExpanded = false
+            }
+            .onChange(of: isReminderExpanded) { _, isExpanded in
+                guard isExpanded else { return }
+                isProfileExpanded = false
+                isTargetsExpanded = false
+                isModesExpanded = false
+            }
+            .onChange(of: isModesExpanded) { _, isExpanded in
+                guard isExpanded else { return }
+                isProfileExpanded = false
+                isTargetsExpanded = false
+                isReminderExpanded = false
+            }
             .appFullscreenContainer()
     }
 

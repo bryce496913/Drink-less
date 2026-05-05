@@ -376,13 +376,13 @@ struct HomeView: View {
 private struct DrinkQuickAddGrid: View {
     let onAdd: (Double, DrinkType) -> Void
 
-    private let options: [(title: String, icon: String, amount: Double)] = [
-        ("Wine", "🍷", 1.0),
-        ("Beer", "🍺", 1.0),
-        ("Shot", "🥃", 0.5),
-        ("Large Beer", "🍺", 1.5),
-        ("Cocktail", "🍸", 1.5),
-        ("Double Shot", "🥃", 2.0)
+    private let options: [(title: String, icon: String)] = [
+        ("Wine", "🍷"),
+        ("Beer", "🍺"),
+        ("Shot", "🥃"),
+        ("Large Beer", "🍺"),
+        ("Cocktail", "🍸"),
+        ("Double Shot", "🥃")
     ]
 
     private func drinkType(for title: String) -> DrinkType {
@@ -404,7 +404,7 @@ private struct DrinkQuickAddGrid: View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
             ForEach(options, id: \.title) { option in
                 Button {
-                    onAdd(option.amount, drinkType(for: option.title))
+                    onAdd(1, drinkType(for: option.title))
                 } label: {
                     VStack(spacing: 4) {
                         Text(option.icon)
@@ -412,7 +412,7 @@ private struct DrinkQuickAddGrid: View {
                         Text(option.title)
                             .statLabelStyle()
                             .multilineTextAlignment(.center)
-                        Text("+\(option.amount, specifier: "%.1f")")
+                        Text("+1")
                             .appTextStyle(.caption)
                             .appTextColor(.highlightValue)
                     }
