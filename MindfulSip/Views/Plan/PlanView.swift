@@ -57,25 +57,25 @@ struct PlanView: View {
                 planHeaderBar
             }
             .onAppear(perform: loadWeek)
-            .onChange(of: isProfileExpanded) { _, isExpanded in
+            .onChange(of: isProfileExpanded) { isExpanded in
                 guard isExpanded else { return }
                 isTargetsExpanded = false
                 isReminderExpanded = false
                 isModesExpanded = false
             }
-            .onChange(of: isTargetsExpanded) { _, isExpanded in
+            .onChange(of: isTargetsExpanded) { isExpanded in
                 guard isExpanded else { return }
                 isProfileExpanded = false
                 isReminderExpanded = false
                 isModesExpanded = false
             }
-            .onChange(of: isReminderExpanded) { _, isExpanded in
+            .onChange(of: isReminderExpanded) { isExpanded in
                 guard isExpanded else { return }
                 isProfileExpanded = false
                 isTargetsExpanded = false
                 isModesExpanded = false
             }
-            .onChange(of: isModesExpanded) { _, isExpanded in
+            .onChange(of: isModesExpanded) { isExpanded in
                 guard isExpanded else { return }
                 isProfileExpanded = false
                 isTargetsExpanded = false
