@@ -74,6 +74,15 @@ struct TrackView: View {
         return calendar.startOfDay(for: container.profile.createdAt)
     }
 
+    private var editableHistoryStartDate: Date? {
+        guard let onboardingStartDate else { return nil }
+        let currentWeekStart = calendar.dateInterval(of: .weekOfYear, for: container.currentDate)?.start
+            ?? calendar.startOfDay(for: container.currentDate)
+        let onboardingWeekStart = calendar.dateInterval(of: .weekOfYear, for: onboardingStartDate)?.start
+            ?? onboardingStartDate
+        return calendar.startOfDay(for: max(currentWeekStart, onboardingWeekStart))
+    }
+
     private var dayMoneySpent: Double {
         selectedLog.totalDrinks * container.profile.costPerDrink
     }
@@ -480,7 +489,7 @@ struct TrackView: View {
     }
 
     private func drinkColor(for log: DayLog, on date: Date) -> Color {
-        if let onboardingStartDate, calendar.startOfDay(for: date) < onboardingStartDate {
+        if let editableHistoryStartDate, calendar.startOfDay(for: date) < editableHistoryStartDate {
             return .gray.opacity(0.3)
         }
 
