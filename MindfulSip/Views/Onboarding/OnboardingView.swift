@@ -89,11 +89,28 @@ struct OnboardingView: View {
                 Stepper("Dry days per week: \(container.profile.dryDaysTarget)", value: $container.profile.dryDaysTarget, in: 0 ... 7)
                     .appTextStyle(.body)
             default:
-                Text("Reminder and estimates")
+                Text("Notifications and estimates")
                     .appTextStyle(.sectionTitle)
                     .appTextColor(.accentHeading)
+
+                Toggle("Turn on system notifications", isOn: $container.settings.remindersEnabled)
+                    .appTextStyle(.body)
+                    .tint(AppTheme.highlight)
+                    .onChange(of: container.settings.remindersEnabled) { enabled in
+                        guard enabled else { return }
+                        Task {
+                            await container.notificationService.requestIfNeeded()
+                        }
+                    }
+
+                Text("We’ll ask iOS for permission and send your mindful check-in at the time below.")
+                    .appTextStyle(.caption)
+                    .appTextColor(.mutedText)
+
                 DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
                     .appTextStyle(.body)
+                    .disabled(!container.settings.remindersEnabled)
+                    .opacity(container.settings.remindersEnabled ? 1 : 0.6)
 
                 HStack {
                     Text("Cost per drink")
