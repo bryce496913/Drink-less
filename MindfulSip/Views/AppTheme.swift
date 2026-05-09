@@ -24,7 +24,7 @@ enum AppTheme {
 
         fileprivate var definition: (size: CGFloat, weight: Font.Weight) {
             switch self {
-            case .pageTitle: return (16, .semibold)   // h1
+            case .pageTitle: return (22, .semibold)   // h1
             case .sectionTitle: return (14, .semibold) // h2
             case .cardTitle: return (14, .semibold)    // h2
             case .value: return (14, .semibold)        // h2 for highlighted stats

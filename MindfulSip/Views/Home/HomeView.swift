@@ -170,11 +170,6 @@ struct HomeView: View {
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
 
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Daily guidance")
-                            .sectionTitleStyle()
-                        Text("Supportive coaching for today, moved here so it is available alongside your daily summary.")
-                            .appTextStyle(.caption)
-                            .appTextColor(.mutedText)
                         GuidanceAccordionsView(date: container.currentDate)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
