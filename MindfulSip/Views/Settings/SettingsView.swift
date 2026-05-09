@@ -287,7 +287,7 @@ struct SettingsView: View {
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
     }
 
-    private func settingsAccordion<Content: View>(title: String, isExpanded: Binding<Bool>, @ViewBuilder content: () -> Content) -> some View {
+    private func settingsAccordion<Content: View>(title: String, isExpanded: Binding<Bool>, @ViewBuilder content: @escaping () -> Content) -> some View {
         DisclosureGroup(isExpanded: isExpanded) {
             content()
                 .padding(.top, 8)
