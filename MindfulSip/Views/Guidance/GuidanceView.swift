@@ -1,14 +1,7 @@
 import SwiftUI
 
-struct GuidanceView: View {
-    @EnvironmentObject var container: AppContainer
-
-    @State private var showDailySupport = false
-    @State private var showAdvice = false
-    @State private var showPraise = false
-    @State private var showRecommendation = false
-
-    private let dailySupportMessages: [String] = [
+enum GuidanceMessageLibrary {
+    static let dailySupportMessages: [String] = [
         "Today is a fresh start. Whatever happened yesterday or earlier this week, you can make one choice right now that supports the version of yourself you want to become.",
         "Reducing alcohol is not about being perfect. It is about paying attention, learning your patterns, and making more intentional decisions one day at a time.",
         "Even a small pause before your first drink is progress. That moment of awareness helps build control, and control grows stronger with practice.",
@@ -31,7 +24,7 @@ struct GuidanceView: View {
         "You are doing more than tracking numbers. You are building awareness, resilience, and a healthier relationship with yourself, and that matters."
     ]
 
-    private let adviceMessages: [String] = [
+    static let adviceMessages: [String] = [
         "Before having a drink, pause and ask yourself what you want from it. If the answer is relief, comfort, or escape, there may be another way to support yourself first.",
         "Try slowing the pace of your drinking by adding a full glass of water between drinks. This creates space, helps you stay aware, and often changes the night more than expected.",
         "If evenings are your hardest time, plan them on purpose. A meal, a walk, a show, a workout, or an early bedtime can reduce the chance of drinking out of habit.",
@@ -54,7 +47,7 @@ struct GuidanceView: View {
         "Be honest about what “just one more” usually leads to. Clarity about your own patterns is one of the most useful tools you can have."
     ]
 
-    private let praiseMessages: [String] = [
+    static let praiseMessages: [String] = [
         "You checked in today, and that matters. Self-awareness is not always easy, and showing up for yourself is a meaningful step.",
         "Tracking your drinks takes honesty. That honesty is a strength, because real change starts when you are willing to see things clearly.",
         "Every mindful choice you make deserves credit. Even if it seems small, it reflects effort, intention, and growth.",
@@ -77,7 +70,7 @@ struct GuidanceView: View {
         "No matter where you are in the process, you deserve recognition for trying. Trying with honesty and intention is never something small."
     ]
 
-    private let recommendationMessages: [String] = [
+    static let recommendationMessages: [String] = [
         "Consider making tonight a slower night. Eat well, keep water nearby, and give yourself permission to choose ease over pressure.",
         "A good next step may be to set a simple limit for the rest of today. Clear, realistic boundaries are often easier to follow than vague intentions.",
         "Try planning one alcohol-free activity this week that you genuinely enjoy. The more rewarding your alternatives feel, the easier change becomes.",
@@ -100,59 +93,44 @@ struct GuidanceView: View {
         "If you want today to feel different, start with one supportive action now: drink water, eat something, step outside, text someone, or choose to wait ten minutes before deciding."
     ]
 
-    private var daySeed: Int {
-        Calendar.current.ordinality(of: .day, in: .era, for: container.currentDate) ?? 0
+    static func message(from messages: [String], date: Date, offset: Int) -> String {
+        guard !messages.isEmpty else { return "" }
+        let daySeed = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
+        return messages[(daySeed + offset) % messages.count]
     }
+}
+
+struct GuidanceAccordionsView: View {
+    let date: Date
+
+    @State private var showDailySupport = false
+    @State private var showAdvice = false
+    @State private var showPraise = false
+    @State private var showRecommendation = false
 
     private var dailySupport: String {
-        message(from: dailySupportMessages, offset: 0)
+        GuidanceMessageLibrary.message(from: GuidanceMessageLibrary.dailySupportMessages, date: date, offset: 0)
     }
 
     private var advice: String {
-        message(from: adviceMessages, offset: 1)
+        GuidanceMessageLibrary.message(from: GuidanceMessageLibrary.adviceMessages, date: date, offset: 1)
     }
 
     private var praiseMessage: String {
-        message(from: praiseMessages, offset: 2)
+        GuidanceMessageLibrary.message(from: GuidanceMessageLibrary.praiseMessages, date: date, offset: 2)
     }
 
     private var recommendation: String {
-        message(from: recommendationMessages, offset: 3)
+        GuidanceMessageLibrary.message(from: GuidanceMessageLibrary.recommendationMessages, date: date, offset: 3)
     }
 
     var body: some View {
-        let trimmedName = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        GeometryReader { geometry in
-            ScrollView {
-                    VStack(alignment: .leading, spacing: 14) {
-                        Text("Guidance for \(trimmedName.isEmpty ? "Friend" : trimmedName)")
-                            .pageTitleStyle()
-
-                        Text("Daily support and practical coaching based on your recent progress.")
-                            .appTextStyle(.body)
-                            .appTextColor(.secondaryText)
-
-                        guidanceAccordion(title: "Daily Support", message: dailySupport, icon: "sun.max", isExpanded: $showDailySupport)
-                        guidanceAccordion(title: "Advice", message: advice, icon: "lightbulb", isExpanded: $showAdvice)
-                        guidanceAccordion(title: "Praise", message: praiseMessage, icon: "hands.clap", isExpanded: $showPraise)
-                        guidanceAccordion(title: "Recommendation", message: recommendation, icon: "target", isExpanded: $showRecommendation)
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom, 24)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .frame(minHeight: geometry.size.height, alignment: .top)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .background(AppTheme.background)
-                .appFullscreenContainer()
+        VStack(alignment: .leading, spacing: 14) {
+            guidanceAccordion(title: "Daily Support", message: dailySupport, icon: "sun.max", isExpanded: $showDailySupport)
+            guidanceAccordion(title: "Advice", message: advice, icon: "lightbulb", isExpanded: $showAdvice)
+            guidanceAccordion(title: "Praise", message: praiseMessage, icon: "hands.clap", isExpanded: $showPraise)
+            guidanceAccordion(title: "Recommendation", message: recommendation, icon: "target", isExpanded: $showRecommendation)
         }
-    }
-
-    private func message(from messages: [String], offset: Int) -> String {
-        guard !messages.isEmpty else { return "" }
-        let index = (daySeed + offset) % messages.count
-        return messages[index]
     }
 
     private func guidanceAccordion(title: String, message: String, icon: String, isExpanded: Binding<Bool>) -> some View {
@@ -167,6 +145,36 @@ struct GuidanceView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+    }
+}
+
+struct GuidanceView: View {
+    @EnvironmentObject var container: AppContainer
+
+    var body: some View {
+        let trimmedName = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    Text("Guidance for \(trimmedName.isEmpty ? "Friend" : trimmedName)")
+                        .pageTitleStyle()
+
+                    Text("Daily support and practical coaching based on your recent progress.")
+                        .appTextStyle(.body)
+                        .appTextColor(.secondaryText)
+
+                    GuidanceAccordionsView(date: container.currentDate)
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 24)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(minHeight: geometry.size.height, alignment: .top)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(AppTheme.background)
+            .appFullscreenContainer()
+        }
     }
 }
 

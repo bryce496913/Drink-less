@@ -11,20 +11,7 @@ struct TrackView: View {
     @State private var noteSaveMessage = ""
     @State private var drinksSaveMessage = ""
     @State private var isAddDrinksExpanded = false
-    @State private var targetReachedBannerMessage: String?
-
-    private let targetReachedMessages: [String] = [
-        "You hit your plan for today — a great place to pause and protect tomorrow.",
-        "Nice work sticking to your number so far. This is your moment to hold the line.",
-        "You reached today’s target. Staying here is a win.",
-        "You planned this number for a reason — trust that choice.",
-        "You’re exactly where you meant to be today. Keep that momentum going.",
-        "Goal reached. A pause now can turn a good night into a proud one.",
-        "You’ve met your plan for today — anything after this is your decision, so choose with intention.",
-        "This is a strong stopping point. You’re doing what you said you would do.",
-        "You made a plan and followed it. That kind of consistency matters.",
-        "Today’s target is done. Take a breath, check in, and back your goal."
-    ]
+    @State private var drinkSupportMessage: DrinkSupportMessage?
 
     private var monthDates: [Date] {
         guard let monthInterval = calendar.dateInterval(of: .month, for: selectedDate),
@@ -312,16 +299,7 @@ struct TrackView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         TrackDrinkQuickAddGrid { amountToAdd, type in
                             guard isEditableDay else { return }
-                            let previousTotal = selectedLog.totalDrinks
-                            let target = selectedLog.plannedTargetDrinks
-                            container.updateDrinkTotal(
-                                date: selectedDate,
-                                total: previousTotal + amountToAdd,
-                                type: type,
-                                delta: amountToAdd
-                            )
-                            let updatedTotal = container.log(for: selectedDate).totalDrinks
-                            showTargetReachedBannerIfNeeded(previousTotal: previousTotal, updatedTotal: updatedTotal, target: target)
+                            addDrink(amount: amountToAdd, type: type)
                             showDrinksSavedMessage()
                         }
                         .disabled(!isEditableDay)
@@ -372,13 +350,9 @@ struct TrackView: View {
                         .transition(.opacity)
                 }
 
-                if let targetReachedBannerMessage {
-                    Text(targetReachedBannerMessage)
-                        .appTextStyle(.secondary)
-                        .appTextColor(.primaryText)
-                        .padding(10)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(AppTheme.accent.opacity(0.75), in: RoundedRectangle(cornerRadius: 10))
+                if let drinkSupportMessage {
+                    InAppSupportBanner(message: drinkSupportMessage)
+                        .padding(.horizontal, -20)
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
 
@@ -523,16 +497,34 @@ struct TrackView: View {
         }
     }
 
-    private func showTargetReachedBannerIfNeeded(previousTotal: Double, updatedTotal: Double, target: Double) {
-        guard !isSelectedDateHoliday, target > 0, previousTotal < target, updatedTotal == target else { return }
-        let daySeed = calendar.ordinality(of: .day, in: .era, for: selectedDate) ?? 0
-        let messageIndex = daySeed % targetReachedMessages.count
+    private func addDrink(amount: Double, type: DrinkType) {
+        let currentLog = selectedLog
+        let previousTotal = currentLog.totalDrinks
+        container.updateDrinkTotal(
+            date: selectedDate,
+            total: previousTotal + amount,
+            type: type,
+            delta: amount
+        )
+        let updatedLog = container.log(for: selectedDate)
+        showDrinkSupportMessageIfNeeded(previousLog: currentLog, updatedTotal: updatedLog.totalDrinks)
+    }
+
+    private func showDrinkSupportMessageIfNeeded(previousLog: DayLog, updatedTotal: Double) {
+        guard !container.shouldIgnoreGoals(for: previousLog.date),
+              let message = DrinkSupportMessageProvider.message(
+                previousTotal: previousLog.totalDrinks,
+                updatedTotal: updatedTotal,
+                target: previousLog.plannedTargetDrinks,
+                isDryDay: previousLog.isDryPlanned
+              ) else { return }
+
         withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
-            targetReachedBannerMessage = targetReachedMessages[messageIndex]
+            drinkSupportMessage = message
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) {
             withAnimation(.easeOut(duration: 0.25)) {
-                targetReachedBannerMessage = nil
+                drinkSupportMessage = nil
             }
         }
     }
@@ -547,7 +539,7 @@ struct TrackView: View {
         notesDraft = log.notes
         noteSaveMessage = ""
         drinksSaveMessage = ""
-        targetReachedBannerMessage = nil
+        drinkSupportMessage = nil
     }
 
     private func drinkTypeTotals(for log: DayLog) -> [DrinkType: Double] {

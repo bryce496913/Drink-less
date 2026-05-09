@@ -9,7 +9,7 @@ enum AppTab: String, CaseIterable, Identifiable {
     case plan
     case track
     case progress
-    case guidance
+    case settings
 
     var id: String { rawValue }
 
@@ -19,7 +19,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         case .plan: return "Plan"
         case .track: return "Track"
         case .progress: return "Progress"
-        case .guidance: return "Guidance"
+        case .settings: return "Settings"
         }
     }
 
@@ -29,7 +29,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         case .plan: return "calendar"
         case .track: return "calendar.badge.clock"
         case .progress: return "chart.bar"
-        case .guidance: return "heart.text.square"
+        case .settings: return "gearshape"
         }
     }
 }
@@ -63,11 +63,11 @@ struct MainTabView: View {
                 }
                 .tag(AppTab.progress)
 
-            GuidanceView()
+            SettingsView()
                 .tabItem {
-                    Label(AppTab.guidance.title, systemImage: AppTab.guidance.icon)
+                    Label(AppTab.settings.title, systemImage: AppTab.settings.icon)
                 }
-                .tag(AppTab.guidance)
+                .tag(AppTab.settings)
         }
         .onReceive(NotificationCenter.default.publisher(for: .openPlanTab)) { _ in
             selectedTab = .plan

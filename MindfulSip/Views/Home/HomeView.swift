@@ -4,30 +4,16 @@ struct HomeView: View {
     @EnvironmentObject var container: AppContainer
     @State private var showStats = true
     @State private var showAddDrinks = false
-    @State private var showAchievements = false
     @State private var showTip = false
     @State private var showMondaySetupPrompt = false
     @State private var showWeeklyCelebration = false
     @State private var pendingMondaySetupPrompt = false
-    @State private var targetReachedBannerMessage: String?
+    @State private var drinkSupportMessage: DrinkSupportMessage?
 
     @AppStorage("lastWeeklySetupPromptWeekStart") private var lastWeeklySetupPromptWeekStart = ""
     @AppStorage("lastWeeklyCelebrationWeekStart") private var lastWeeklyCelebrationWeekStart = ""
 
     private let analytics = AnalyticsService()
-    private let targetReachedMessages: [String] = [
-        "You hit your plan for today — a great place to pause and protect tomorrow.",
-        "Nice work sticking to your number so far. This is your moment to hold the line.",
-        "You reached today’s target. Staying here is a win.",
-        "You planned this number for a reason — trust that choice.",
-        "You’re exactly where you meant to be today. Keep that momentum going.",
-        "Goal reached. A pause now can turn a good night into a proud one.",
-        "You’ve met your plan for today — anything after this is your decision, so choose with intention.",
-        "This is a strong stopping point. You’re doing what you said you would do.",
-        "You made a plan and followed it. That kind of consistency matters.",
-        "Today’s target is done. Take a breath, check in, and back your goal."
-    ]
-
     private var displayName: String {
         let trimmed = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? "Friend" : trimmed
@@ -93,15 +79,6 @@ struct HomeView: View {
         value.formatted(.number.precision(.fractionLength(decimals)))
     }
 
-    private var achievementBadges: [String] {
-        var badges: [String] = []
-        if todayLog.totalDrinks == 0 { badges.append("Daily win: no drinks today") }
-        if dryStreak >= 3 { badges.append("On fire: \(dryStreak)-day dry streak") }
-        if loggingStreak >= 7 { badges.append("Consistency: logged \(loggingStreak) days") }
-        if weekTotal <= Double(container.profile.weeklyTarget) { badges.append("Weekly goal is on track") }
-        return badges
-    }
-
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
@@ -132,7 +109,7 @@ struct HomeView: View {
                                 .appTextColor(.primaryText)
                             Spacer()
                             Button("Add Drink") {
-                                container.quickAddDrink()
+                                addDrink(amount: 1, type: .other)
                             }
                             .buttonStyle(SecondaryButtonStyle())
                         }
@@ -168,16 +145,7 @@ struct HomeView: View {
                     DisclosureGroup(isExpanded: $showAddDrinks) {
                         VStack(spacing: 12) {
                             DrinkQuickAddGrid { amountToAdd, type in
-                                let previousTotal = todayLog.totalDrinks
-                                let target = todayLog.plannedTargetDrinks
-                                container.updateDrinkTotal(
-                                    date: container.currentDate,
-                                    total: previousTotal + amountToAdd,
-                                    type: type,
-                                    delta: amountToAdd
-                                )
-                                let updatedTotal = container.log(for: container.currentDate).totalDrinks
-                                showTargetReachedBannerIfNeeded(previousTotal: previousTotal, updatedTotal: updatedTotal, target: target)
+                                addDrink(amount: amountToAdd, type: type)
                             }
                         }
                         .padding(.top, 8)
@@ -185,27 +153,6 @@ struct HomeView: View {
                         Text("Add Drinks")
                             .accordionTitleStyle()
                     }
-                    .padding(16)
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-
-                    DisclosureGroup(isExpanded: $showAchievements) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            if achievementBadges.isEmpty {
-                                Text("Keep logging to unlock daily and weekly badges.")
-                            } else {
-                                ForEach(achievementBadges, id: \.self) { badge in
-                                    Label(badge, systemImage: "rosette")
-                                }
-                            }
-                        }
-                        .padding(.top, 8)
-                    } label: {
-                        Text("Daily Achievements")
-                            .accordionTitleStyle()
-                    }
-                    .appTextStyle(.body)
-                    .appTextColor(.secondaryText)
-                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
 
@@ -221,6 +168,16 @@ struct HomeView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(16)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Daily guidance")
+                            .sectionTitleStyle()
+                        Text("Supportive coaching for today, moved here so it is available alongside your daily summary.")
+                            .appTextStyle(.caption)
+                            .appTextColor(.mutedText)
+                        GuidanceAccordionsView(date: container.currentDate)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     if let reminderMessage = container.todaysReminderMessage {
                         VStack(alignment: .leading, spacing: 6) {
@@ -271,8 +228,8 @@ struct HomeView: View {
                 }
                 .overlay(alignment: .top) {
                     VStack(spacing: 8) {
-                        if let targetReachedBannerMessage {
-                            bannerCard(message: targetReachedBannerMessage, systemImage: "checkmark.seal.fill", background: AppTheme.accent.opacity(0.9))
+                        if let drinkSupportMessage {
+                            InAppSupportBanner(message: drinkSupportMessage)
                                 .transition(.move(edge: .top).combined(with: .opacity))
                         }
 
@@ -327,18 +284,35 @@ struct HomeView: View {
         }
     }
 
-    private func showTargetReachedBannerIfNeeded(previousTotal: Double, updatedTotal: Double, target: Double) {
-        guard target > 0, previousTotal < target, updatedTotal == target else { return }
-        let daySeed = Calendar.current.ordinality(of: .day, in: .era, for: container.currentDate) ?? 0
-        let messageIndex = daySeed % targetReachedMessages.count
+    private func addDrink(amount: Double, type: DrinkType) {
+        let currentLog = todayLog
+        let previousTotal = currentLog.totalDrinks
+        container.updateDrinkTotal(
+            date: container.currentDate,
+            total: previousTotal + amount,
+            type: type,
+            delta: amount
+        )
+        let updatedLog = container.log(for: container.currentDate)
+        showDrinkSupportMessageIfNeeded(previousLog: currentLog, updatedTotal: updatedLog.totalDrinks)
+    }
+
+    private func showDrinkSupportMessageIfNeeded(previousLog: DayLog, updatedTotal: Double) {
+        guard !container.shouldIgnoreGoals(for: previousLog.date),
+              let message = DrinkSupportMessageProvider.message(
+                previousTotal: previousLog.totalDrinks,
+                updatedTotal: updatedTotal,
+                target: previousLog.plannedTargetDrinks,
+                isDryDay: previousLog.isDryPlanned
+              ) else { return }
 
         withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-            targetReachedBannerMessage = targetReachedMessages[messageIndex]
+            drinkSupportMessage = message
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 4.5) {
             withAnimation(.easeOut(duration: 0.25)) {
-                targetReachedBannerMessage = nil
+                drinkSupportMessage = nil
             }
         }
     }
@@ -440,6 +414,91 @@ private struct StatPill: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .background(AppTheme.background.opacity(0.45), in: RoundedRectangle(cornerRadius: 14))
+    }
+}
+
+
+struct DrinkSupportMessage {
+    let title: String
+    let body: String
+    let systemImage: String
+    let background: Color
+}
+
+enum DrinkSupportMessageProvider {
+    private static let resetMessages: [String] = [
+        "This was planned as a dry day. That’s okay — the next choice still matters.",
+        "Today was meant to be a dry day. Be kind to yourself and try to reset from here.",
+        "A dry day did not go to plan, and that happens. You can still make the rest of today count.",
+        "No shame, just awareness. Try to make your next choice one that supports you.",
+        "This was a dry day goal, but the day is not lost. One mindful choice can still change the tone of the night.",
+        "It did not go exactly to plan today. Take a breath and see if you can steady things from here.",
+        "A tough moment does not undo your progress. Try to get back to your goal with the next decision.",
+        "This was meant to be a dry day. Be gentle with yourself and aim for a better next step.",
+        "One off-plan drink does not define the day. You still have time to make today better.",
+        "You are still allowed to reset. Let this be a pause, not a reason to give up on the day."
+    ]
+
+    private static let limitReachedMessages: [String] = [
+        "You’ve hit your plan for today — a great place to pause and protect tomorrow.",
+        "Nice work sticking to your number so far. This is your moment to hold the line.",
+        "You’ve reached today’s limit. Staying here is a win.",
+        "You planned this number for a reason — trust that choice.",
+        "You’re exactly where you meant to be today. Keep that momentum going by stopping here.",
+        "Goal reached. A pause now can turn a good night into a proud one.",
+        "You’ve met your plan for today — now is a strong time to stop.",
+        "This is a solid stopping point. You’re doing what you said you would do.",
+        "You made a plan and followed it. That kind of consistency matters.",
+        "Today’s limit is reached. Take a breath, check in, and back your goal."
+    ]
+
+    static func message(previousTotal: Double, updatedTotal: Double, target: Double, isDryDay: Bool) -> DrinkSupportMessage? {
+        if isDryDay {
+            return resetMessage(title: "Dry day reset")
+        }
+
+        if target > 0, previousTotal <= target, updatedTotal > target {
+            return resetMessage(title: "Reset from here")
+        }
+
+        if target > 0, previousTotal < target, updatedTotal == target {
+            return DrinkSupportMessage(
+                title: "Limit reached",
+                body: limitReachedMessages.randomElement() ?? limitReachedMessages[0],
+                systemImage: "checkmark.seal.fill",
+                background: AppTheme.accent.opacity(0.9)
+            )
+        }
+
+        return nil
+    }
+
+    private static func resetMessage(title: String) -> DrinkSupportMessage {
+        DrinkSupportMessage(
+            title: title,
+            body: resetMessages.randomElement() ?? resetMessages[0],
+            systemImage: "heart.circle.fill",
+            background: AppTheme.highlight.opacity(0.9)
+        )
+    }
+}
+
+struct InAppSupportBanner: View {
+    let message: DrinkSupportMessage
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Label(message.title, systemImage: message.systemImage)
+                .appTextStyle(.sectionTitle)
+            Text(message.body)
+                .appTextStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .appTextColor(.primaryText)
+        .padding(14)
+        .background(message.background, in: RoundedRectangle(cornerRadius: 14))
+        .padding(.top, 12)
+        .padding(.horizontal, 20)
     }
 }
 
