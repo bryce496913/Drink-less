@@ -5,6 +5,7 @@ struct ProgressView: View {
     @EnvironmentObject var container: AppContainer
     let analytics = AnalyticsService()
     let dateService = DateService()
+    @State private var showDailyAchievements = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -72,6 +73,13 @@ struct ProgressView: View {
                         }
                     }
 
+                    dailyAchievementsAccordion(
+                        todayTotal: container.log(for: container.currentDate).totalDrinks,
+                        dryStreak: analytics.dryStreak(logs: container.logs, shouldIgnoreDryDayPenalty: container.shouldIgnoreDryDayPenalty(for:)),
+                        loggingStreak: analytics.loggingStreak(logs: container.logs),
+                        weekTotal: drinks
+                    )
+
                     let achievementService = AchievementService()
                     let achievementStats = achievementService.stats(logs: container.logs, today: container.currentDate)
                     let achievements = achievementService.achievements(logs: container.logs, today: container.currentDate)
@@ -99,6 +107,40 @@ struct ProgressView: View {
             topHeaderBar
         }
         .appFullscreenContainer()
+    }
+
+    private func dailyAchievementsAccordion(todayTotal: Double, dryStreak: Int, loggingStreak: Int, weekTotal: Double) -> some View {
+        let badges = dailyAchievementBadges(todayTotal: todayTotal, dryStreak: dryStreak, loggingStreak: loggingStreak, weekTotal: weekTotal)
+
+        return DisclosureGroup(isExpanded: $showDailyAchievements) {
+            VStack(alignment: .leading, spacing: 8) {
+                if badges.isEmpty {
+                    Text("Keep logging to unlock daily and weekly badges.")
+                } else {
+                    ForEach(badges, id: \.self) { badge in
+                        Label(badge, systemImage: "rosette")
+                    }
+                }
+            }
+            .padding(.top, 8)
+        } label: {
+            Text("Daily Achievements")
+                .accordionTitleStyle()
+        }
+        .appTextStyle(.body)
+        .appTextColor(.secondaryText)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    private func dailyAchievementBadges(todayTotal: Double, dryStreak: Int, loggingStreak: Int, weekTotal: Double) -> [String] {
+        var badges: [String] = []
+        if todayTotal == 0 { badges.append("Daily win: no drinks today") }
+        if dryStreak >= 3 { badges.append("On fire: \(dryStreak)-day dry streak") }
+        if loggingStreak >= 7 { badges.append("Consistency: logged \(loggingStreak) days") }
+        if weekTotal <= Double(container.profile.weeklyTarget) { badges.append("Weekly goal is on track") }
+        return badges
     }
 
     private func progressMetric(title: String, value: String) -> some View {
