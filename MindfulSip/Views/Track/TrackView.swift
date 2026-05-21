@@ -63,11 +63,9 @@ struct TrackView: View {
 
     private var editableHistoryStartDate: Date? {
         guard let onboardingStartDate else { return nil }
-        let currentWeekStart = calendar.dateInterval(of: .weekOfYear, for: container.currentDate)?.start
-            ?? calendar.startOfDay(for: container.currentDate)
         let onboardingWeekStart = calendar.dateInterval(of: .weekOfYear, for: onboardingStartDate)?.start
             ?? onboardingStartDate
-        return calendar.startOfDay(for: max(currentWeekStart, onboardingWeekStart))
+        return calendar.startOfDay(for: onboardingWeekStart)
     }
 
     private var dayMoneySpent: Double {
@@ -605,7 +603,7 @@ private struct TrackDrinkQuickAddGrid: View {
         ("Shot", "🥃"),
         ("Large Beer", "🍺"),
         ("Cocktail", "🍸"),
-        ("Double Shot", "🥃")
+        ("Other", "🥃")
     ]
 
     private func drinkType(for title: String) -> DrinkType {
@@ -614,7 +612,7 @@ private struct TrackDrinkQuickAddGrid: View {
             return .wine
         case "Beer", "Large Beer":
             return .beer
-        case "Shot", "Double Shot":
+        case "Shot", "Other":
             return .spirits
         case "Cocktail":
             return .cocktail

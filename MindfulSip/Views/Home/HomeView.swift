@@ -351,7 +351,7 @@ private struct DrinkQuickAddGrid: View {
         ("Shot", "🥃"),
         ("Large Beer", "🍺"),
         ("Cocktail", "🍸"),
-        ("Double Shot", "🥃")
+        ("Other", "🥃")
     ]
 
     private func drinkType(for title: String) -> DrinkType {
@@ -360,7 +360,7 @@ private struct DrinkQuickAddGrid: View {
             return .wine
         case "Beer", "Large Beer":
             return .beer
-        case "Shot", "Double Shot":
+        case "Shot", "Other":
             return .spirits
         case "Cocktail":
             return .cocktail
