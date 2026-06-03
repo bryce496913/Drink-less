@@ -100,7 +100,7 @@ enum AppTheme {
         case .medium: family = "Poppins-Medium"
         default: family = "Poppins-Regular"
         }
-        return .custom(family, size: size)
+        return .custom(family, size: size, relativeTo: .body)
     }
 }
 
@@ -154,6 +154,7 @@ struct PrimaryButtonStyle: ButtonStyle {
             .padding(.vertical, 10)
             .padding(.horizontal, 12)
             .frame(maxWidth: .infinity)
+            .frame(minHeight: 44)
             .background(AppTheme.accent.opacity(configuration.isPressed ? 0.72 : 1), in: RoundedRectangle(cornerRadius: 10))
     }
 }
@@ -165,6 +166,7 @@ struct SecondaryButtonStyle: ButtonStyle {
             .appTextColor(.primaryText)
             .padding(.vertical, 10)
             .padding(.horizontal, 12)
+            .frame(minHeight: 44)
             .background(AppTheme.surface.opacity(configuration.isPressed ? 0.7 : 1), in: RoundedRectangle(cornerRadius: 10))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(AppTheme.highlight, lineWidth: 1))
     }

@@ -23,7 +23,7 @@ final class DataStore: ObservableObject {
                 baselineWeeklyDrinks: entity.baselineWeeklyDrinks,
                 costPerDrink: entity.costPerDrink,
                 caloriesPerDrink: entity.caloriesPerDrink
-            )
+            ).sanitized
         }
         let profile = UserProfile()
         saveProfile(profile)
@@ -31,6 +31,7 @@ final class DataStore: ObservableObject {
     }
 
     func saveProfile(_ profile: UserProfile) {
+        let profile = profile.sanitized
         let request = NSFetchRequest<UserProfileEntity>(entityName: "UserProfileEntity")
         let entity = (try? context.fetch(request).first) ?? UserProfileEntity(context: context)
         entity.id = profile.id
@@ -58,7 +59,7 @@ final class DataStore: ObservableObject {
                 holidayModeEnabled: entity.holidayModeEnabled,
                 holidayStartDate: entity.holidayStartDate,
                 holidayEndDate: entity.holidayEndDate
-            )
+            ).sanitized
         }
         let settings = AppSettings()
         saveSettings(settings)
@@ -66,6 +67,7 @@ final class DataStore: ObservableObject {
     }
 
     func saveSettings(_ settings: AppSettings) {
+        let settings = settings.sanitized
         let request = NSFetchRequest<AppSettingsEntity>(entityName: "AppSettingsEntity")
         let entity = (try? context.fetch(request).first) ?? AppSettingsEntity(context: context)
         entity.reminderTime = settings.reminderTime
@@ -87,11 +89,12 @@ final class DataStore: ObservableObject {
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
         let entities = (try? context.fetch(request)) ?? []
         return entities.map {
-            DayLog(id: $0.id, date: $0.date, plannedTargetDrinks: $0.plannedTargetDrinks, isDryPlanned: $0.isDryPlanned, totalDrinks: $0.totalDrinks, updatedAt: $0.updatedAt, notes: $0.notes, entries: (try? JSONDecoder().decode([DrinkEntry].self, from: $0.entriesBlob ?? Data())) ?? [])
+            DayLog(id: $0.id, date: $0.date, plannedTargetDrinks: $0.plannedTargetDrinks, isDryPlanned: $0.isDryPlanned, totalDrinks: $0.totalDrinks, updatedAt: $0.updatedAt, notes: $0.notes, entries: (try? JSONDecoder().decode([DrinkEntry].self, from: $0.entriesBlob ?? Data())) ?? []).sanitized
         }
     }
 
     func upsert(log: DayLog) {
+        let log = log.sanitized
         let date = Calendar.current.startOfDay(for: log.date)
         let request = NSFetchRequest<DayLogEntity>(entityName: "DayLogEntity")
         request.predicate = NSPredicate(format: "date == %@", date as NSDate)

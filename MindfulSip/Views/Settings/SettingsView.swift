@@ -75,6 +75,7 @@ struct SettingsView: View {
                         .appTextStyle(.body)
                         .appTextColor(.highlightValue)
                         .textInputAutocapitalization(.words)
+                        .accessibilityLabel("Name")
                 }
 
                 HStack(spacing: 8) {
@@ -100,6 +101,7 @@ struct SettingsView: View {
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.trailing)
                         .frame(maxWidth: 90)
+                        .accessibilityLabel("Price per drink")
                 }
 
                 HStack(spacing: 8) {
@@ -113,6 +115,7 @@ struct SettingsView: View {
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.trailing)
                         .frame(maxWidth: 90)
+                        .accessibilityLabel("Calories per drink")
                 }
             }
             .padding(.top, 4)
@@ -153,6 +156,11 @@ struct SettingsView: View {
                     .onChange(of: container.settings.remindersEnabled) { _ in
                         container.saveSettings()
                     }
+                Text("If notifications are denied in iOS Settings, reminders and Booze Mode quick logging will stay off until permission is restored.")
+                    .appTextStyle(.caption)
+                    .appTextColor(.mutedText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, settingsExtraContentIndent)
                 DatePicker("Reminder time", selection: $container.settings.reminderTime, displayedComponents: .hourAndMinute)
                     .appTextStyle(.body)
                     .padding(.leading, settingsExtraContentIndent)
@@ -210,6 +218,10 @@ struct SettingsView: View {
                     .appTextStyle(.body)
                     .padding(.leading, settingsExtraContentIndent)
                     .onChange(of: container.settings.holidayModeEnabled) { _ in
+                        if container.settings.holidayModeEnabled {
+                            container.settings.holidayStartDate = container.settings.holidayStartDate ?? container.currentDate
+                            container.settings.holidayEndDate = container.settings.holidayEndDate ?? container.settings.holidayStartDate ?? container.currentDate
+                        }
                         container.saveSettings()
                     }
 
@@ -217,7 +229,12 @@ struct SettingsView: View {
                     "Holiday start",
                     selection: Binding(
                         get: { container.settings.holidayStartDate ?? container.currentDate },
-                        set: { container.settings.holidayStartDate = $0 }
+                        set: {
+                            container.settings.holidayStartDate = $0
+                            if let end = container.settings.holidayEndDate, end < $0 {
+                                container.settings.holidayEndDate = $0
+                            }
+                        }
                     ),
                     displayedComponents: .date
                 )
@@ -236,7 +253,10 @@ struct SettingsView: View {
                             ?? container.settings.holidayStartDate
                             ?? container.currentDate
                         },
-                        set: { container.settings.holidayEndDate = $0 }
+                        set: {
+                            let start = container.settings.holidayStartDate ?? container.currentDate
+                            container.settings.holidayEndDate = max($0, start)
+                        }
                     ),
                     displayedComponents: .date
                 )
@@ -253,6 +273,13 @@ struct SettingsView: View {
                         .appTextColor(.primaryText)
                         .padding(.leading, settingsExtraContentIndent)
                 }
+
+                if container.settings.holidayModeEnabled, !container.isHolidayModeActive {
+                    Text("Holiday Mode is scheduled. Normal goals resume outside those dates.")
+                        .appTextStyle(.caption)
+                        .appTextColor(.mutedText)
+                        .padding(.leading, settingsExtraContentIndent)
+                }
             }
             .padding(.top, 4)
             .padding(.leading, settingsContentIndent)
@@ -262,10 +289,8 @@ struct SettingsView: View {
     private var actionsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Button("Save settings") {
-                container.profile.name = container.profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
-                if container.profile.name.isEmpty {
-                    container.profile.name = "Friend"
-                }
+                container.profile = container.profile.sanitized
+                container.settings = container.settings.sanitized
                 container.saveProfileAndSettings()
                 showSettingsSavedFeedback()
             }

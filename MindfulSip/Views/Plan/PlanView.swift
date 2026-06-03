@@ -138,6 +138,7 @@ struct PlanView: View {
     private func dayRow(index: Int, date: Date) -> some View {
         let dayLog = container.log(for: date)
         let isHolidayDate = container.isDateInHolidayRange(date)
+        let dailyTarget = target(at: index)
 
         return VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -150,6 +151,7 @@ struct PlanView: View {
                 }
                 Spacer()
                 Toggle("Dry", isOn: Binding(get: { dryDays.contains(index) }, set: { isDry in
+                    ensureTargetsCoverWeek()
                     if isDry {
                         dryDays.insert(index)
                         targets[index] = 0
@@ -174,7 +176,7 @@ struct PlanView: View {
 
             HStack(spacing: 10) {
                 planStat(title: "Logged", value: "\(Int(dayLog.totalDrinks))")
-                planStat(title: "Target", value: "\(Int(targets[index]))")
+                planStat(title: "Target", value: "\(Int(dailyTarget))")
             }
 
             if isFutureDate(date) {
@@ -183,8 +185,9 @@ struct PlanView: View {
                     .appTextColor(.mutedText)
             }
 
-            Stepper(value: Binding(get: { targets[index] }, set: { newValue in
-                targets[index] = max(0, newValue)
+            Stepper(value: Binding(get: { target(at: index) }, set: { newValue in
+                ensureTargetsCoverWeek()
+                targets[index] = newValue.finiteOrDefault(0).clamped(to: 0...20)
                 if targets[index] > 0 {
                     dryDays.remove(index)
                 }
@@ -221,15 +224,18 @@ struct PlanView: View {
         }
         dryDays = Set(currentDryDays)
         targets = weekDates.map { container.log(for: $0).plannedTargetDrinks }
+        ensureTargetsCoverWeek()
         if targets.allSatisfy({ $0 == 0 }) {
             targets = container.planService.distributeTarget(weeklyTarget: container.profile.weeklyTarget, dryDayIndexes: dryDays)
+            ensureTargetsCoverWeek()
         }
     }
 
     private func persist(_ changedIndex: Int? = nil) {
         guard canEditPlan else { return }
+        ensureTargetsCoverWeek()
         let sum = targets.reduce(0, +)
-        if sum > Double(container.profile.weeklyTarget), let changedIndex {
+        if sum > Double(container.profile.weeklyTarget), let changedIndex, targets.indices.contains(changedIndex) {
             let overflow = sum - Double(container.profile.weeklyTarget)
             targets[changedIndex] = max(0, targets[changedIndex] - overflow)
         }
@@ -237,10 +243,25 @@ struct PlanView: View {
         for (index, date) in weekDates.enumerated() {
             var log = container.log(for: date)
             log.isDryPlanned = dryDays.contains(index)
-            log.plannedTargetDrinks = targets[index]
+            log.plannedTargetDrinks = target(at: index)
             container.saveLog(log)
         }
         container.registerWeeklyPlanSavedIfNeeded()
+    }
+
+    private func target(at index: Int) -> Double {
+        guard targets.indices.contains(index) else { return 0 }
+        return targets[index].finiteOrDefault(0).clamped(to: 0...20)
+    }
+
+    private func ensureTargetsCoverWeek() {
+        if targets.count < weekDates.count {
+            targets.append(contentsOf: Array(repeating: 0, count: weekDates.count - targets.count))
+        }
+        if targets.count > weekDates.count {
+            targets = Array(targets.prefix(weekDates.count))
+        }
+        targets = targets.map { $0.finiteOrDefault(0).clamped(to: 0...20) }
     }
 
     private var planHeaderBar: some View {

@@ -10,9 +10,21 @@ final class PersistenceController {
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
         }
-        container.loadPersistentStores { _, error in
-            if let error {
-                fatalError("Core Data store failed: \(error)")
+        container.loadPersistentStores { [container] storeDescription, error in
+            guard let error else { return }
+
+            // A persistent-store failure should not crash users at launch. If the
+            // on-disk store cannot be opened, fall back to an in-memory store so
+            // the app remains usable and the issue can be resolved by a future
+            // migration or data reset.
+            let fallbackDescription = NSPersistentStoreDescription()
+            fallbackDescription.type = NSInMemoryStoreType
+            fallbackDescription.url = URL(fileURLWithPath: "/dev/null")
+            container.persistentStoreDescriptions = [fallbackDescription]
+            container.loadPersistentStores { _, fallbackError in
+                if let fallbackError {
+                    assertionFailure("Core Data fallback store failed after \(storeDescription): \(error), fallback: \(fallbackError)")
+                }
             }
         }
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
