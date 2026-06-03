@@ -236,6 +236,7 @@ struct TrackView: View {
                             .background(AppTheme.background.opacity(0.7), in: Circle())
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Close day details")
                 }
 
                 HStack(alignment: .center, spacing: 8) {
@@ -362,14 +363,17 @@ struct TrackView: View {
                     .frame(minHeight: 72, maxHeight: 110)
                     .padding(6)
                     .background(AppTheme.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
+                    .disabled(!isEditableDay)
+                    .accessibilityLabel("Notes for selected day")
 
                 Button("Save notes") {
                     var updated = selectedLog
-                    updated.notes = notesDraft
+                    updated.notes = String(notesDraft.prefix(2_000))
                     container.saveLog(updated)
                     showNoteSavedMessage()
                 }
                 .buttonStyle(PrimaryButtonStyle())
+                .disabled(!isEditableDay)
 
                 if !noteSaveMessage.isEmpty {
                     Text(noteSaveMessage)
@@ -458,6 +462,7 @@ struct TrackView: View {
                 }
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("Open details for \(date.formatted(date: .complete, time: .omitted))")
     }
 
     private func drinkColor(for log: DayLog, on date: Date) -> Color {
@@ -496,6 +501,7 @@ struct TrackView: View {
     }
 
     private func addDrink(amount: Double, type: DrinkType) {
+        guard amount.isFinite, amount > 0 else { return }
         let currentLog = selectedLog
         let previousTotal = currentLog.totalDrinks
         container.updateDrinkTotal(
@@ -643,6 +649,7 @@ private struct TrackDrinkQuickAddGrid: View {
                     .background(AppTheme.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Add one \(option.title.lowercased())")
             }
         }
     }

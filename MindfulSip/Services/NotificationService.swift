@@ -10,7 +10,7 @@ struct NotificationService {
     private let weeklyPlanningReminderId = "weeklyPlanningReminder"
     private let boozeModeNotificationId = "boozeModeQuickAdd"
     private let reminderMessages = [
-        "A mindful choice tonight can change tomorrow.",
+        "A mindful choice tonight can support tomorrow.",
         "Pause first. Your goal still matters.",
         "One less drink is still progress.",
         "Stay steady. You’re doing this for you.",
@@ -19,8 +19,8 @@ struct NotificationService {
         "Check in with yourself before you pour.",
         "Your goals deserve your attention tonight.",
         "A little restraint can go a long way.",
-        "You’re stronger than the habit.",
-        "Slow down tonight. You’ll thank yourself later.",
+        "You’re building a more mindful habit.",
+        "Slow down tonight. Your future self may appreciate it.",
         "Keep your promise to yourself tonight.",
         "Progress happens one choice at a time.",
         "Choose what supports tomorrow’s version of you.",
@@ -29,12 +29,28 @@ struct NotificationService {
         "Keep going. Your effort counts.",
         "Be kind to yourself and stay mindful tonight.",
         "Remember why you started.",
-        "Tonight is another chance to do yourself proud."
+        "Tonight is another chance to support your goal."
     ]
 
-    func requestIfNeeded() async {
-        _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])
+    func requestIfNeeded() async -> Bool {
         registerBoozeModeCategory()
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+
+        switch settings.authorizationStatus {
+        case .authorized, .provisional, .ephemeral:
+            return true
+        case .denied:
+            return false
+        case .notDetermined:
+            do {
+                return try await center.requestAuthorization(options: [.alert, .badge, .sound])
+            } catch {
+                return false
+            }
+        @unknown default:
+            return false
+        }
     }
 
     func scheduleDailyReminder(at date: Date, from now: Date = .now, daysAhead: Int = 30) {
@@ -43,8 +59,9 @@ struct NotificationService {
 
         let calendar = Calendar.current
         let reminderTime = calendar.dateComponents([.hour, .minute], from: date)
+        let sanitizedDaysAhead = daysAhead.clamped(to: 1...60)
 
-        for offset in 0..<daysAhead {
+        for offset in 0..<sanitizedDaysAhead {
             guard
                 let day = calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: now)),
                 let fireDate = calendar.date(bySettingHour: reminderTime.hour ?? 20, minute: reminderTime.minute ?? 0, second: 0, of: day),
@@ -59,7 +76,7 @@ struct NotificationService {
             content.body = reminderMessage(for: fireDate)
             content.badge = 1
             if #available(iOS 15.0, *) {
-                content.interruptionLevel = .timeSensitive
+                content.interruptionLevel = .active
             }
 
             let request = UNNotificationRequest(
@@ -71,7 +88,6 @@ struct NotificationService {
         }
 
         scheduleWeeklyPlanningReminder()
-
         clearStaleDeliveredReminders()
     }
 
@@ -82,21 +98,23 @@ struct NotificationService {
     func scheduleBoozeModeQuickAdd(todayCount: Double) {
         registerBoozeModeCategory()
 
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [boozeModeNotificationId])
+
         let content = UNMutableNotificationContent()
         content.title = "Booze Mode active"
-        content.body = "MindfulSip • Today: \(String(format: "%.1f", todayCount)) drinks. Tap Add Drink for a quick log."
+        content.body = "Mindful Sips • Today: \(String(format: "%.0f", max(0, todayCount))) drink(s). Tap Add Drink for a quick log."
         content.categoryIdentifier = Self.boozeModeCategoryId
         content.sound = .default
         if #available(iOS 15.0, *) {
             content.interruptionLevel = .active
         }
 
-        // iOS does not support permanently pinned local notifications.
-        // We keep one quickly-available local notification with an action button
-        // and refresh it after each quick log.
+        // iOS does not support permanently pinned local notifications. Keep one
+        // current quick-add notification and replace it after each quick log.
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         let request = UNNotificationRequest(identifier: boozeModeNotificationId, content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request)
+        center.add(request)
     }
 
     func cancelBoozeModeQuickAdd() {
@@ -181,7 +199,7 @@ struct NotificationService {
 
         let content = UNMutableNotificationContent()
         content.title = "Plan your week"
-        content.body = "It’s Monday morning. Set your weekly target and daily plan in MindfulSip."
+        content.body = "It’s Monday morning. Take a minute to set a supportive plan in Mindful Sips."
         content.badge = 1
         if #available(iOS 15.0, *) {
             content.interruptionLevel = .active

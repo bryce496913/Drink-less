@@ -280,6 +280,7 @@ struct HomeView: View {
     }
 
     private func addDrink(amount: Double, type: DrinkType) {
+        guard amount.isFinite, amount > 0 else { return }
         let currentLog = todayLog
         let previousTotal = currentLog.totalDrinks
         container.updateDrinkTotal(
@@ -390,6 +391,7 @@ private struct DrinkQuickAddGrid: View {
                     .background(AppTheme.background.opacity(0.6), in: RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Add one \(option.title.lowercased())")
             }
         }
     }

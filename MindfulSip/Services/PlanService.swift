@@ -5,6 +5,7 @@ struct PlanService {
 
     func autoPickDryDays(count: Int, avoidWeekend: Bool) -> Set<Int> {
         guard count > 0 else { return [] }
+        let count = count.clamped(to: 0...7)
         var candidates = Array(0..<7)
         if avoidWeekend {
             candidates = [0, 1, 2, 3, 4] + [5, 6]
@@ -21,6 +22,7 @@ struct PlanService {
 
     func distributeTarget(weeklyTarget: Int, dryDayIndexes: Set<Int>) -> [Double] {
         var result = Array(repeating: 0.0, count: 7)
+        let weeklyTarget = weeklyTarget.clamped(to: UserProfile.weeklyTargetRange)
         let active = (0..<7).filter { !dryDayIndexes.contains($0) }
         guard !active.isEmpty else { return result }
         let even = weeklyTarget / active.count

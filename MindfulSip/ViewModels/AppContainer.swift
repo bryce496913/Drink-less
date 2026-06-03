@@ -37,8 +37,8 @@ final class AppContainer: ObservableObject {
     private var lastReminderRefreshDay: Date
 
     init() {
-        profile = store.loadProfile()
-        settings = store.loadSettings()
+        profile = store.loadProfile().sanitized
+        settings = store.loadSettings().sanitized
         logs = store.fetchLogs(daysBack: 365)
         lastReminderRefreshDay = dateService.startOfDay(.now)
         startClock()
@@ -81,28 +81,30 @@ final class AppContainer: ObservableObject {
     }
 
     func refresh() {
-        profile = store.loadProfile()
-        settings = store.loadSettings()
+        profile = store.loadProfile().sanitized
+        settings = store.loadSettings().sanitized
         logs = store.fetchLogs(daysBack: 365)
         syncBoozeModeExperience()
     }
 
     func saveProfile() {
+        profile = profile.sanitized
         applyWeeklyTargetLock()
         store.saveProfile(profile)
         store.saveSettings(settings)
         refresh()
     }
     func saveSettings() {
-        normalizeHolidayDatesIfNeeded()
+        settings = settings.sanitized
         store.saveSettings(settings)
         applyReminderSettings()
         syncBoozeModeExperience()
         refresh()
     }
     func saveProfileAndSettings() {
+        profile = profile.sanitized
+        settings = settings.sanitized
         applyWeeklyTargetLock()
-        normalizeHolidayDatesIfNeeded()
         store.saveProfile(profile)
         store.saveSettings(settings)
         applyReminderSettings()
@@ -110,7 +112,7 @@ final class AppContainer: ObservableObject {
         refresh()
     }
 
-    func saveLog(_ log: DayLog) { store.upsert(log: log); refresh() }
+    func saveLog(_ log: DayLog) { store.upsert(log: log.sanitized); refresh() }
 
     func log(for date: Date) -> DayLog {
         let day = dateService.startOfDay(date)
@@ -119,7 +121,7 @@ final class AppContainer: ObservableObject {
     }
 
     func updateDrinkTotal(date: Date, total: Double, type: DrinkType? = nil, delta: Double? = nil) {
-        loggingService.update(date: date, total: total, type: type, delta: delta)
+        loggingService.update(date: date, total: total.finiteOrDefault(0).clamped(to: 0...200), type: type, delta: delta?.finiteOrDefault(0).clamped(to: 0...50))
         logs = store.fetchLogs(daysBack: 365)
         if settings.boozeModeEnabled {
             notificationService.scheduleBoozeModeQuickAdd(todayCount: log(for: currentDate).totalDrinks)
@@ -127,6 +129,7 @@ final class AppContainer: ObservableObject {
     }
 
     func quickAddDrink(amount: Double = 1.0, type: DrinkType? = .other) {
+        guard amount.isFinite, amount > 0 else { return }
         let today = log(for: currentDate)
         updateDrinkTotal(date: currentDate, total: today.totalDrinks + amount, type: type, delta: amount)
     }
@@ -172,7 +175,13 @@ final class AppContainer: ObservableObject {
         }
 
         Task {
-            await notificationService.requestIfNeeded()
+            let isAuthorized = await notificationService.requestIfNeeded()
+            guard isAuthorized else {
+                settings.remindersEnabled = false
+                store.saveSettings(settings)
+                notificationService.cancelDailyReminder()
+                return
+            }
             notificationService.scheduleDailyReminder(at: settings.reminderTime)
         }
     }
@@ -180,19 +189,16 @@ final class AppContainer: ObservableObject {
     private func syncBoozeModeExperience() {
         if settings.boozeModeEnabled {
             Task {
-                await notificationService.requestIfNeeded()
+                guard await notificationService.requestIfNeeded() else {
+                    settings.boozeModeEnabled = false
+                    store.saveSettings(settings)
+                    notificationService.cancelBoozeModeQuickAdd()
+                    return
+                }
                 notificationService.scheduleBoozeModeQuickAdd(todayCount: log(for: currentDate).totalDrinks)
             }
         } else {
             notificationService.cancelBoozeModeQuickAdd()
-        }
-    }
-
-    private func normalizeHolidayDatesIfNeeded() {
-        guard settings.holidayModeEnabled else { return }
-        guard let start = settings.holidayStartDate, let end = settings.holidayEndDate else { return }
-        if dateService.startOfDay(start) > dateService.startOfDay(end) {
-            settings.holidayEndDate = start
         }
     }
 

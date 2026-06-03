@@ -164,6 +164,13 @@ struct GuidanceView: View {
                         .appTextStyle(.body)
                         .appTextColor(.secondaryText)
 
+                    Text("Mindful Sips is a wellness tool, not medical care. If drinking feels unsafe, unmanageable, or you feel unwell when cutting back, consider reaching out to a qualified professional or local support service.")
+                        .appTextStyle(.caption)
+                        .appTextColor(.mutedText)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(12)
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+
                     GuidanceAccordionsView(date: container.currentDate)
                 }
                 .padding(.horizontal)

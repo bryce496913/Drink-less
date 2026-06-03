@@ -34,7 +34,9 @@ struct AnalyticsService {
 
         var weekdayTotals = Array(repeating: 0.0, count: 7)
         sorted.filter { !shouldIgnoreGoals($0.date) }.forEach {
-            weekdayTotals[Calendar.current.component(.weekday, from: $0.date) - 1] += $0.totalDrinks
+            let weekdayIndex = Calendar.current.component(.weekday, from: $0.date) - 1
+            guard weekdayTotals.indices.contains(weekdayIndex) else { return }
+            weekdayTotals[weekdayIndex] += $0.totalDrinks
         }
         let top = weekdayTotals.enumerated().max(by: { $0.element < $1.element })?.offset ?? 0
 

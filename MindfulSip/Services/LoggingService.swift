@@ -9,12 +9,12 @@ final class LoggingService {
 
     func update(date: Date, total: Double, type: DrinkType? = nil, delta: Double? = nil) {
         var log = log(for: date)
-        log.totalDrinks = max(0, total)
-        if let delta {
+        log.totalDrinks = total.finiteOrDefault(0).clamped(to: 0...200)
+        if let delta, delta.isFinite, delta > 0 {
             let entry = DrinkEntry(id: UUID(), dateTime: .now, amount: delta, type: type)
             log.entries.append(entry)
         }
-        store.upsert(log: log)
+        store.upsert(log: log.sanitized)
     }
 
     func log(for date: Date) -> DayLog {

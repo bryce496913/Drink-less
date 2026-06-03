@@ -28,6 +28,7 @@
 		A019 /* Settings/SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B019 /* Settings/SettingsView.swift */; };
 		A021 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B021 /* Assets.xcassets */; };
 		A022 /* tips.json in Resources */ = {isa = PBXBuildFile; fileRef = B022 /* tips.json */; };
+		A031 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B032 /* PrivacyInfo.xcprivacy */; };
 		A023 /* MindfulSipModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B023 /* MindfulSipModel.xcdatamodeld */; };
 		A024 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B025 /* AppTheme.swift */; };
 		A025 /* Guidance/GuidanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B026 /* Guidance/GuidanceView.swift */; };
@@ -76,6 +77,7 @@
 		B022 /* tips.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = tips.json; sourceTree = "<group>"; };
 		B023 /* MindfulSipModel.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodeld; path = MindfulSipModel.xcdatamodeld; sourceTree = "<group>"; };
 		B024 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B032 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		B025 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		B026 /* Guidance/GuidanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Guidance/GuidanceView.swift; sourceTree = "<group>"; };
 		B027 /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 				B021 /* Assets.xcassets */,
 				B022 /* tips.json */,
 				B024 /* Info.plist */,
+				B032 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -304,6 +307,7 @@
 			files = (
 				A021 /* Assets.xcassets in Resources */,
 				A022 /* tips.json in Resources */,
+				A031 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
