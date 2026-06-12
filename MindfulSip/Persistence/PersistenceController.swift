@@ -31,10 +31,18 @@ final class PersistenceController {
         container.viewContext.automaticallyMergesChangesFromParent = true
     }
 
-    func save() {
+    @discardableResult
+    func save() -> Bool {
         let context = container.viewContext
-        guard context.hasChanges else { return }
-        try? context.save()
+        guard context.hasChanges else { return true }
+
+        do {
+            try context.save()
+            return true
+        } catch {
+            context.rollback()
+            return false
+        }
     }
 }
 

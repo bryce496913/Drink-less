@@ -93,7 +93,8 @@ final class DataStore: ObservableObject {
         }
     }
 
-    func upsert(log: DayLog) {
+    @discardableResult
+    func upsert(log: DayLog) -> Bool {
         let log = log.sanitized
         let date = Calendar.current.startOfDay(for: log.date)
         let request = NSFetchRequest<DayLogEntity>(entityName: "DayLogEntity")
@@ -107,7 +108,7 @@ final class DataStore: ObservableObject {
         entity.updatedAt = .now
         entity.notes = log.notes
         entity.entriesBlob = try? JSONEncoder().encode(log.entries)
-        persistence.save()
+        return persistence.save()
     }
 
     func deleteAll() {

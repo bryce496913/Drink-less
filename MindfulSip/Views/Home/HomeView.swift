@@ -8,6 +8,7 @@ struct HomeView: View {
     @State private var showMondaySetupPrompt = false
     @State private var showWeeklyCelebration = false
     @State private var pendingMondaySetupPrompt = false
+    @State private var drinkAddedFeedback: DrinkAddedFeedback?
     @State private var drinkSupportMessage: DrinkSupportMessage?
 
     @AppStorage("lastWeeklySetupPromptWeekStart") private var lastWeeklySetupPromptWeekStart = ""
@@ -223,6 +224,12 @@ struct HomeView: View {
                 }
                 .overlay(alignment: .top) {
                     VStack(spacing: 8) {
+                        if let drinkAddedFeedback {
+                            DrinkAddedFeedbackBanner(feedback: drinkAddedFeedback)
+                                .id(drinkAddedFeedback.id)
+                                .transition(.move(edge: .top).combined(with: .opacity))
+                        }
+
                         if let drinkSupportMessage {
                             InAppSupportBanner(message: drinkSupportMessage)
                                 .transition(.move(edge: .top).combined(with: .opacity))
@@ -238,6 +245,7 @@ struct HomeView: View {
                             .transition(.move(edge: .top).combined(with: .opacity))
                         }
                     }
+                    .allowsHitTesting(false)
                 }
                 .appFullscreenContainer()
         }
@@ -281,16 +289,32 @@ struct HomeView: View {
 
     private func addDrink(amount: Double, type: DrinkType) {
         guard amount.isFinite, amount > 0 else { return }
-        let currentLog = todayLog
+        let loggingDate = container.currentDate
+        let currentLog = container.log(for: loggingDate)
         let previousTotal = currentLog.totalDrinks
-        container.updateDrinkTotal(
-            date: container.currentDate,
+        guard let updatedLog = container.updateDrinkTotal(
+            date: loggingDate,
             total: previousTotal + amount,
             type: type,
             delta: amount
-        )
-        let updatedLog = container.log(for: container.currentDate)
+        ) else { return }
+
+        showDrinkAddedFeedback(total: updatedLog.totalDrinks)
         showDrinkSupportMessageIfNeeded(previousLog: currentLog, updatedTotal: updatedLog.totalDrinks)
+    }
+
+    private func showDrinkAddedFeedback(total: Double) {
+        let feedback = DrinkAddedFeedback(total: total)
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+            drinkAddedFeedback = feedback
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            guard drinkAddedFeedback?.id == feedback.id else { return }
+            withAnimation(.easeOut(duration: 0.25)) {
+                drinkAddedFeedback = nil
+            }
+        }
     }
 
     private func showDrinkSupportMessageIfNeeded(previousLog: DayLog, updatedTotal: Double) {
@@ -340,6 +364,34 @@ struct HomeView: View {
         .background(background, in: RoundedRectangle(cornerRadius: 14))
         .padding(.top, 12)
         .padding(.horizontal, 20)
+    }
+}
+
+private struct DrinkAddedFeedback: Identifiable {
+    let id = UUID()
+    let total: Double
+
+    var message: String {
+        let formattedTotal = total.formatted(.number.precision(.fractionLength(total.rounded() == total ? 0 : 1)))
+        let drinkLabel = total == 1 ? "drink" : "drinks"
+        return "Saved. You’re now at \(formattedTotal) \(drinkLabel) today."
+    }
+}
+
+private struct DrinkAddedFeedbackBanner: View {
+    let feedback: DrinkAddedFeedback
+
+    var body: some View {
+        Label(feedback.message, systemImage: "checkmark.circle.fill")
+            .appTextStyle(.body)
+            .appTextColor(.primaryText)
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(12)
+            .background(AppTheme.accent.opacity(0.95), in: RoundedRectangle(cornerRadius: 14))
+            .padding(.top, 12)
+            .padding(.horizontal, 20)
+            .accessibilityLabel(feedback.message)
     }
 }
 

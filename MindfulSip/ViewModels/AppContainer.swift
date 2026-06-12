@@ -120,12 +120,22 @@ final class AppContainer: ObservableObject {
             ?? DayLog(date: day, plannedTargetDrinks: 0, isDryPlanned: false, totalDrinks: 0, updatedAt: .now, notes: "")
     }
 
-    func updateDrinkTotal(date: Date, total: Double, type: DrinkType? = nil, delta: Double? = nil) {
-        loggingService.update(date: date, total: total.finiteOrDefault(0).clamped(to: 0...200), type: type, delta: delta?.finiteOrDefault(0).clamped(to: 0...50))
+    @discardableResult
+    func updateDrinkTotal(date: Date, total: Double, type: DrinkType? = nil, delta: Double? = nil) -> DayLog? {
+        let didSave = loggingService.update(
+            date: date,
+            total: total.finiteOrDefault(0).clamped(to: 0...200),
+            type: type,
+            delta: delta?.finiteOrDefault(0).clamped(to: 0...50)
+        )
+        guard didSave else { return nil }
+
         logs = store.fetchLogs(daysBack: 365)
+        let updatedLog = log(for: date)
         if settings.boozeModeEnabled {
             notificationService.scheduleBoozeModeQuickAdd(todayCount: log(for: currentDate).totalDrinks)
         }
+        return updatedLog
     }
 
     func quickAddDrink(amount: Double = 1.0, type: DrinkType? = .other) {
