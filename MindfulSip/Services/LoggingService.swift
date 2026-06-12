@@ -7,14 +7,15 @@ final class LoggingService {
 
     init(store: DataStore) { self.store = store }
 
-    func update(date: Date, total: Double, type: DrinkType? = nil, delta: Double? = nil) {
+    @discardableResult
+    func update(date: Date, total: Double, type: DrinkType? = nil, delta: Double? = nil) -> Bool {
         var log = log(for: date)
         log.totalDrinks = total.finiteOrDefault(0).clamped(to: 0...200)
         if let delta, delta.isFinite, delta > 0 {
             let entry = DrinkEntry(id: UUID(), dateTime: .now, amount: delta, type: type)
             log.entries.append(entry)
         }
-        store.upsert(log: log.sanitized)
+        return store.upsert(log: log.sanitized)
     }
 
     func log(for date: Date) -> DayLog {
