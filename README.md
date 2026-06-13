@@ -1,10 +1,10 @@
-# MindfulSip
+# DrinkKind
 
-MindfulSip is an iOS 16+ SwiftUI app for planning and tracking mindful drinking with local-only storage.
+DrinkKind is an iOS 16+ SwiftUI app for planning and tracking mindful drinking with local-only storage.
 
 ## Build & Run
-1. Open `MindfulSip.xcodeproj` in Xcode 15+.
-2. Select the `MindfulSip` scheme and an iOS 16+ simulator.
+1. Open `DrinkKind.xcodeproj` in Xcode 15+.
+2. Select the `DrinkKind` scheme and an iOS 16+ simulator.
 3. Build and run.
 
 ## Architecture
@@ -23,13 +23,20 @@ MindfulSip is an iOS 16+ SwiftUI app for planning and tracking mindful drinking 
 - CSV export can be added from current `DataStore` logs.
 
 ## Testing
-- `MindfulSipTests/PlanServiceTests.swift`
-- `MindfulSipTests/AnalyticsServiceTests.swift`
+- `DrinkKindTests/PlanServiceTests.swift`
+- `DrinkKindTests/AnalyticsServiceTests.swift`
 
 Run in Xcode test navigator or with command-line xcodebuild on macOS:
 ```bash
-xcodebuild test -project MindfulSip.xcodeproj -scheme MindfulSip -destination 'platform=iOS Simulator,name=iPhone 15'
+xcodebuild test -project DrinkKind.xcodeproj -scheme DrinkKind -destination 'platform=iOS Simulator,name=iPhone 15'
 ```
 
 ## Privacy
-All app data stays on device. MindfulSip is fully offline and does not perform server sync or online checks.
+All app data stays on device. DrinkKind is fully offline and does not perform server sync or online checks.
+
+## App Identity
+- App target, product, module, and shared scheme: `DrinkKind`
+- Main bundle identifier: `com.brycedevelopment.DrinkKind`
+- Unit-test target and bundle identifier: `DrinkKindTests` / `com.brycedevelopment.DrinkKindTests`
+
+The Core Data model intentionally retains its internal `MindfulSipModel` name to preserve the existing persistence schema identity.

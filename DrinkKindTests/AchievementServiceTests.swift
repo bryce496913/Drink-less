@@ -1,5 +1,5 @@
 import XCTest
-@testable import MindfulSip
+@testable import DrinkKind
 
 final class AchievementServiceTests: XCTestCase {
     let service = AchievementService()

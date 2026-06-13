@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A001 /* MindfulSipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B001 /* MindfulSipApp.swift */; };
+		A001 /* DrinkKindApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B001 /* DrinkKindApp.swift */; };
 		A002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B002 /* Models.swift */; };
 		A003 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B003 /* PersistenceController.swift */; };
 		A004 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B004 /* DataStore.swift */; };
@@ -48,13 +48,13 @@
 			containerPortal = PROJ /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = T001;
-			remoteInfo = MindfulSip;
+			remoteInfo = DrinkKind;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		APP /* MindfulSip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = MindfulSip.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B001 /* MindfulSipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindfulSipApp.swift; sourceTree = "<group>"; };
+		APP /* DrinkKind.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = DrinkKind.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B001 /* DrinkKindApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkKindApp.swift; sourceTree = "<group>"; };
 		B002 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		B003 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		B004 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
@@ -88,7 +88,7 @@
 		B101 /* PlanServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanServiceTests.swift; sourceTree = "<group>"; };
 		B102 /* AnalyticsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsServiceTests.swift; sourceTree = "<group>"; };
 		B103 /* AchievementServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementServiceTests.swift; sourceTree = "<group>"; };
-		TST /* MindfulSipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = MindfulSipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		TST /* DrinkKindTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = DrinkKindTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,12 +109,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		GAPP /* MindfulSipApp */ = {
+		GAPP /* DrinkKindApp */ = {
 			isa = PBXGroup;
 			children = (
-				B001 /* MindfulSipApp.swift */,
+				B001 /* DrinkKindApp.swift */,
 			);
-			path = MindfulSipApp;
+			path = DrinkKindApp;
 			sourceTree = "<group>";
 		};
 		GMODEL /* Models */ = {
@@ -138,8 +138,8 @@
 		GPROD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				APP /* MindfulSip.app */,
-				TST /* MindfulSipTests.xctest */,
+				APP /* DrinkKind.app */,
+				TST /* DrinkKindTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -158,8 +158,8 @@
 		GROOT = {
 			isa = PBXGroup;
 			children = (
-				GSRC /* MindfulSip */,
-				GTEST /* MindfulSipTests */,
+				GSRC /* DrinkKind */,
+				GTEST /* DrinkKindTests */,
 				GPROD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -179,10 +179,10 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		GSRC /* MindfulSip */ = {
+		GSRC /* DrinkKind */ = {
 			isa = PBXGroup;
 			children = (
-				GAPP /* MindfulSipApp */,
+				GAPP /* DrinkKindApp */,
 				GMODEL /* Models */,
 				GPERS /* Persistence */,
 				GSERV /* Services */,
@@ -190,17 +190,17 @@
 				GVIEW /* Views */,
 				GRES /* Resources */,
 			);
-			path = MindfulSip;
+			path = DrinkKind;
 			sourceTree = "<group>";
 		};
-		GTEST /* MindfulSipTests */ = {
+		GTEST /* DrinkKindTests */ = {
 			isa = PBXGroup;
 			children = (
 				B101 /* PlanServiceTests.swift */,
 				B102 /* AnalyticsServiceTests.swift */,
 				B103 /* AchievementServiceTests.swift */,
 			);
-			path = MindfulSipTests;
+			path = DrinkKindTests;
 			sourceTree = "<group>";
 		};
 		GVIEW /* Views */ = {
@@ -234,9 +234,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		T001 /* MindfulSip */ = {
+		T001 /* DrinkKind */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C001 /* Build configuration list for PBXNativeTarget "MindfulSip" */;
+			buildConfigurationList = C001 /* Build configuration list for PBXNativeTarget "DrinkKind" */;
 			buildPhases = (
 				SAPP /* Sources */,
 				RAPP /* Resources */,
@@ -246,14 +246,14 @@
 			);
 			dependencies = (
 			);
-			name = MindfulSip;
-			productName = MindfulSip;
-			productReference = APP /* MindfulSip.app */;
+			name = DrinkKind;
+			productName = DrinkKind;
+			productReference = APP /* DrinkKind.app */;
 			productType = "com.apple.product-type.application";
 		};
-		T002 /* MindfulSipTests */ = {
+		T002 /* DrinkKindTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C002 /* Build configuration list for PBXNativeTarget "MindfulSipTests" */;
+			buildConfigurationList = C002 /* Build configuration list for PBXNativeTarget "DrinkKindTests" */;
 			buildPhases = (
 				STST /* Sources */,
 				FTST /* Frameworks */,
@@ -263,9 +263,9 @@
 			dependencies = (
 				D001 /* PBXTargetDependency */,
 			);
-			name = MindfulSipTests;
-			productName = MindfulSipTests;
-			productReference = TST /* MindfulSipTests.xctest */;
+			name = DrinkKindTests;
+			productName = DrinkKindTests;
+			productReference = TST /* DrinkKindTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -281,7 +281,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C000 /* Build configuration list for PBXProject "MindfulSip" */;
+			buildConfigurationList = C000 /* Build configuration list for PBXProject "DrinkKind" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -294,8 +294,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				T001 /* MindfulSip */,
-				T002 /* MindfulSipTests */,
+				T001 /* DrinkKind */,
+				T002 /* DrinkKindTests */,
 			);
 		};
 /* End PBXProject section */
@@ -318,7 +318,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A001 /* MindfulSipApp.swift in Sources */,
+				A001 /* DrinkKindApp.swift in Sources */,
 				A002 /* Models.swift in Sources */,
 				A003 /* PersistenceController.swift in Sources */,
 				A004 /* DataStore.swift in Sources */,
@@ -363,7 +363,7 @@
 /* Begin PBXTargetDependency section */
 		D001 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = T001 /* MindfulSip */;
+			target = T001 /* DrinkKind */;
 			targetProxy = P001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -378,11 +378,11 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7ZAXQ2686Z;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = MindfulSip/Resources/Info.plist;
+				INFOPLIST_FILE = DrinkKind/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSip;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brycedevelopment.DrinkKind;
+				PRODUCT_NAME = DrinkKind;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 			};
@@ -397,11 +397,11 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7ZAXQ2686Z;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = MindfulSip/Resources/Info.plist;
+				INFOPLIST_FILE = DrinkKind/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSip;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brycedevelopment.DrinkKind;
+				PRODUCT_NAME = DrinkKind;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 			};
@@ -416,11 +416,11 @@
 				DEVELOPMENT_TEAM = 7ZAXQ2686Z;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSipTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brycedevelopment.DrinkKindTests;
+				PRODUCT_NAME = DrinkKindTests;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MindfulSip.app/MindfulSip";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DrinkKind.app/DrinkKind";
 			};
 			name = Debug;
 		};
@@ -433,11 +433,11 @@
 				DEVELOPMENT_TEAM = 7ZAXQ2686Z;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.MindfulSipTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brycedevelopment.DrinkKindTests;
+				PRODUCT_NAME = DrinkKindTests;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MindfulSip.app/MindfulSip";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DrinkKind.app/DrinkKind";
 			};
 			name = Release;
 		};
@@ -458,7 +458,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C000 /* Build configuration list for PBXProject "MindfulSip" */ = {
+		C000 /* Build configuration list for PBXProject "DrinkKind" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BCP1 /* Debug */,
@@ -467,7 +467,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C001 /* Build configuration list for PBXNativeTarget "MindfulSip" */ = {
+		C001 /* Build configuration list for PBXNativeTarget "DrinkKind" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BC01 /* Debug */,
@@ -476,7 +476,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C002 /* Build configuration list for PBXNativeTarget "MindfulSipTests" */ = {
+		C002 /* Build configuration list for PBXNativeTarget "DrinkKindTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BC11 /* Debug */,

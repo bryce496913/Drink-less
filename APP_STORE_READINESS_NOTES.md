@@ -1,4 +1,4 @@
-# Mindful Sips App Store Readiness Notes
+# DrinkKind App Store Readiness Notes
 
 ## Permissions used
 
@@ -6,7 +6,7 @@
 
 ## Data stored locally
 
-Mindful Sips stores user data on-device using Core Data and a small amount of UserDefaults state for weekly prompt/celebration timing. Stored data includes:
+DrinkKind stores user data on-device using Core Data and a small amount of UserDefaults state for weekly prompt/celebration timing. Stored data includes:
 
 - Profile name and goal preference.
 - Weekly drink target, dry-day target, baseline drink estimate, cost per drink, and calories per drink.
@@ -18,7 +18,16 @@ The app does not include third-party SDKs, network calls, analytics tracking, ad
 
 ## Privacy manifest
 
-`MindfulSip/Resources/PrivacyInfo.xcprivacy` declares no tracking and no collected data. It declares UserDefaults access with reason `CA92.1` because the app uses SwiftUI `@AppStorage` to store local app state.
+`DrinkKind/Resources/PrivacyInfo.xcprivacy` declares no tracking and no collected data. It declares UserDefaults access with reason `CA92.1` because the app uses SwiftUI `@AppStorage` to store local app state.
+
+## Branding and identifiers
+
+- The app target, product, shared scheme, executable, and Swift module are named `DrinkKind`.
+- The main app bundle identifier is `com.brycedevelopment.DrinkKind`.
+- The unit-test bundle identifier is `com.brycedevelopment.DrinkKindTests`.
+- The Core Data model remains internally named `MindfulSipModel` so persistence identity and model loading are not changed by the product rebrand.
+- The app icon is unchanged and contains no product-name text.
+- `LaunchBrand.imageset` and the repository-root `Splash.imageset` are not referenced by the current launch configuration, but their bitmap artwork still contains the former wordmark. Replace those source images with final DrinkKind artwork before re-enabling or submitting them as branded marketing assets.
 
 ## Likely App Privacy disclosures
 
@@ -36,4 +45,6 @@ Based on the current codebase, App Store Connect App Privacy responses should di
 - Complete export compliance answers.
 - Run a full TestFlight pass.
 - Create and validate a Release archive in Xcode.
-- Replace the placeholder bundle identifier (`com.example.MindfulSip`) with your production bundle identifier before submission.
+- Register `com.brycedevelopment.DrinkKind` in Apple Developer, enable only the capabilities the app actually uses, and regenerate the App Store provisioning profile.
+- Create or update the DrinkKind app record in App Store Connect so its bundle ID matches `com.brycedevelopment.DrinkKind`.
+- Select the correct development team and refreshed signing profile for the renamed `DrinkKind` target in Xcode.

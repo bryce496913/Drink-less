@@ -23,7 +23,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 }
 
 @main
-struct MindfulSipApp: App {
+struct DrinkKindApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var container = AppContainer()
     @Environment(\.scenePhase) private var scenePhase
