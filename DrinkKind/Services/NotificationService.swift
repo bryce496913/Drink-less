@@ -103,7 +103,7 @@ struct NotificationService {
 
         let content = UNMutableNotificationContent()
         content.title = "Booze Mode active"
-        content.body = "Mindful Sips • Today: \(String(format: "%.0f", max(0, todayCount))) drink(s). Tap Add Drink for a quick log."
+        content.body = "DrinkKind • Today: \(String(format: "%.0f", max(0, todayCount))) drink(s). Tap Add Drink for a quick log."
         content.categoryIdentifier = Self.boozeModeCategoryId
         content.sound = .default
         if #available(iOS 15.0, *) {
@@ -199,7 +199,7 @@ struct NotificationService {
 
         let content = UNMutableNotificationContent()
         content.title = "Plan your week"
-        content.body = "It’s Monday morning. Take a minute to set a supportive plan in Mindful Sips."
+        content.body = "It’s Monday morning. Take a minute to set a supportive plan in DrinkKind."
         content.badge = 1
         if #available(iOS 15.0, *) {
             content.interruptionLevel = .active
